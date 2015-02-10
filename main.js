@@ -2,10 +2,10 @@ require("js/lib/bottom_line");
 require("js/utility/broadcaster");
 require("js/utility/state_manager");
 require("js/utility/math_extension");
-require("js/utility/vector");
 require("js/utility/weighted_collection");
 require("js/utility/json");
 require("js/utility/enumerator");
+require("js/utility/vector2d");
 
 var RenderTargets = RenderTargets || {
 	default: RenderTarget.new("Default")
