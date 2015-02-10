@@ -1,32 +1,34 @@
-Log.JSON = function(str)
-{
-	Log.rgb("[JSONManager] " + str, 100, 250, 220, 50, 100, 100);
-}
-
-var JSONManager = JSONManager || {
+/**
+ * Manages JSON files
+ *
+ * @public
+ * @singleton module:JSON
+ * @extends JSON
+ * @author Riko Ophorst
+ */
+_.extend(JSON, {
+	/**
+	 * The cache the JSON manager uses to save its jsons
+	 *
+	 * @private
+	 * @property module:JSON#property
+	 */
 	_cache: {},
-	_hotReload: {},
 
-	load: function(path, key, reloading)
+	/**
+	 * Adds a parsed JSON file to the cache
+	 * 
+	 * @public
+	 * @method module:JSON#load
+	 * @param {string} path - The path the JSON is stored at, and is also the key under which this JSON is stored
+	 * @param {bool=false} reloading - Boolean that specifies if the file is reloading, if it is not reloading, it is added to the content watch
+	 * @author Riko Ophorst
+	 */
+	load: function (path, reloading)
 	{
-		var result = IO.open(path);
-		if (result === "")
-		{
-			return;
-		}
-		this._cache[key] = {
-			result: JSON.parse(result),
-			path: path
-		}
+		this._cache[key] = JSON.parse(IO.open(path));
 
-		if (this._cache[key].result === undefined)
-		{
-			Log.error("Could not parse JSON file '" + path + "'");
-			return;
-		}
-		this._hotReload[path] = true;
-
-		if (reloading == false || reloading === undefined)
+		if (!reloading)
 		{
 			ContentManager.watch(path);
 			Log.JSON("Added " + path + " to the file watch");
@@ -34,35 +36,38 @@ var JSONManager = JSONManager || {
 		}
 	},
 
-	get: function(key)
+	/**
+	 * Retrieves a parsed JSON file from the cache, and if not found, tries to load it
+	 *
+	 * @public
+	 * @method module:JSON#get
+	 * @param {string} path - The path to be retrieved
+	 * @return {object} A javascript object structured by the JSON that was parsed
+	 * @author Riko Ophorst
+	 */
+	get: function (path)
 	{
-		var toReturn = this._cache[key];
-		if (toReturn === undefined)
+		if (this._cache[path] === undefined)
 		{
-			Log.error("Could not find loaded JSON with key '" + key + "'");
+			this.load(path, false);
+			Log.warning("Warning - trying to retrieve a JSON which has not been loaded yet");
 		}
 
-		return toReturn.result;
+		return this._cache[path];
 	},
 
-	reload: function(path)
+	/**
+	 * Tries to reload a given path if it is already cached
+	 *
+	 * @public
+	 * @method module:JSON#reload
+	 * @param {string} path - The path to be reloaded
+	 * @author Riko Ophorst
+	 */
+	reload: function (path)
 	{
-		if (this._hotReload[path] == true)
+		if (this._cache[path] !== undefined)
 		{
-			var cached = undefined;
-			var key = undefined;
-
-			for (var i in this._cache)
-			{
-				cached = this._cache[i];
-
-				if (cached.path === path)
-				{
-					key = i;
-					break;
-				}
-			}
-
 			if (key !== undefined)
 			{
 				this.load(path, key, true);
@@ -70,4 +75,18 @@ var JSONManager = JSONManager || {
 			}
 		}
 	}
-}
+});
+
+_.extend(Log, {
+	/**
+	 * Logs a JSON message in the console
+	 * 
+	 * @public
+	 * @method module:Log#JSON
+	 * @author Daniël Konings
+	 */
+	JSON: function (str) 
+	{
+		Log.rgb("[JSONManager] " + str, 100, 250, 220, 50, 100, 100);
+	}
+});
