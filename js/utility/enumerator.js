@@ -12,7 +12,7 @@ var _GLOBAL_ = this;
  * @param {object} opt_context - a context in which the enumerator should be placed
  * @author Riko Ophorst
  */
-function Enum(name, enumerations, opt_context)
+var Enum = Enum || function(name, enumerations, opt_context)
 {
 	var opt_context = opt_context || {};
 

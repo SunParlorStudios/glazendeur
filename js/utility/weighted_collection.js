@@ -1,4 +1,23 @@
-var WeightedCollection = WeightedCollection || {
+require("js/lib/bottom_line");
+
+/**
+ * Has functionality for weighted collections
+ *
+ * @public
+ * @singleton module:WeightedCollection
+ * @author Riko Ophorst
+ */
+var WeightedCollection = WeightedCollection || {};
+
+_.extend(WeightedCollection, {
+	/**
+	 * Retrieves a random item from a tuple array
+	 *
+	 * @public
+	 * @method module:WeightedCollection#retrieve
+	 * @param {array} tupleArray - A tuple array 
+	 * @author Daniel Konings
+	 */
 	retrieve: function(tupleArray)
 	{
 		var final = [];
@@ -15,6 +34,14 @@ var WeightedCollection = WeightedCollection || {
 		return final[Math.floor(Math.random()*final.length)];
 	},
 
+	/**
+	 * Retrieves a random tuple from a tuple array
+	 *
+	 * @public
+	 * @method module:WeightedCollection#retrieveAsTuple
+	 * @param {array} tupleArray - A tuple array 
+	 * @author Daniel Konings
+	 */
 	retrieveAsTuple: function(tupleArray)
 	{
 		var final = [];
@@ -30,4 +57,4 @@ var WeightedCollection = WeightedCollection || {
 
 		return final[Math.floor(Math.random()*final.length)];
 	}
-}
+});

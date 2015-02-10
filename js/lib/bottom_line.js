@@ -66,8 +66,8 @@ var console = {
 				{
 					var descriptor = __obj.getOwnPropertyDescriptor(nativeObj, name);
 
-					if(wrapperObj.hasOwnProperty(name)) console.warn('overwriting existing property: '+name+' on _.'+shorthand+' while copying native statics');
-					if(_.hasOwnProperty(name)) console.warn('overwriting existing property: '+name+' on _ while copying native statics, for shorthand: '+shorthand);
+/*					if(wrapperObj.hasOwnProperty(name)) console.warn('overwriting existing property: '+name+' on _.'+shorthand+' while copying native statics');
+					if(_.hasOwnProperty(name)) console.warn('overwriting existing property: '+name+' on _ while copying native statics, for shorthand: '+shorthand);*/
 
 					__obj.defineProperty(wrapperObj, name, descriptor);
 					__obj.defineProperty(_,          name, descriptor);
@@ -82,14 +82,14 @@ var console = {
 
 			descriptor.enumerable = false;
 
-			if(wrapperObj.hasOwnProperty(name)) console.warn('overwriting existing property: '+name+' on _.'+shorthand+' while copying statics');
+			//if(wrapperObj.hasOwnProperty(name)) console.warn('overwriting existing property: '+name+' on _.'+shorthand+' while copying statics');
 
 			__obj.defineProperty(wrapperObj, name, descriptor);
 
 			// copy static properties to the bottom line _ object
 			if(shorthand !== 'int') // except for the int class
 			{
-				if(_.hasOwnProperty(name)) console.warn('overwriting existing property: '+name+' on _ while copying statics');
+				//if(_.hasOwnProperty(name)) console.warn('overwriting existing property: '+name+' on _ while copying statics');
 
 				__obj.defineProperty(_, name, descriptor);
 			}
@@ -102,7 +102,7 @@ var console = {
 
 			descriptor.enumerable = false;
 
-			if(nativeObj.prototype.hasOwnProperty(name)) console.warn('overwriting existing property: '+name+' on _.'+nativeObj+' while copying prototype methods');
+			//if(nativeObj.prototype.hasOwnProperty(name)) console.warn('overwriting existing property: '+name+' on _.'+nativeObj+' while copying prototype methods');
 
 			__obj.defineProperty(nativeObj.prototype, name, descriptor);
 		})
@@ -281,7 +281,7 @@ var console = {
                 var override     = !settings || settings.override  !== false; // default is true
 
                 var loglevel     = (settings && settings.loglevel) || 'debug';
-                if(loglevel === 'debug' && !console.debug) loglevel = 'log'; // shim for old browsers i.e 10... better solve it with a shim though
+                if(loglevel === 'debug' && !console.debug) loglevel = 'warn'; // shim for old browsers i.e 10... better solve it with a shim though
 
                 for(var prop in module) // we can't use ._each here otherwise we will execute the getter
                 {   if(module.hasOwnProperty(prop))
@@ -365,7 +365,7 @@ var console = {
 			 * @returns {string} - type of the object
 			 */
 			typeOf: function(obj) {
-				return __obj.prototype.toString.call(obj)._between('[object ', ']')._decapitalize();
+				return __obj.prototype.toString.call(obj)._between('[object ', ']');
 			}
 		},
 		/**

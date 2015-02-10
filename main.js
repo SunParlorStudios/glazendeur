@@ -4,7 +4,6 @@ require("js/utility/state_manager");
 require("js/utility/math_extension");
 require("js/utility/vector");
 require("js/utility/weighted_collection");
-require("js/utility/helper");
 require("js/utility/json");
 require("js/utility/enumerator");
 

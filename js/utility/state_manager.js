@@ -106,7 +106,7 @@ var StateManager = StateManager ||
 
 	reload: function(path)
 	{
-		JSONManager.reload(path);
+		JSON.reload(path);
 		if (this._currentState == undefined)
 			return;
 		
