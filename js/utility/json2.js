@@ -4,6 +4,7 @@
  * @public
  * @singleton module:JSON
  * @extends JSON
+ * @author Riko Ophorst
  */
 _.extend(JSON, {
 	/**
@@ -21,6 +22,7 @@ _.extend(JSON, {
 	 * @method module:JSON#load
 	 * @param {string} path - The path the JSON is stored at, and is also the key under which this JSON is stored
 	 * @param {bool=false} reloading - Boolean that specifies if the file is reloading, if it is not reloading, it is added to the content watch
+	 * @author Riko Ophorst
 	 */
 	load: function (path, reloading)
 	{
@@ -40,6 +42,8 @@ _.extend(JSON, {
 	 * @public
 	 * @method module:JSON#get
 	 * @param {string} path - The path to be retrieved
+	 * @return {object} A javascript object structured by the JSON that was parsed
+	 * @author Riko Ophorst
 	 */
 	get: function (path)
 	{
@@ -58,6 +62,7 @@ _.extend(JSON, {
 	 * @public
 	 * @method module:JSON#reload
 	 * @param {string} path - The path to be reloaded
+	 * @author Riko Ophorst
 	 */
 	reload: function (path)
 	{

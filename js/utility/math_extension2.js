@@ -3,6 +3,7 @@
  *
  * @singleton
  * @extends Math
+ * @author Riko Ophorst
  */
 _.extend(Math, {
 	/**
@@ -112,6 +113,7 @@ _.extend(Math, {
 	 * @param {number} magnitude - strength of the shake
 	 * @param {number} timer - a point in time between 0 - 1
 	 * @return {object} An object with x&y values of a shake
+	 * @author Daniel Konings
 	 */
 	shake: function(magnitude,timer)
 	{

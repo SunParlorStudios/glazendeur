@@ -3,6 +3,7 @@
  *
  * @public
  * @singleton module:Geometry
+ * @author Riko Ophorst
  */
 var Geometry = {};
 
@@ -23,6 +24,7 @@ _.extend(Geometry, {
 	 * @param {number} rr - red color value of the bottom right coordinate
 	 * @param {number} gg - green color value of the bottom right coordinate
 	 * @param {number} bb - blue color value of the bottom right coordinate
+	 * @author Daniel Konings
 	 */
 	drawRectangle: function (x1, y1, x2, y2, z, r, g, b, rr, gg, bb)
 	{
