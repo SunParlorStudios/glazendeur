@@ -6,6 +6,13 @@
  * Released under the MIT license
  * ________________________________
  */
+
+var console = {
+	log: Log.debug,
+	warn: Log.warning,
+	error: Log.error
+};
+
 'use strict';
 !function(root, bottom_line) {
 	if(typeof(define) === 'function' && define.amd)

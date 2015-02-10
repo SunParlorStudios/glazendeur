@@ -1,3 +1,4 @@
+require("js/lib/bottom_line");
 require("js/utility/broadcaster");
 require("js/utility/state_manager");
 require("js/utility/math_extension");
