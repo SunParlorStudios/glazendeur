@@ -6,15 +6,21 @@
  * @extends JSON
  * @author Riko Ophorst
  */
+
 _.extend(JSON, {
+	override: false,
+	overwrite: false
+}, {
 	/**
 	 * The cache the JSON manager uses to save its jsons
 	 *
 	 * @private
 	 * @property module:JSON#property
 	 */
-	_cache: {},
+	_cache: {}
+});
 
+_.extend(JSON, {
 	/**
 	 * Adds a parsed JSON file to the cache
 	 * 

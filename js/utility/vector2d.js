@@ -150,7 +150,7 @@ _.extend(Vector2D, {
 	 * Calculates the right hand normal of a vector2d
 	 *
 	 * @public
-	 * @method module:Vector3D#rightHandNormal
+	 * @method module:Vector2D#rightHandNormal
 	 * @param {vector2d} v - a vector2d
 	 * @return {vector2d} the right hand normal of the given vector2d
 	 * @author Riko Ophorst
@@ -164,7 +164,7 @@ _.extend(Vector2D, {
 	 * Calculates the left hand normal of a vector2d
 	 *
 	 * @public
-	 * @method module:Vector3D#leftHandNormal
+	 * @method module:Vector2D#leftHandNormal
 	 * @param {vector2d} v - a vector2d
 	 * @return {vector2d} the left hand normal of the given vector2d
 	 * @author Riko Ophorst
