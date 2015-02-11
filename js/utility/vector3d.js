@@ -55,7 +55,7 @@ _.extend(Vector3D, {
 	},
 
 	/**
-	 * Multiplies two vectors
+	 * Multiplies a vector3d with a scalar
 	 *
 	 * @public
 	 * @method module:Vector3D#mul
@@ -70,13 +70,13 @@ _.extend(Vector3D, {
 	},
 
 	/**
-	 * Multiplies two vectors
+	 * Dot product of two vectors
 	 *
 	 * @public
-	 * @method module:Vector3D#mul
+	 * @method module:Vector3D#dot
 	 * @param {vector3d} v1 - a vector3d
 	 * @param {vector3d} v2 - a vector3d
-	 * @return {vector3d} A new Vector3D which is the result of v1*v2
+	 * @return {vector3d} A new Vector3D which is the dot product of v1 & v2
 	 * @author Riko Ophorst
 	 */
 	dot: function (v1, v2)
@@ -85,13 +85,13 @@ _.extend(Vector3D, {
 	},
 
 	/**
-	 * Multiplies two vectors
+	 * Cross product of two vectors
 	 *
 	 * @public
-	 * @method module:Vector3D#mul
+	 * @method module:Vector3D#cross
 	 * @param {vector3d} v1 - a vector3d
 	 * @param {vector3d} v2 - a vector3d
-	 * @return {vector3d} A new Vector3D which is the result of v1*v2
+	 * @return {vector3d} A new Vector3D which is the cross product of v1 & v2
 	 * @author Riko Ophorst
 	 */
 	cross: function (v1, v2)
@@ -103,11 +103,29 @@ _.extend(Vector3D, {
 		);
 	},
 
+	/**
+	 * Calculates the length of a vector3d
+	 *
+	 * @public
+	 * @method module:Vector3D#length
+	 * @param {vector3d} v - a vector3d
+	 * @return {number} The length of the vector3d
+	 * @author Riko Ophorst
+	 */
 	length: function (v)
 	{
 		return Math.sqrt(v.x * v.x, v.y * v.y, v.z * v.z);
 	},
 
+	/**
+	 * Normalises a vector3d
+	 *
+	 * @public
+	 * @method module:Vector3D#normalise
+	 * @param {vector3d} v - a vector3d
+	 * @return {vector3d} A new Vector3D which is the normalised vector of given vector3d
+	 * @author Riko Ophorst
+	 */
 	normalise: function (v)
 	{
 		var l = this.length(v);
