@@ -1,0 +1,13 @@
+{
+	"renderables" : [
+		{
+			"type" : "Quad2D",
+			"scale" : [16, 16, 16]
+		}
+	],
+
+	"script" : {
+		"path" : "entities/scripts/test",
+		"object" : "Test"
+	}
+}

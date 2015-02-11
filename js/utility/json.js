@@ -32,14 +32,16 @@ _.extend(JSON, {
 	 */
 	load: function (path, reloading)
 	{
-		this._cache[key] = JSON.parse(IO.open(path));
+		this._cache[path] = JSON.parse(IO.open(path));
 
 		if (!reloading)
 		{
 			ContentManager.watch(path);
 			Log.JSON("Added " + path + " to the file watch");
-			Log.JSON("Parsed JSON from " + path + " stored in '" + key + "'");
+			Log.JSON("Parsed JSON from " + path);
 		}
+
+		return this._cache[path];
 	},
 
 	/**
