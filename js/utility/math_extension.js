@@ -73,6 +73,24 @@ _.extend(Math, {
 	},
 
 	/**
+	 * Eases quintic in-out
+	 * 
+	 * @public
+	 * @method module:Math#easeInOutQuintic
+	 * @param {number} t - time
+	 * @param {number} b - first value
+	 * @param {number} c - second value
+	 * @param {number} d - division
+	 * @return {number} An eased number
+	 */
+	easeInOutQuintic: function(t, b, c, d)
+	{
+		var ts = (t /= d)*t;
+		var tc = ts*t;
+		return b+c*(6*tc*ts + -15*ts*ts + 10*tc);
+	},
+
+	/**
 	 * Calculates distance
 	 * 
 	 * @public
