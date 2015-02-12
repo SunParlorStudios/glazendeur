@@ -6,6 +6,7 @@ require("js/utility/weighted_collection");
 require("js/utility/json");
 require("js/utility/enumerator");
 require("js/utility/vector2d");
+require("js/utility/vector3d");
 require("js/utility/world");
 
 var RenderTargets = RenderTargets || {
@@ -59,49 +60,13 @@ Game.Update = function(dt)
 		dt *= Game.speed;
 	}
 
-	var mx = 0,
-		mz = 0,
-		rx = 0,
-		ry = 0,
-		speed = 100 * dt;
-
-	if (Keyboard.isDown("W"))
-	{
-		mz = -speed;
-	}
-
-	if (Keyboard.isDown("S"))
-	{
-		mz = speed;
-	}
-
-	if (Keyboard.isDown("A"))
-	{
-		mx = -speed;
-	}
-
-	if (Keyboard.isDown("D"))
-	{
-		mx = speed;
-	}
-
-	if (Mouse.isDown(0))
-	{
-		var movement = Mouse.movement();
-		ry = -movement.x * dt / 10;
-		rx = -movement.y * dt / 10;
-	}
-
-	Game.camera.translateBy(mx, 0, mz);
-	Game.camera.rotateBy(rx, ry, 0);
-
 	StateManager.update(dt);
 }
 
 Game.Draw = function(dt)
 {
-	Game.render(Game.camera);
 	StateManager.draw();
+	Game.render(Game.camera);
 }
 
 Game.Shutdown = function()

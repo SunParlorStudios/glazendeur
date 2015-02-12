@@ -25,5 +25,5 @@
 		"class": "Menu"
 	},
 
-	"autoStart": true
+	"autoStart": false
 }

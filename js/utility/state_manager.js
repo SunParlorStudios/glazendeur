@@ -50,22 +50,14 @@ _.extend(StateManager, {
 				actual: new _GLOBAL_[stateData.scripts.class](),
 				autoStart: stateData.autoStart,
 				loader: stateData.loader,
+				initialized: false,
 			};
 
-			if (state.entities !== undefined && state.entities.length > 0)
-			{
-				for (var i = 0; i < state.entities.length; i++)
-				{
-					//state.actual.world.spawn(state.entities[i].json, state.entities[i].params, state.entities[i].layer);
-				}
-			}
-
 			this._states[state.name] = state;
-			Log.info(state.name);
 
 			if (state.autoStart === true)
 			{
-				//this.switch(state.name);
+				this.switch(state.name);
 			}
 		}
 		else
@@ -134,6 +126,21 @@ _.extend(StateManager, {
 		}
 		else
 		{
+			if (!state.initialized)
+			{
+				if (state.entities !== undefined && state.entities.length > 0)
+				{
+					for (var i = 0; i < state.entities.length; i++)
+					{
+						state.actual.world.spawn(state.entities[i].json, state.entities[i].params, state.entities[i].layer);
+					}
+				}
+
+				state.initialized = true;
+
+				state.actual.init.call(state.actual);
+			}
+
 			state.actual.show.call(state.actual, showParams);
 			Log.info('SWITCHING TO ' + state.name);
 			this._current = state.name;
