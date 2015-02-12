@@ -1,0 +1,12 @@
+{
+	"renderables" : [
+		{
+			"type" : "Terrain"
+		}
+	],
+
+	"script" : {
+		"path" : "entities/scripts/landscape",
+		"object" : "Landscape"
+	}
+}

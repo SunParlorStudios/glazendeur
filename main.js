@@ -26,14 +26,13 @@ Game.Initialise = function()
 	Game.speed = 1;
 
 	Game.camera = Camera.new("perspective");
+	Game.camera.setTranslation(256, -128, 256);
+	Game.camera.setRotation(-Math.PI / 4, 0, 0);
 
 	Game.world = new World();
 
-	Game.world.spawn("entities/test.json", {width: 1024, height: 1024, x: 0}, "Default");
-	Game.world.spawn("entities/test.json", {width: 1024, height: 1024, x: 32}, "Default");
-
-	Game.widget = Widget.new();
-	Game.widget.setSize(64, 64);
+	ContentManager.load("shader", "shaders/terrain.fx");
+	Game.world.spawn("entities/landscape.json", {width: 512, height: 512, x: 0}, "Default");
 
 	StateManager.loadState('states/menu.json');
 }
@@ -66,7 +65,7 @@ Game.Update = function(dt)
 		mz = 0,
 		rx = 0,
 		ry = 0,
-		speed = 30 * dt;
+		speed = 100 * dt;
 
 	if (Keyboard.isDown("W"))
 	{
