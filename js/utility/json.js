@@ -95,6 +95,6 @@ _.extend(Log, {
 	 */
 	JSON: function (str) 
 	{
-		Log.rgb("[JSONManager] " + str, 100, 250, 220, 50, 100, 100);
+		Log.rgb("[JSON] " + str, 100, 250, 220, 50, 100, 100);
 	}
 });

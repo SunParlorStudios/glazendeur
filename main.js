@@ -20,7 +20,7 @@ Game.Initialise = function()
 	RenderSettings.setResolution(1280,720);
 	RenderSettings.setYDown(true);
 	RenderSettings.setWindowSize(1280,720);
-	RenderSettings.setCullMode(RenderSettings.CullNone)
+	RenderSettings.setCullMode(RenderSettings.CullNone);
 
 	Game.debug = true;
 	Game.speed = 1;
@@ -34,6 +34,8 @@ Game.Initialise = function()
 
 	Game.widget = Widget.new();
 	Game.widget.setSize(64, 64);
+
+	StateManager.loadState('states/menu.json');
 }
 
 Game.Update = function(dt)
@@ -95,21 +97,24 @@ Game.Update = function(dt)
 
 	Game.camera.translateBy(mx, 0, mz);
 	Game.camera.rotateBy(rx, ry, 0);
+
+	StateManager.update(dt);
 }
 
 Game.Draw = function(dt)
 {
 	Game.render(Game.camera);
+	StateManager.draw();
 }
 
 Game.Shutdown = function()
 {
-
+	StateManager.shutdown();
 }
 
 Game.FixedUpdate = function()
 {
-
+	StateManager.fixedUpdate();
 }
 
 Game.OnReload = function(path)

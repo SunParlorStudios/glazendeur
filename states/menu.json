@@ -1,0 +1,17 @@
+{
+	"name": "menu",
+
+	"resources": [
+
+	],
+
+	"invokeLoader": false,
+
+	"scripts": {
+		"path": "states/scripts/menu",
+		"ui": "ui/menu.json",
+		"class": "Menu"
+	},
+
+	"autoStart": true
+}

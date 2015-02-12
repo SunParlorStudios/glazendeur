@@ -1,122 +1,116 @@
+require("js/utility/state");
+
 /**
-* @class StateManager
-* @brief The state manager used for switching states
-* @author Daniël Konings
-*/
-var StateManager = StateManager ||
-{
-	/// The current state
-	_currentState: undefined,
-	_pendingState: undefined,
+ * The StateManager which manages the states
+ *
+ * @public
+ * @singleton module:StateManager
+ * @author Riko Ophorst
+ */
+var StateManager = {};
 
-	/// Switches the current state to a new state, destroying the current one
-	switchState: function(state)
+_.extend(StateManager, {
+	overwrite: false,
+	override: false
+}, {
+	_states: {}
+});
+
+_.extend(StateManager, {
+	loadState: function (path)
 	{
-		this._pendingState = state;
-	},
+		var stateData = JSON.load(path);
 
-	doSwitch: function()
-	{
-		Mouse.clearAreas();
+		if (stateData.name !== undefined && stateData.scripts !== undefined)
+		{
+			require(stateData.scripts.path);
+			
+			var state = {
+				name: stateData.name,
+				script: stateData.scripts.path,
+				ui: stateData.scripts.ui,
+				class: stateData.scripts.class,
+				resources: stateData.resources,
+				resourcesCached: false,
+				actual: new _GLOBAL_[stateData.scripts.class](),
+				autoStart: stateData.autoStart
+			};
 
-		for (var i in RenderTargets)
-		{
-			RenderTargets[i].clear();
-		}
+			this._states[state.name] = state;
 
-		var newState = new this._pendingState();
-		
-		if (newState.name === undefined)
-		{
-			Log.error("[StateManager] State does not have a name!");
-		}
-		else if (newState.initialise === undefined)
-		{
-			assert("[StateManager] State does not have an initialise function!");
-		}
-		else if (newState.destroy === undefined)
-		{
-			assert("[StateManager] State does not have a destroy function!");
+			if (state.autoStart === true)
+			{
+				this.switch(state.name);
+			}
 		}
 		else
 		{
-			if (this._currentState !== undefined)
-			{
-				this._currentState.destroy();
-				var name = this._currentState.name;
-				for (var i in this._currentState)
-				{
-					this._currentState[i] = null;
-				}
+			Log.fatal("Trying to call StateManager.loadState() on a json file with incorrect structuring");
+		}
+	},
+	loadSave: function (path)
+	{
+		var save = JSON.load(path);
+		this._states[save.name] = save;
+	},
+	switch: function (name, leaveParams, showParams)
+	{
+		var state;
+		if (this._current !== undefined)
+		{
+			state = this._states[current];
 
-				Log.info("[StateManager] Destroyed the state '" + name + "'");
-			}
-
-			newState.initialise();
-			Log.info("[StateManager] Initialised the state '" + newState.name + "'");
-
-			this._currentState = newState;
-
-			if (this._currentState.name !== undefined)
-			{
-				Log.debug("[StateManager] Switched to state '" + this._currentState.name + "'");
-			}
-			else
-			{
-				Log.debug("[StateManager] Switched to a state with no name");
-			}
+			state.actual.leave.call(state.actual, leaveParams);
+		}
+		else
+		{
+			showParams = leaveParams;
 		}
 
-		this._pendingState = undefined;
-		Game.cleanUp();
-	},
-
-	/// Returns the current state
-	getState: function()
-	{
-		return this._currentState;
-	},
-
-	update: function(dt)
-	{
-		if (this._currentState == undefined)
+		state = this._states[name];
+		if (state === undefined)
+		{
+			Log.fatal('Trying to call StateManager.switch() on an invalid state name: ' + name);
 			return;
-
-		if (this._currentState.update !== undefined)
-		{
-			this._currentState.update(dt);
 		}
+
+		if (!state.resourcesCached && state.invokeLoader === true)
+			Loader.Process(state.resources);
+
+		state.actual.show.call(state.actual, showParams);
+		this._current = state.name;
 	},
-
-	draw: function(dt)
+	save: function ()
 	{
-		if (this._pendingState !== undefined)
-		{
-			this.doSwitch();
-		}
-		
-		if (this._currentState == undefined)
-			return;
-
-		if (this._currentState.draw !== undefined)
-		{
-			this._currentState.draw(dt);
-		}
+		//var save = state.serialize();
 	},
-
-	reload: function(path)
+	update: function (dt)
 	{
-		JSON.reload(path);
-		if (this._currentState == undefined)
-			return;
-		
-		if (this._currentState.reload !== undefined)
-		{
-			this._currentState.reload(path);
-		}
-
-		Game.cleanUp();
-
-		Log.success("[StateManager] Succesfully reloaded");
+		if (this._current !== undefined)
+			this._states[this._current].actual.update(dt);
+	},
+	fixedUpdate: function ()
+	{
+		if (this._current !== undefined)
+			this._states[this._current].actual.fixedUpdate();
+	},
+	draw: function () 
+	{
+		if (this._current !== undefined)
+			this._states[this._current].actual.draw();
+	},
+	reload: function (path)
+	{
+		if (this._current !== undefined)
+			this._states[this._current].actual.reload(path);
+	},
+	shutdown: function ()
+	{
+		if (this._current !== undefined)
+			this._states[this._current].actual.shutdown();
+	},
+	current: function ()
+	{
+		return this._states[this._current].actual;
 	}
-}
+});
