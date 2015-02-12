@@ -1,0 +1,19 @@
+{
+	"name": "loader",
+
+	"entities": [
+		{
+			"json": "entities/landscape.json",
+			"params": { "width": 512, "height": 512, "x": 0 },
+			"layer": "Default"
+		}
+	],
+
+	"loader": false,
+
+	"scripts": {
+		"path": "states/scripts/loader",
+		"ui": "ui/loader.json",
+		"class": "Loader"
+	}
+}

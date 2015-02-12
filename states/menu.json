@@ -1,10 +1,6 @@
 {
 	"name": "menu",
 
-	"resources": [
-
-	],
-
 	"entities": [
 		{
 			"json": "entities/landscape.json",
@@ -13,7 +9,15 @@
 		}
 	],
 
-	"invokeLoader": false,
+	"loader": {
+		"resources": [
+			{ "type": "shader", "path": "shaders/terrain.fx" }
+		],
+		"info": {
+			"resourcesPerFrame": 2,
+			"displayName": "WE B LOADIN' THE MENU SCREENIO"
+		}
+	},
 
 	"scripts": {
 		"path": "states/scripts/menu",

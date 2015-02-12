@@ -31,9 +31,10 @@ Game.Initialise = function()
 
 	Game.world = new World();
 
-	ContentManager.load("shader", "shaders/terrain.fx");
-
+	StateManager.loadState('states/loader.json');
 	StateManager.loadState('states/menu.json');
+
+	StateManager.switch('menu');
 }
 
 Game.Update = function(dt)
@@ -87,8 +88,8 @@ Game.Update = function(dt)
 	if (Mouse.isDown(0))
 	{
 		var movement = Mouse.movement();
-		ry = -movement.x * dt;
-		rx = -movement.y * dt;
+		ry = -movement.x * dt / 10;
+		rx = -movement.y * dt / 10;
 	}
 
 	Game.camera.translateBy(mx, 0, mz);

@@ -45,27 +45,27 @@ _.extend(StateManager, {
 				script: stateData.scripts.path,
 				ui: stateData.scripts.ui,
 				class: stateData.scripts.class,
-				resources: stateData.resources,
 				resourcesCached: false,
 				entities: stateData.entities,
 				actual: new _GLOBAL_[stateData.scripts.class](),
-				autoStart: stateData.autoStart
+				autoStart: stateData.autoStart,
+				loader: stateData.loader,
 			};
 
 			if (state.entities !== undefined && state.entities.length > 0)
 			{
-				Log.watch('entities', state.entities);
 				for (var i = 0; i < state.entities.length; i++)
 				{
-					state.actual.world.spawn(state.entities[i].json, state.entities[i].params, state.entities[i].layer);
+					//state.actual.world.spawn(state.entities[i].json, state.entities[i].params, state.entities[i].layer);
 				}
 			}
 
 			this._states[state.name] = state;
+			Log.info(state.name);
 
 			if (state.autoStart === true)
 			{
-				this.switch(state.name);
+				//this.switch(state.name);
 			}
 		}
 		else
@@ -103,7 +103,7 @@ _.extend(StateManager, {
 		var state;
 		if (this._current !== undefined)
 		{
-			state = this._states[current];
+			state = this._states[this._current];
 
 			state.actual.leave.call(state.actual, leaveParams);
 		}
@@ -119,11 +119,25 @@ _.extend(StateManager, {
 			return;
 		}
 
-		if (!state.resourcesCached && state.invokeLoader === true)
-			Loader.Process(state.resources);
+		if (!!state.loader && state.resourcesCached !== true)
+		{
+			var loader = this._states['loader'];
+			loader.actual.show.call(loader.actual, {
+				info: state.loader.info,
+				resources: state.loader.resources,
+				to: state.name
+			});
 
-		state.actual.show.call(state.actual, showParams);
-		this._current = state.name;
+			Log.info('SWITCHING TO LOADER');
+			this._current = 'loader';
+			state.resourcesCached = true;
+		}
+		else
+		{
+			state.actual.show.call(state.actual, showParams);
+			Log.info('SWITCHING TO ' + state.name);
+			this._current = state.name;
+		}
 	},
 
 	/**
@@ -205,7 +219,7 @@ _.extend(StateManager, {
 		if (this._current !== undefined)
 			this._states[this._current].actual.shutdown();
 	},
-	
+
 	/**
 	 * Retrieves the current state
 	 *
