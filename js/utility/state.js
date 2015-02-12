@@ -1,6 +1,6 @@
 function State ()
 {
-
+	this.world = new World();
 }
 
 _.extend(State.prototype, {
@@ -16,8 +16,9 @@ _.extend(State.prototype, {
 	{
 
 	},
-	update: function (dt) {
-
+	update: function (dt) 
+	{
+		this.world.update(dt);
 	},
 	fixedUpdate: function (dt)
 	{

@@ -32,9 +32,19 @@ _.extend(StateManager, {
 				class: stateData.scripts.class,
 				resources: stateData.resources,
 				resourcesCached: false,
+				entities: stateData.entities,
 				actual: new _GLOBAL_[stateData.scripts.class](),
 				autoStart: stateData.autoStart
 			};
+
+			if (state.entities !== undefined && state.entities.length > 0)
+			{
+				Log.watch('entities', state.entities);
+				for (var i = 0; i < state.entities.length; i++)
+				{
+					state.actual.world.spawn(state.entities[i].json, state.entities[i].params, state.entities[i].layer);
+				}
+			}
 
 			this._states[state.name] = state;
 

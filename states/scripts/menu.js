@@ -1,13 +1,13 @@
 var Menu = Menu || function()
 {
-		
+	Menu._super.constructor.call(this, arguments);
 }
 
 _.inherit(Menu, State);
 
 _.extend(Menu.prototype, {
-	update: function ()
+	update: function (dt)
 	{
-		Log.fatal("hallo");
+		Menu._super.update.call(this, dt);
 	}
 });

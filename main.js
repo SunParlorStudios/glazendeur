@@ -14,7 +14,7 @@ var RenderTargets = RenderTargets || {
 
 Game.Initialise = function()
 {
-	Game.setName("Snuffbox Template");
+	Game.setName("Project Glazen Deur");
 
 	RenderSettings.setVsync(true);
 	RenderSettings.setResolution(1280,720);
@@ -32,7 +32,6 @@ Game.Initialise = function()
 	Game.world = new World();
 
 	ContentManager.load("shader", "shaders/terrain.fx");
-	Game.world.spawn("entities/landscape.json", {width: 512, height: 512, x: 0}, "Default");
 
 	StateManager.loadState('states/menu.json');
 }
@@ -58,8 +57,6 @@ Game.Update = function(dt)
 
 		dt *= Game.speed;
 	}
-
-	Game.world.update(dt);
 
 	var mx = 0,
 		mz = 0,
