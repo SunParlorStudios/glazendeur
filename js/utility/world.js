@@ -43,14 +43,7 @@ _.extend(World.prototype, {
 			}
 
 			fields = renderable;
-			if (renderable.type == "Terrain")
-			{
-				renderable = _GLOBAL_[renderable.type].new(params.width, params.height);
-			}
-			else
-			{
-				renderable = _GLOBAL_[renderable.type].new();
-			}
+			renderable = new _GLOBAL_[renderable.type]();
 			
 			renderable.spawn(layer);
 

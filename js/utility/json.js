@@ -32,7 +32,7 @@ _.extend(JSON, {
 	 */
 	load: function (path, reloading)
 	{
-		this._cache[path] = JSON.parse(IO.open(path));
+		this._cache[path] = JSON.parse(IO.read(path));
 
 		if (!reloading)
 		{

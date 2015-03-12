@@ -24,22 +24,22 @@ _.extend(Menu.prototype, {
 			ry = 0,
 			speed = 100 * dt;
 
-		if (Keyboard.isDown("W"))
+		if (Keyboard.isDown(Key.W))
 		{
 			mz = -speed;
 		}
 
-		if (Keyboard.isDown("S"))
+		if (Keyboard.isDown(Key.S))
 		{
 			mz = speed;
 		}
 
-		if (Keyboard.isDown("A"))
+		if (Keyboard.isDown(Key.A))
 		{
 			mx = -speed;
 		}
 
-		if (Keyboard.isDown("D"))
+		if (Keyboard.isDown(Key.D))
 		{
 			mx = speed;
 		}
@@ -47,8 +47,8 @@ _.extend(Menu.prototype, {
 		if (Mouse.isDown(0))
 		{
 			var movement = Mouse.movement();
-			ry = -movement.x * dt / 10;
-			rx = -movement.y * dt / 10;
+			ry = -movement.x / 100;
+			rx = movement.y / 100;
 		}
 
 		Game.camera.translateBy(mx, 0, mz);

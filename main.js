@@ -10,25 +10,19 @@ require("js/utility/vector3d");
 require("js/utility/world");
 
 var RenderTargets = RenderTargets || {
-	default: RenderTarget.new("Default")
+	default: new RenderTarget("Default")
 }
 
 Game.Initialise = function()
 {
-	Game.setName("Project Glazen Deur");
+	Window.setName("Project Glazen Deur");
+	Window.setSize(1280,720);
 
 	RenderSettings.setVsync(true);
 	RenderSettings.setResolution(1280,720);
-	RenderSettings.setYDown(true);
-	RenderSettings.setWindowSize(1280,720);
-	RenderSettings.setCullMode(RenderSettings.CullNone);
 
-	Game.debug = true;
-	Game.speed = 1;
-
-	Game.camera = Camera.new("perspective");
-	Game.camera.setTranslation(256, -128, 256);
-	Game.camera.setRotation(-Math.PI / 4, 0, 0);
+	Game.camera = new Camera(CameraType.Perspective);
+	Game.camera.setTranslation(0, 0, 0);
 
 	Game.world = new World();
 
@@ -40,33 +34,13 @@ Game.Initialise = function()
 
 Game.Update = function(dt)
 {
-	if (Game.debug == true)
-	{
-		var oldSpeed = Game.speed;
-		if (Keyboard.isReleased("OEM4"))
-		{
-			Game.speed /= 1.5;
-		}
-		else if (Keyboard.isReleased("OEM6"))
-		{
-			Game.speed *= 1.5;
-		}
-
-		if (oldSpeed != Game.speed)
-		{
-			Log.rgb("Game speed changed to: " + Game.speed, 255, 255, 255, 127, 127, 127);
-		}
-
-		dt *= Game.speed;
-	}
-
 	StateManager.update(dt);
 }
 
 Game.Draw = function(dt)
 {
 	StateManager.draw();
-	Game.render(Game.camera);
+	Game.render(Game.camera, RenderTargets.default);
 }
 
 Game.Shutdown = function()

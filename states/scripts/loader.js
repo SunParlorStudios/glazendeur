@@ -18,8 +18,6 @@ _.extend(Loader.prototype, {
 	{
 		Loader._super.show.call(this);
 
-		Log.watch('data', data.resources[0]);
-
 		this.info = data.info;
 		this.resourcesToLoad = data.resources;
 		this.stateName = data.to;

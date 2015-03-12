@@ -11,7 +11,7 @@
 
 	"loader": {
 		"resources": [
-			{ "type": "shader", "path": "shaders/terrain.fx" }
+			
 		],
 		"info": {
 			"resourcesPerFrame": 2,
