@@ -31,38 +31,41 @@ _.extend(World.prototype, {
 		var argv = [];
 		var fields;
 
-		for (var i = 0; i < toRender.length; ++i)
+		if (toRender !== undefined)
 		{
-			argv = [];
-			renderable = toRender[i];
-
-			if (_GLOBAL_[renderable.type] === undefined)
+			for (var i = 0; i < toRender.length; ++i)
 			{
-				Log.error("Unknown renderable type " + renderable.type + ", for entity '" + entityPath + "'");
-				continue;
-			}
+				argv = [];
+				renderable = toRender[i];
 
-			fields = renderable;
-			renderable = new _GLOBAL_[renderable.type]();
-			
-			renderable.spawn(layer);
-
-			for (var field in this._fields)
-			{
-				if (fields[field] !== undefined)
+				if (_GLOBAL_[renderable.type] === undefined)
 				{
-					argc = this._fields[field];
-					for (var arg = 0; arg < argc; ++arg)
-					{
-						argv.push(fields[field][arg]);
-					}
-					func = "set" + field.charAt(0).toUpperCase() + field.substr(1, field.length - 1);
-
-					renderable[func].apply(renderable, argv);
+					Log.error("Unknown renderable type " + renderable.type + ", for entity '" + entityPath + "'");
+					continue;
 				}
-			}
 
-			renderables.push(renderable);
+				fields = renderable;
+				renderable = new _GLOBAL_[renderable.type]();
+				
+				renderable.spawn(layer);
+
+				for (var field in this._fields)
+				{
+					if (fields[field] !== undefined)
+					{
+						argc = this._fields[field];
+						for (var arg = 0; arg < argc; ++arg)
+						{
+							argv.push(fields[field][arg]);
+						}
+						func = "set" + field.charAt(0).toUpperCase() + field.substr(1, field.length - 1);
+
+						renderable[func].apply(renderable, argv);
+					}
+				}
+
+				renderables.push(renderable);
+			}
 		}
 
 		if (constructor.prototype.onUpdate === undefined)

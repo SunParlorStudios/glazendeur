@@ -1,0 +1,6 @@
+{
+	"script" : {
+		"path" : "entities/scripts/editor/editing_circle",
+		"object" : "EditingCircle"
+	}
+}

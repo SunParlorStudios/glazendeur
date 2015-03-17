@@ -1,8 +1,3 @@
-#define MAX_LIGHTS 64
-#define LIGHT_POINT 0
-#define LIGHT_DIRECTIONAL 1
-#define LIGHT_SPOT 2
-
 cbuffer Global : register(b0)
 {
 	float Time;
@@ -31,18 +26,21 @@ struct VOut
 	float4 colour : COLOUR;
 	float2 texcoord : TEXCOORD0;
 	float3 normal : TEXCOORD2;
-	float shift : TEXCOORD3;
+	float3 tangent : TEXCOORD3;
+	float3 bitangent : TEXCOORD4;
 };
 
-VOut VS(float4 position : POSITION, float4 colour : COLOUR, float2 texcoord : TEXCOORD0, float3 normal : NORMAL)
+VOut VS(float4 position : POSITION, float4 colour : COLOUR, float2 texcoord : TEXCOORD0, float3 normal : NORMAL, float3 tangent : TANGENT, float3 bitangent : BITANGENT)
 {
 	VOut output;
-	output.shift = position.x - floor(position.x);
 	output.position = mul(position, World);
 	output.position = mul(output.position, Projection);
 	output.normal = mul(normal, (float3x3)InvWorld);
 	output.texcoord = texcoord;
 	output.colour = colour;
+	output.normal = normalize(mul(normal, (float3x3)InvWorld));
+	output.tangent = normalize(mul(tangent, (float3x3)InvWorld));
+	output.bitangent = normalize(mul(bitangent, (float3x3)InvWorld));
 	return output;
 }
 

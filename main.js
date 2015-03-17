@@ -10,11 +10,18 @@ require("js/utility/vector3d");
 require("js/utility/world");
 
 var RenderTargets = RenderTargets || {
-	default: new RenderTarget("Default")
+	default: new RenderTarget("Default"),
+	normals: new RenderTarget("Normals"),
+	lighting: new RenderTarget("Lighting")
 }
 
 Game.Initialise = function()
 {
+	RenderTargets.default.setClearDepth(true);
+	RenderTargets.default.setLightingEnabled(true);
+	RenderTargets.default.addMultiTarget(RenderTargets.normals);
+	RenderTargets.default.addMultiTarget(RenderTargets.lighting);
+
 	Window.setName("Project Glazen Deur");
 	Window.setSize(1280,720);
 

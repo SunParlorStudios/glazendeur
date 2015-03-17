@@ -2,11 +2,7 @@
 	"name": "menu",
 
 	"entities": [
-		{
-			"json": "entities/landscape.json",
-			"params": { "width": 512, "height": 512, "x": 0 },
-			"layer": "Default"
-		}
+
 	],
 
 	"loader": {
