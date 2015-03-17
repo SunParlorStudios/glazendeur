@@ -73,7 +73,7 @@ _.extend(World.prototype, {
 			assert("'" + entityPath + "' doesn't have an onUpdate function")
 		}
 
-		var entity = new constructor(params, renderables);
+		var entity = new constructor(params, renderables, this);
 
 		this._entities.push(entity);
 		constructor.prototype._renderables = null;

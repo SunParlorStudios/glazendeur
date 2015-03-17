@@ -31,8 +31,6 @@ Game.Initialise = function()
 	Game.camera = new Camera(CameraType.Perspective);
 	Game.camera.setTranslation(0, 0, 0);
 
-	Game.world = new World();
-
 	StateManager.loadState('states/loader.json');
 	StateManager.loadState('states/menu.json');
 

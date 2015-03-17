@@ -1,4 +1,10 @@
 {
+	"renderables" : [
+		{
+			"type" : "Polygon"
+		}
+	],
+
 	"script" : {
 		"path" : "entities/scripts/editor/editing_circle",
 		"object" : "EditingCircle"

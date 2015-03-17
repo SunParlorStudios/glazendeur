@@ -130,5 +130,20 @@ _.extend(Vector3D, {
 	{
 		var l = this.length(v);
 		return this.construct(v.x / l, v.y / l, v.z / l);
+	},
+
+	lookAt: function(v1, v2)
+	{
+		var dx = v2.x - v1.x;
+		var dy = v2.y - v1.y;
+		var dz = v2.z - v1.z;
+
+		var distance = Math.sqrt(dx * dx + dz * dz);
+		
+		var rx = -Math.atan2(dy, distance);
+		var ry = Math.atan2(dx, dz);
+		var rz = 0;
+
+		return {x: rx, y: ry, z: rz}
 	}
 });

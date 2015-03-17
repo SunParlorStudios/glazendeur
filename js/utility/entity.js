@@ -1,6 +1,7 @@
 function Entity(args)
 {
 	this._renderables = args[1];
+	this._world = args[2];
 	this._active = true;
 	this._translation = {
 		x: 0,
@@ -13,6 +14,11 @@ _.extend(Entity.prototype, {
 	active: function()
 	{
 		return this._active;
+	},
+
+	world: function()
+	{
+		return this._world;
 	},
 
 	setActivated: function(value)

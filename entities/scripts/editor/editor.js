@@ -2,12 +2,28 @@ var Editor = Editor || function(params)
 {
 	Editor._super.constructor.call(this, arguments);
 	this._terrain = params.terrain;
+	this._editingCircle = this.world().spawn("entities/editor/editing_circle.json", {terrain: this._terrain}, "Default");
+	this._camSpeed = 200;
+	this._border = 0.75;
+	this._lookAt = Vector3D.construct(0, 0, 0);
+
+	Game.camera.setTranslation(64, 64, 64);
 }
 
 _.inherit(Editor, Entity);
 
 _.extend(Editor.prototype, {
-	onUpdate: function(dt)
+	updateCamera: function(dt)
+	{
+		var t = Game.camera.translation();
+		var r = Vector3D.lookAt(t, this._lookAt);
+
+		Game.camera.setRotation(r.x, r.y, 0);
+
+		t = Game.time();
+	},
+
+	updateCircle: function(dt)
 	{
 		var p = Mouse.position(MousePosition.Relative);
 		p.x = (p.x + RenderSettings.resolution().w / 2);
@@ -19,6 +35,8 @@ _.extend(Editor.prototype, {
 		var f = unprojA.y / (unprojB.y - unprojA.y);
 		var x2d = unprojA.x - f * (unprojB.x - unprojA.x);
 		var z2d = unprojA.z - f * (unprojB.z - unprojA.z);
+
+		this._editingCircle.setPosition(x2d, z2d);
 
 		var size = 20;
 		var dist;
@@ -56,5 +74,11 @@ _.extend(Editor.prototype, {
 
 			this._terrain.flush();
 		}
+	},
+
+	onUpdate: function(dt)
+	{
+		this.updateCamera(dt);
+		this.updateCircle(dt);
 	}
 });
