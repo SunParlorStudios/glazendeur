@@ -58,39 +58,80 @@ _.extend(Editor.prototype, {
 
 		var speed = dt * this._camSpeed;
 
+		var forward = {
+			x: Math.cos(this._angle.azimuth + Math.PI / 2),
+			z: Math.sin(this._angle.azimuth + Math.PI / 2)
+		}
+
+		var strafe = {
+			x: Math.cos(this._angle.azimuth),
+			z: Math.sin(this._angle.azimuth)
+		}
+
+		var forwardBack = {
+			x: 0,
+			z: 0
+		}
+
+		var leftRight = {
+			x: 0,
+			z: 0
+		}
+
 		if (Keyboard.isDown(Key.W))
 		{
-			var mx = Math.cos(this._angle.azimuth + Math.PI / 2);
-			var mz = Math.sin(this._angle.azimuth + Math.PI / 2);
-
-			this._lookAt.x += mx * speed;
-			this._lookAt.z += mz * speed;
+			forwardBack.x = forward.x * speed;
+			forwardBack.z = forward.z * speed;
 		}
 		else if (Keyboard.isDown(Key.S))
 		{
-			var mx = Math.cos(this._angle.azimuth + Math.PI / 2);
-			var mz = Math.sin(this._angle.azimuth + Math.PI / 2);
-
-			this._lookAt.x -= mx * speed;
-			this._lookAt.z -= mz * speed;
+			forwardBack.x = forward.x * -speed;
+			forwardBack.z = forward.z * -speed;
 		}
 
 		if (Keyboard.isDown(Key.A))
 		{
-			var mx = Math.cos(this._angle.azimuth);
-			var mz = Math.sin(this._angle.azimuth);
-
-			this._lookAt.x += mx * speed;
-			this._lookAt.z += mz * speed;
+			leftRight.x = strafe.x * speed;
+			leftRight.z = strafe.z * speed;
 		}
 		else if (Keyboard.isDown(Key.D))
 		{
-			var mx = Math.cos(this._angle.azimuth);
-			var mz = Math.sin(this._angle.azimuth);
-
-			this._lookAt.x -= mx * speed;
-			this._lookAt.z -= mz * speed;
+			leftRight.x = strafe.x * -speed;
+			leftRight.z = strafe.z * -speed;
 		}
+
+		var p = Mouse.position(MousePosition.Screen);
+		var ratio;
+		var mag = 1;
+
+		if (p.x < -this._border)
+		{
+			ratio = (this._border + p.x) * (1 / (1 - this._border)) * mag;
+			leftRight.x = strafe.x * ratio * -speed;
+			leftRight.z = strafe.z * ratio * -speed;
+		}
+		else if (p.x > this._border)
+		{
+			ratio = (this._border - p.x) * (1 / (1 - this._border)) * mag;
+			leftRight.x = strafe.x * ratio * speed;
+			leftRight.z = strafe.z * ratio * speed;
+		}
+
+		if (p.y < -this._border)
+		{
+			ratio = (this._border + p.y) * (1 / (1 - this._border)) * mag;
+			forwardBack.x = forward.x * ratio * -speed;
+			forwardBack.z = forward.z * ratio * -speed;
+		}
+		else if (p.y > this._border)
+		{
+			ratio = (this._border - p.y) * (1 / (1 - this._border)) * mag;
+			forwardBack.x = forward.x * ratio * speed;
+			forwardBack.z = forward.z * ratio * speed;
+		}
+
+		this._lookAt.x += leftRight.x + forwardBack.x;
+		this._lookAt.z += leftRight.z + forwardBack.z;
 	},
 
 	updateCircle: function(dt)
