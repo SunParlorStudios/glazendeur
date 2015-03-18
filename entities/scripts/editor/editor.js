@@ -3,11 +3,15 @@ var Editor = Editor || function(params)
 	Editor._super.constructor.call(this, arguments);
 	this._terrain = params.terrain;
 	this._editingCircle = this.world().spawn("entities/editor/editing_circle.json", {terrain: this._terrain}, "Default");
-	this._camSpeed = 200;
+	this._camSpeed = 100;
 	this._border = 0.75;
-	this._lookAt = Vector3D.construct(0, 0, 0);
+	this._lookAt = Vector3D.construct(64, 10, 64);
 
-	Game.camera.setTranslation(64, 64, 64);
+	this._zoom = 32;
+	this._angle = {
+		elevation: 0.5,
+		azimuth: 0
+	}
 }
 
 _.inherit(Editor, Entity);
@@ -15,12 +19,78 @@ _.inherit(Editor, Entity);
 _.extend(Editor.prototype, {
 	updateCamera: function(dt)
 	{
+		this._angle.elevation = Math.max(0.1, this._angle.elevation);
+		this._angle.elevation = Math.min(Math.PI / 2, this._angle.elevation);
+
+		this._zoom = Math.max(this._zoom, 1);
+
+		var e = this._angle.elevation;
+		var z = this._zoom;
+
+		var x = this._lookAt.x + (z * Math.sin(e) * Math.sin(this._angle.azimuth));
+		var y = this._lookAt.y + (z * Math.cos(e));
+		var z = this._lookAt.z + (-z * Math.sin(e) * Math.cos(this._angle.azimuth));
+
+		Game.camera.setTranslation(x, y, z);
+
 		var t = Game.camera.translation();
 		var r = Vector3D.lookAt(t, this._lookAt);
 
 		Game.camera.setRotation(r.x, r.y, 0);
 
 		t = Game.time();
+
+		if (Mouse.wheelDown())
+		{
+			this._zoom += 3;
+		}
+		else if (Mouse.wheelUp())
+		{
+			this._zoom -= 3;
+		}
+
+		if (Mouse.isDown(MouseButton.Middle))
+		{
+			var movement = Mouse.movement();
+			this._angle.azimuth += movement.x / 100;
+			this._angle.elevation -= movement.y / 100;
+		}
+
+		var speed = dt * this._camSpeed;
+
+		if (Keyboard.isDown(Key.W))
+		{
+			var mx = Math.cos(this._angle.azimuth + Math.PI / 2);
+			var mz = Math.sin(this._angle.azimuth + Math.PI / 2);
+
+			this._lookAt.x += mx * speed;
+			this._lookAt.z += mz * speed;
+		}
+		else if (Keyboard.isDown(Key.S))
+		{
+			var mx = Math.cos(this._angle.azimuth + Math.PI / 2);
+			var mz = Math.sin(this._angle.azimuth + Math.PI / 2);
+
+			this._lookAt.x -= mx * speed;
+			this._lookAt.z -= mz * speed;
+		}
+
+		if (Keyboard.isDown(Key.A))
+		{
+			var mx = Math.cos(this._angle.azimuth);
+			var mz = Math.sin(this._angle.azimuth);
+
+			this._lookAt.x += mx * speed;
+			this._lookAt.z += mz * speed;
+		}
+		else if (Keyboard.isDown(Key.D))
+		{
+			var mx = Math.cos(this._angle.azimuth);
+			var mz = Math.sin(this._angle.azimuth);
+
+			this._lookAt.x -= mx * speed;
+			this._lookAt.z -= mz * speed;
+		}
 	},
 
 	updateCircle: function(dt)
@@ -40,7 +110,7 @@ _.extend(Editor.prototype, {
 
 		var size = 20;
 		var dist;
-		if (Mouse.isDown(MouseButton.Right))
+		if (Mouse.isDown(MouseButton.Right) || Mouse.isDown(MouseButton.Left))
 		{
 			for (var x = x2d - size / 2; x < x2d + size / 2; ++x)
 			{
@@ -68,7 +138,14 @@ _.extend(Editor.prototype, {
 
 					var h = this._terrain.getHeight(indices.x, indices.y);
 
-					this._terrain.setHeight(indices.x, indices.y, h + e * dt);
+					if (Mouse.isDown(MouseButton.Left))
+					{
+						this._terrain.setHeight(indices.x, indices.y, h + e * dt);
+					}
+					else
+					{
+						this._terrain.setHeight(indices.x, indices.y, h - e * dt);
+					}
 				}
 			}
 

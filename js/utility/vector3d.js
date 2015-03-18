@@ -144,6 +144,6 @@ _.extend(Vector3D, {
 		var ry = Math.atan2(dx, dz);
 		var rz = 0;
 
-		return {x: rx, y: ry, z: rz}
+		return {x: rx, y: Math.PI + ry, z: rz}
 	}
 });
