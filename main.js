@@ -17,16 +17,26 @@ var RenderTargets = RenderTargets || {
 
 Game.Initialise = function()
 {
+	ContentManager.load("texture", "textures/brush.png");
+	ContentManager.load("texture", "textures/cracked_floor.png");
+	ContentManager.load("texture", "textures/cracked_floor_normal.png");
+
+	ContentManager.load("texture", "textures/grass.png");
+	ContentManager.load("texture", "textures/grass_normal.png");
+
+	ContentManager.load("texture", "textures/rock.png");
+	ContentManager.load("texture", "textures/rock_normal.png");
+
 	RenderTargets.default.setClearDepth(true);
 	RenderTargets.default.setLightingEnabled(true);
 	RenderTargets.default.addMultiTarget(RenderTargets.normals);
 	RenderTargets.default.addMultiTarget(RenderTargets.lighting);
 
 	Window.setName("Project Glazen Deur");
-	Window.setSize(1280,720);
+	Window.setSize(1280, 720);
 
-	RenderSettings.setVsync(true);
-	RenderSettings.setResolution(1280,720);
+	//RenderSettings.setVsync(true);
+	RenderSettings.setResolution(1280, 720);
 
 	Game.camera = new Camera(CameraType.Perspective);
 	Game.camera.setTranslation(0, 0, 0);

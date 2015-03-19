@@ -6,6 +6,15 @@ var Editor = Editor || function(params)
 	this._camSpeed = 100;
 	this._border = 0.75;
 	this._lookAt = Vector3D.construct(64, 10, 64);
+	this._radius = 5;
+
+	this._textures = [
+		{diffuse: "textures/grass.png", normal: "textures/grass_normal.png"},
+		{diffuse: "textures/cracked_floor.png", normal: "textures/cracked_floor_normal.png"},
+		{diffuse: "textures/rock.png", normal: "textures/rock_normal.png"}
+	]
+
+	this._currentTexture = 0;
 
 	this._zoom = 32;
 	this._angle = {
@@ -136,6 +145,32 @@ _.extend(Editor.prototype, {
 
 	updateCircle: function(dt)
 	{
+		if (Keyboard.isReleased(Key[1]))
+		{
+			this._currentTexture = 0;
+		}
+
+		if (Keyboard.isReleased(Key[2]))
+		{
+			this._currentTexture = 1;
+		}
+
+		if (Keyboard.isReleased(Key[3]))
+		{
+			this._currentTexture = 2;
+		}
+
+		if (Keyboard.isDown(Key.Q))
+		{
+			this._radius -= dt * 30;
+		}
+		else if (Keyboard.isDown(Key.E))
+		{
+			this._radius += dt * 30;
+		}
+
+		this._editingCircle._radius = this._radius / 2.0;
+
 		var p = Mouse.position(MousePosition.Relative);
 		p.x = (p.x + RenderSettings.resolution().w / 2);
 		p.y = (p.y + RenderSettings.resolution().h / 2);
@@ -149,10 +184,16 @@ _.extend(Editor.prototype, {
 
 		this._editingCircle.setPosition(x2d, z2d);
 
-		var size = 20;
+		var size = this._radius;
 		var dist;
-		if (Mouse.isDown(MouseButton.Right) || Mouse.isDown(MouseButton.Left))
+		if (Mouse.isReleased(MouseButton.Right) || Mouse.isDown(MouseButton.Left))
 		{
+			if (Keyboard.isDown(Key.Shift))
+			{
+				this._terrain.brushTexture("textures/brush.png", this._textures[this._currentTexture].diffuse, x2d, z2d, size, this._textures[this._currentTexture].normal);
+				return;
+			}
+			
 			for (var x = x2d - size / 2; x < x2d + size / 2; ++x)
 			{
 				for (var y = z2d - size / 2; y < z2d + size / 2; ++y)
@@ -170,7 +211,7 @@ _.extend(Editor.prototype, {
 					}
 					t = 1 - dist / (size / 2);
 
-					var e = Math.easeInOutQuintic(t, 0, 20, 1);
+					var e = Math.easeInOutQuintic(t, 0, size, 1);
 
 					if (e < 0)
 					{

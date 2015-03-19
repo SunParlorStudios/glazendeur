@@ -2,7 +2,7 @@ var EditingCircle = EditingCircle || function(params)
 {
 	EditingCircle._super.constructor.call(this, arguments);
 	this._circle = this._renderables[0];
-	this._segments = 36;
+	this._segments = 10;
 	this._radius = 5;
 	this._thickness = 0.5;
 
@@ -15,6 +15,7 @@ _.inherit(EditingCircle, Entity);
 _.extend(EditingCircle.prototype, {
 	onUpdate: function(dt)
 	{
+		return;
 		this._circle.clearVertices();
 		this._circle.clearIndices();
 

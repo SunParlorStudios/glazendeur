@@ -160,5 +160,5 @@ float4 PS(VOut input) : SV_TARGET
 	final *= result.Diffuse;
 	final += result.Specular;
 	final.a = result.Specular.a;
-	return final;
+	return diffuse * result.Diffuse;
 }
