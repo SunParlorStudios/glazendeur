@@ -4,9 +4,9 @@ var Landscape = Landscape || function(params)
 	this._terrain = this._renderables[0];
 	this._terrain.setTextureTiling(16, 16);
 
-	for (var i = 0; i < 100; ++i)
+	for (var i = 0; i < 10; ++i)
 	{
-		this._terrain.brushTexture("textures/brush.png", "textures/grass.png", 64, 64, 999, "textures/grass_normal.png");
+		this._terrain.brushTexture("textures/brush.png", "textures/grass.png", 64, 64, 999, "textures/grass_normal.png", "textures/grass_specular.png");
 	}
 }
 

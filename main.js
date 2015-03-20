@@ -18,14 +18,18 @@ var RenderTargets = RenderTargets || {
 Game.Initialise = function()
 {
 	ContentManager.load("texture", "textures/brush.png");
+
 	ContentManager.load("texture", "textures/cracked_floor.png");
 	ContentManager.load("texture", "textures/cracked_floor_normal.png");
+	ContentManager.load("texture", "textures/cracked_floor_specular.png");
 
 	ContentManager.load("texture", "textures/grass.png");
 	ContentManager.load("texture", "textures/grass_normal.png");
+	ContentManager.load("texture", "textures/grass_specular.png");
 
 	ContentManager.load("texture", "textures/rock.png");
 	ContentManager.load("texture", "textures/rock_normal.png");
+	ContentManager.load("texture", "textures/rock_specular.png");
 
 	RenderTargets.default.setClearDepth(true);
 	RenderTargets.default.setLightingEnabled(true);

@@ -9,9 +9,9 @@ var Editor = Editor || function(params)
 	this._radius = 5;
 
 	this._textures = [
-		{diffuse: "textures/grass.png", normal: "textures/grass_normal.png"},
-		{diffuse: "textures/cracked_floor.png", normal: "textures/cracked_floor_normal.png"},
-		{diffuse: "textures/rock.png", normal: "textures/rock_normal.png"}
+		{diffuse: "textures/grass.png", normal: "textures/grass_normal.png", specular: "textures/grass_specular.png"},
+		{diffuse: "textures/cracked_floor.png", normal: "textures/cracked_floor_normal.png", specular: "textures/cracked_floor_specular.png"},
+		{diffuse: "textures/rock.png", normal: "textures/rock_normal.png", specular: "textures/rock_specular.png"}
 	]
 
 	this._currentTexture = 0;
@@ -58,11 +58,38 @@ _.extend(Editor.prototype, {
 			this._zoom -= 3;
 		}
 
+		if (Keyboard.isDown(Key.Plus))
+		{
+			this._zoom -= 50 * dt;
+		}
+		else if (Keyboard.isDown(Key.Minus))
+		{
+			this._zoom += 50 * dt;
+		}
+
 		if (Mouse.isDown(MouseButton.Middle))
 		{
 			var movement = Mouse.movement();
 			this._angle.azimuth += movement.x / 100;
 			this._angle.elevation -= movement.y / 100;
+		}
+
+		if (Keyboard.isDown(Key.Q))
+		{
+			this._angle.azimuth += dt * 3;
+		}
+		else if (Keyboard.isDown(Key.E))
+		{
+			this._angle.azimuth -= dt * 3;
+		}
+
+		if (Keyboard.isDown(Key.R))
+		{
+			this._angle.elevation -= dt * 3;
+		}
+		else if (Keyboard.isDown(Key.F))
+		{
+			this._angle.elevation += dt * 3;
 		}
 
 		var speed = dt * this._camSpeed;
@@ -113,6 +140,7 @@ _.extend(Editor.prototype, {
 		var ratio;
 		var mag = 1;
 
+		/*
 		if (p.x < -this._border)
 		{
 			ratio = (this._border + p.x) * (1 / (1 - this._border)) * mag;
@@ -137,7 +165,7 @@ _.extend(Editor.prototype, {
 			ratio = (this._border - p.y) * (1 / (1 - this._border)) * mag;
 			forwardBack.x = forward.x * ratio * speed;
 			forwardBack.z = forward.z * ratio * speed;
-		}
+		}*/
 
 		this._lookAt.x += leftRight.x + forwardBack.x;
 		this._lookAt.z += leftRight.z + forwardBack.z;
@@ -160,16 +188,16 @@ _.extend(Editor.prototype, {
 			this._currentTexture = 2;
 		}
 
-		if (Keyboard.isDown(Key.Q))
+		if (Keyboard.isDown(Key.OEM4))
 		{
-			this._radius -= dt * 30;
+			this._radius -= dt * 10;
 		}
-		else if (Keyboard.isDown(Key.E))
+		else if (Keyboard.isDown(Key.OEM6))
 		{
-			this._radius += dt * 30;
+			this._radius += dt * 10;
 		}
 
-		this._editingCircle._radius = this._radius / 2.0;
+		this._editingCircle.setRadius(this._radius);
 
 		var p = Mouse.position(MousePosition.Relative);
 		p.x = (p.x + RenderSettings.resolution().w / 2);
@@ -186,17 +214,22 @@ _.extend(Editor.prototype, {
 
 		var size = this._radius;
 		var dist;
-		if (Mouse.isReleased(MouseButton.Right) || Mouse.isDown(MouseButton.Left))
+		if (Mouse.isDown(MouseButton.Right) || Mouse.isDown(MouseButton.Left))
 		{
 			if (Keyboard.isDown(Key.Shift))
 			{
-				this._terrain.brushTexture("textures/brush.png", this._textures[this._currentTexture].diffuse, x2d, z2d, size, this._textures[this._currentTexture].normal);
+				this._terrain.brushTexture("textures/brush.png", 
+					this._textures[this._currentTexture].diffuse, 
+					x2d, z2d, size, 
+					this._textures[this._currentTexture].normal,
+					this._textures[this._currentTexture].specular);
+				
 				return;
 			}
 			
-			for (var x = x2d - size / 2; x < x2d + size / 2; ++x)
+			for (var x = x2d - size; x < x2d + size; ++x)
 			{
-				for (var y = z2d - size / 2; y < z2d + size / 2; ++y)
+				for (var y = z2d - size; y < z2d + size; ++y)
 				{
 					var indices = this._terrain.worldToIndex(x, y);
 					if (indices.x === undefined || indices.y === undefined)
@@ -209,7 +242,7 @@ _.extend(Editor.prototype, {
 					{
 						dist = 0;
 					}
-					t = 1 - dist / (size / 2);
+					t = 1 - dist / size;
 
 					var e = Math.easeInOutQuintic(t, 0, size, 1);
 

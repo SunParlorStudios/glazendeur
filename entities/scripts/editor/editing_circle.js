@@ -2,29 +2,41 @@ var EditingCircle = EditingCircle || function(params)
 {
 	EditingCircle._super.constructor.call(this, arguments);
 	this._circle = this._renderables[0];
-	this._segments = 10;
+	this._segments = 20;
 	this._radius = 5;
 	this._thickness = 0.5;
 
-	this._circle.setTopology(Topology.TriangleStrip);
 	this._terrain = params.terrain;
+
+	for (var i = 0; i <= this._segments; ++i)
+	{
+		this._circle.addVertex(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		this._circle.addVertex(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
+		this._circle.addIndex(0);
+		this._circle.addIndex(0);
+	}
+
+	this._circle.create(false);
+	this._circle.setTopology(Topology.TriangleStrip);
 }
 
 _.inherit(EditingCircle, Entity);
 
 _.extend(EditingCircle.prototype, {
+	setRadius: function(r)
+	{
+		this._radius = r;
+	},
+
 	onUpdate: function(dt)
 	{
-		return;
-		this._circle.clearVertices();
-		this._circle.clearIndices();
-
 		var ax, az, x, z, xx, zz;
 		var t, indices, h;
 		var count = -1;
 		var scalar = Math.PI * 2 / this._segments;
 
-		for (var i = 0; i < Math.PI * 2; i += scalar)
+		for (var i = 0; i <= Math.PI * 2; i += scalar)
 		{
 			ax = Math.cos(i);
 			az = Math.sin(i);
@@ -47,11 +59,11 @@ _.extend(EditingCircle.prototype, {
 				h = Number.MAX_VALUE;
 			}
 
-			this._circle.addVertex(x, h, z, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0);
-			this._circle.addVertex(xx, h, zz, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0);
+			this._circle.setVertex(++count, x, h, z, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0);
+			this._circle.setVertex(++count, xx, h, zz, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0);
 
-			this._circle.addIndex(++count);
-			this._circle.addIndex(++count);
+			this._circle.setIndex(count - 1, count - 1);
+			this._circle.setIndex(count, count);
 		}
 
 		this._circle.flush(false);
