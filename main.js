@@ -12,7 +12,8 @@ require("js/utility/world");
 var RenderTargets = RenderTargets || {
 	default: new RenderTarget("Default"),
 	normals: new RenderTarget("Normals"),
-	lighting: new RenderTarget("Lighting")
+	lighting: new RenderTarget("Lighting"),
+	ui: new RenderTarget("UI")
 }
 
 Game.Initialise = function()
@@ -36,10 +37,13 @@ Game.Initialise = function()
 	RenderTargets.default.addMultiTarget(RenderTargets.normals);
 	RenderTargets.default.addMultiTarget(RenderTargets.lighting);
 
+	RenderTargets.ui.setClearDepth(true);
+	RenderTargets.ui.setLightingEnabled(false);
+
 	Window.setName("Project Glazen Deur");
 	Window.setSize(1280, 720);
 
-	//RenderSettings.setVsync(true);
+	RenderSettings.setVsync(true);
 	RenderSettings.setResolution(1280, 720);
 
 	Game.camera = new Camera(CameraType.Perspective);
@@ -60,6 +64,7 @@ Game.Draw = function(dt)
 {
 	StateManager.draw();
 	Game.render(Game.camera, RenderTargets.default);
+	//Game.render(Game.camera, RenderTargets.ui);
 }
 
 Game.Shutdown = function()

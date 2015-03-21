@@ -3,9 +3,8 @@ var Editor = Editor || function(params)
 	Editor._super.constructor.call(this, arguments);
 	this._terrain = params.terrain;
 	this._editingCircle = this.world().spawn("entities/editor/editing_circle.json", {terrain: this._terrain}, "Default");
-	this._camSpeed = 100;
-	this._border = 0.75;
-	this._lookAt = Vector3D.construct(64, 10, 64);
+	this._camera = this.world().spawn("entities/editor/editor_camera.json", {camera: Game.camera}, "Default");
+
 	this._radius = 5;
 
 	this._textures = [
@@ -15,162 +14,11 @@ var Editor = Editor || function(params)
 	]
 
 	this._currentTexture = 0;
-
-	this._zoom = 32;
-	this._angle = {
-		elevation: 0.5,
-		azimuth: 0
-	}
 }
 
 _.inherit(Editor, Entity);
 
 _.extend(Editor.prototype, {
-	updateCamera: function(dt)
-	{
-		this._angle.elevation = Math.max(0.1, this._angle.elevation);
-		this._angle.elevation = Math.min(Math.PI / 2, this._angle.elevation);
-
-		this._zoom = Math.max(this._zoom, 1);
-
-		var e = this._angle.elevation;
-		var z = this._zoom;
-
-		var x = this._lookAt.x + (z * Math.sin(e) * Math.sin(this._angle.azimuth));
-		var y = this._lookAt.y + (z * Math.cos(e));
-		var z = this._lookAt.z + (-z * Math.sin(e) * Math.cos(this._angle.azimuth));
-
-		Game.camera.setTranslation(x, y, z);
-
-		var t = Game.camera.translation();
-		var r = Vector3D.lookAt(t, this._lookAt);
-
-		Game.camera.setRotation(r.x, r.y, 0);
-
-		t = Game.time();
-
-		if (Mouse.wheelDown())
-		{
-			this._zoom += 3;
-		}
-		else if (Mouse.wheelUp())
-		{
-			this._zoom -= 3;
-		}
-
-		if (Keyboard.isDown(Key.Plus))
-		{
-			this._zoom -= 50 * dt;
-		}
-		else if (Keyboard.isDown(Key.Minus))
-		{
-			this._zoom += 50 * dt;
-		}
-
-		if (Mouse.isDown(MouseButton.Middle))
-		{
-			var movement = Mouse.movement();
-			this._angle.azimuth += movement.x / 100;
-			this._angle.elevation -= movement.y / 100;
-		}
-
-		if (Keyboard.isDown(Key.Q))
-		{
-			this._angle.azimuth += dt * 3;
-		}
-		else if (Keyboard.isDown(Key.E))
-		{
-			this._angle.azimuth -= dt * 3;
-		}
-
-		if (Keyboard.isDown(Key.R))
-		{
-			this._angle.elevation -= dt * 3;
-		}
-		else if (Keyboard.isDown(Key.F))
-		{
-			this._angle.elevation += dt * 3;
-		}
-
-		var speed = dt * this._camSpeed;
-
-		var forward = {
-			x: Math.cos(this._angle.azimuth + Math.PI / 2),
-			z: Math.sin(this._angle.azimuth + Math.PI / 2)
-		}
-
-		var strafe = {
-			x: Math.cos(this._angle.azimuth),
-			z: Math.sin(this._angle.azimuth)
-		}
-
-		var forwardBack = {
-			x: 0,
-			z: 0
-		}
-
-		var leftRight = {
-			x: 0,
-			z: 0
-		}
-
-		if (Keyboard.isDown(Key.W))
-		{
-			forwardBack.x = forward.x * speed;
-			forwardBack.z = forward.z * speed;
-		}
-		else if (Keyboard.isDown(Key.S))
-		{
-			forwardBack.x = forward.x * -speed;
-			forwardBack.z = forward.z * -speed;
-		}
-
-		if (Keyboard.isDown(Key.A))
-		{
-			leftRight.x = strafe.x * speed;
-			leftRight.z = strafe.z * speed;
-		}
-		else if (Keyboard.isDown(Key.D))
-		{
-			leftRight.x = strafe.x * -speed;
-			leftRight.z = strafe.z * -speed;
-		}
-
-		var p = Mouse.position(MousePosition.Screen);
-		var ratio;
-		var mag = 1;
-
-		/*
-		if (p.x < -this._border)
-		{
-			ratio = (this._border + p.x) * (1 / (1 - this._border)) * mag;
-			leftRight.x = strafe.x * ratio * -speed;
-			leftRight.z = strafe.z * ratio * -speed;
-		}
-		else if (p.x > this._border)
-		{
-			ratio = (this._border - p.x) * (1 / (1 - this._border)) * mag;
-			leftRight.x = strafe.x * ratio * speed;
-			leftRight.z = strafe.z * ratio * speed;
-		}
-
-		if (p.y < -this._border)
-		{
-			ratio = (this._border + p.y) * (1 / (1 - this._border)) * mag;
-			forwardBack.x = forward.x * ratio * -speed;
-			forwardBack.z = forward.z * ratio * -speed;
-		}
-		else if (p.y > this._border)
-		{
-			ratio = (this._border - p.y) * (1 / (1 - this._border)) * mag;
-			forwardBack.x = forward.x * ratio * speed;
-			forwardBack.z = forward.z * ratio * speed;
-		}*/
-
-		this._lookAt.x += leftRight.x + forwardBack.x;
-		this._lookAt.z += leftRight.z + forwardBack.z;
-	},
-
 	updateCircle: function(dt)
 	{
 		if (Keyboard.isReleased(Key[1]))
@@ -270,7 +118,6 @@ _.extend(Editor.prototype, {
 
 	onUpdate: function(dt)
 	{
-		this.updateCamera(dt);
 		this.updateCircle(dt);
 	}
 });
