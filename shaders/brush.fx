@@ -8,6 +8,7 @@ cbuffer Global : register(b0)
 cbuffer Uniforms : register(b2)
 {
 	float4 Brush;
+	float4 Opacity;
 }
 
 struct VOut

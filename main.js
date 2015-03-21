@@ -39,6 +39,7 @@ Game.Initialise = function()
 
 	RenderTargets.ui.setClearDepth(true);
 	RenderTargets.ui.setLightingEnabled(false);
+	RenderTargets.ui.setTechnique("Diffuse");
 
 	Window.setName("Project Glazen Deur");
 	Window.setSize(1280, 720);
@@ -64,7 +65,7 @@ Game.Draw = function(dt)
 {
 	StateManager.draw();
 	Game.render(Game.camera, RenderTargets.default);
-	//Game.render(Game.camera, RenderTargets.ui);
+	Game.render(Game.camera, RenderTargets.ui);
 }
 
 Game.Shutdown = function()

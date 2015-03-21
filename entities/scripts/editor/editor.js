@@ -1,3 +1,11 @@
+Enum("EditorTools", [
+	"Raise",
+	"Paint",
+	"Smooth"
+]);
+
+require("js/ui/editor/editor_ui");
+
 var Editor = Editor || function(params)
 {
 	Editor._super.constructor.call(this, arguments);
