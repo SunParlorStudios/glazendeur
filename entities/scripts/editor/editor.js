@@ -5,6 +5,7 @@ Enum("EditorTools", [
 ]);
 
 require("js/ui/editor/editor_ui");
+require("entities/scripts/editor/editor_history");
 
 var Editor = Editor || function(params)
 {
@@ -22,6 +23,8 @@ var Editor = Editor || function(params)
 	]
 
 	this._currentTexture = 0;
+	this._history = new EditorHistory(this._terrain);
+	this._historyPoint = false;
 }
 
 _.inherit(Editor, Entity);
@@ -72,6 +75,13 @@ _.extend(Editor.prototype, {
 		var dist;
 		if (Mouse.isDown(MouseButton.Right) || Mouse.isDown(MouseButton.Left))
 		{
+			if (this._historyPoint == false)
+			{
+				this._historyPoint = true;
+				var hp = new HistoryPoint(this._terrain);
+				this._history.addPoint(hp);
+			}
+
 			if (Keyboard.isDown(Key.Shift))
 			{
 				this._terrain.brushTexture("textures/brush.png", 
@@ -121,6 +131,23 @@ _.extend(Editor.prototype, {
 			}
 
 			this._terrain.flush();
+		}
+
+		if (Mouse.isReleased(MouseButton.Left) || Mouse.isReleased(MouseButton.Right))
+		{
+			this._historyPoint = false;
+			var last = new HistoryPoint(this._terrain);
+			this._history.addPoint(last);
+		}
+
+		if (Keyboard.isDown(Key.Control) && Keyboard.isReleased(Key.Z))
+		{
+			this._history.undo();
+		}
+
+		if (Keyboard.isDown(Key.Control) && Keyboard.isReleased(Key.Y))
+		{
+			this._history.redo();
 		}
 	},
 
