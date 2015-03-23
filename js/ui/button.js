@@ -1,6 +1,6 @@
-var Button = Button || function()
+var Button = Button || function(root)
 {
-	Button._super.constructor.call(this, arguments);
+	Button._super.constructor.call(this, root);
 	this._mouseArea = new MouseArea(this);
 
 	this._textures = {}

@@ -5,11 +5,11 @@ var EditorCamera = EditorCamera || function(params)
 	this._speed = {
 		movement: 100,
 		angle: 3,
-		zoom: 30,
+		zoom: 150,
 		sensitivity: 100
 	}
 
-	this._border = 0.75;
+	this._border = 0.95;
 	this._lookAt = Vector3D.construct(64, 10, 64);
 	this._zoom = 32;
 
@@ -70,7 +70,7 @@ _.extend(EditorCamera.prototype, {
 		{
 			var movement = Mouse.movement();
 			this._angle.azimuth += movement.x / this._speed.sensitivity;
-			this._angle.elevation -= movement.y / this._speed.this._sensitivity;
+			this._angle.elevation -= movement.y / this._speed.sensitivity;
 		}
 
 		speed = this._speed.angle * dt;

@@ -52,7 +52,7 @@ _.extend(EditingCircle.prototype, {
 
 			if (indices.x !== undefined && indices.y !== undefined)
 			{
-				h = -this._terrain.getHeight(indices.x, indices.y);
+				h = -this._terrain.getBilinearHeight(t.x + x, t.z + z);
 			}
 			else
 			{
@@ -71,6 +71,6 @@ _.extend(EditingCircle.prototype, {
 
 	setPosition: function(x, z)
 	{
-		this._circle.setTranslation(x, 0.5, z);
+		this._circle.setTranslation(x, 1, z);
 	}
 });
