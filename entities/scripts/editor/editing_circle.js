@@ -2,7 +2,7 @@ var EditingCircle = EditingCircle || function(params)
 {
 	EditingCircle._super.constructor.call(this, arguments);
 	this._circle = this._renderables[0];
-	this._segments = 36;
+	this._segments = 360;
 	this._radius = 5;
 	this._thickness = 0.5;
 

@@ -51,11 +51,6 @@ _.extend(EditorUI.prototype, {
 			res.w / 2 - this._metrics.toolWidth - this._metrics.toolPadding, 
 			-res.h / 2 + this._metrics.toolPadding, 0);
 
-		var t = this._root.translation();
-		Log.info(t.x);
-		Log.info(t.y);
-		Log.info(t.z);
-
 		for (var i = 0; i < this._numTools; ++i)
 		{
 			var tool = this._tools[i];
