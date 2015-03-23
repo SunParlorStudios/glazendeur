@@ -1,6 +1,8 @@
-var EditorTool = EditorTool || function(root, type, layer)
+var EditorTool = EditorTool || function(root, editor, type, layer)
 {
 	EditorTool._super.constructor.call(this, root);
+
+	this._editor = editor;
 	this._type = type;
 	this._layer = layer || "UI";
 
@@ -19,12 +21,14 @@ _.inherit(EditorTool, Button);
 _.extend(EditorTool.prototype, {
 	initialise: function()
 	{
-
+		this.onReleased.ctx = this;
+		this.setOnReleased(this.onReleased);
 	},
 
 	setUI: function()
 	{
 		var tex = this._toolTextures[this._type];
+
 		this.setDiffuseMap(tex.default);
 		this.setTextures(tex.default, tex.hover, tex.pressed);
 		this.spawn(this._layer);
@@ -38,5 +42,10 @@ _.extend(EditorTool.prototype, {
 	hide: function()
 	{
 
+	},
+
+	onReleased: function()
+	{
+		this._editor.setTool(this._type);
 	}
 });

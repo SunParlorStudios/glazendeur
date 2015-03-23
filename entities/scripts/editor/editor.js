@@ -10,6 +10,8 @@ require("entities/scripts/editor/editor_history");
 var Editor = Editor || function(params)
 {
 	Editor._super.constructor.call(this, arguments);
+	this._currentTool = EditorTools.Raise;
+
 	this._terrain = params.terrain;
 	this._editingCircle = this.world().spawn("entities/editor/editing_circle.json", {terrain: this._terrain}, "Default");
 	this._camera = this.world().spawn("entities/editor/editor_camera.json", {camera: Game.camera}, "Default");
@@ -26,12 +28,17 @@ var Editor = Editor || function(params)
 	this._history = new EditorHistory(this._terrain);
 	this._historyPoint = false;
 
-	this._ui = new EditorUI();
+	this._ui = new EditorUI(this);
 }
 
 _.inherit(Editor, Entity);
 
 _.extend(Editor.prototype, {
+	setTool: function(tool)
+	{
+		this._currentTool = tool;
+	},
+
 	updateCircle: function(dt)
 	{
 		if (Keyboard.isReleased(Key[1]))
@@ -77,14 +84,7 @@ _.extend(Editor.prototype, {
 		var dist;
 		if (Mouse.isDown(MouseButton.Right) || Mouse.isDown(MouseButton.Left))
 		{
-			if (this._historyPoint == false)
-			{
-				this._historyPoint = true;
-				var hp = new HistoryPoint(this._terrain);
-				this._history.addPoint(hp);
-			}
-
-			if (Keyboard.isDown(Key.Shift))
+			if (this._currentTool == EditorTools.Paint)
 			{
 				this._terrain.brushTexture("textures/brush.png", 
 					this._textures[this._currentTexture].diffuse, 
@@ -94,7 +94,14 @@ _.extend(Editor.prototype, {
 				
 				return;
 			}
-			
+
+			if (this._historyPoint == false)
+			{
+				this._historyPoint = true;
+				var hp = new HistoryPoint(this._terrain);
+				this._history.addPoint(hp);
+			}
+
 			for (var x = x2d - size; x < x2d + size; ++x)
 			{
 				for (var y = z2d - size; y < z2d + size; ++y)
@@ -120,6 +127,26 @@ _.extend(Editor.prototype, {
 					}
 
 					var h = this._terrain.getHeight(indices.x, indices.y);
+
+					if (this._currentTool == EditorTools.Smooth && t > 0)
+					{
+						var avg = 0;
+						var num = 0;
+						var filterSize = 1;
+						for (var adjx = -filterSize; adjx <= filterSize; ++adjx)
+						{
+							for (var adjy = -filterSize; adjy <= filterSize; ++adjy)
+							{
+								++num;
+								avg += this._terrain.getHeight(indices.x + adjx, indices.y + adjy);
+							}
+						}
+
+						var smooth = avg / num;
+						this._terrain.setHeight(indices.x, indices.y, Math.lerp(h, smooth, t));
+
+						continue;
+					}
 
 					if (Mouse.isDown(MouseButton.Left))
 					{

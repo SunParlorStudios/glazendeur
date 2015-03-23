@@ -10,9 +10,10 @@ ContentManager.load("texture", "textures/editor/widgets/tools/raise_pressed.png"
 ContentManager.load("texture", "textures/editor/widgets/tools/paint_pressed.png");
 ContentManager.load("texture", "textures/editor/widgets/tools/smooth_pressed.png");
 
-var EditorUI = EditorUI || function()
+var EditorUI = EditorUI || function(editor, root)
 {
-	this._root = undefined;
+	this._editor = editor;
+	this._root = root || undefined;
 	this._toolNames = [
 		"Raise",
 		"Paint",
@@ -33,12 +34,15 @@ var EditorUI = EditorUI || function()
 _.extend(EditorUI.prototype, {
 	initialise: function()
 	{
-		this._root = new Widget();
+		if (this._root === undefined)
+		{
+			this._root = new Widget();
+		}
 
 		this._tools = [];
 		for (var i = 0; i < this._numTools; ++i)
 		{
-			this._tools.push(new EditorTool(this._root, EditorTools[this._toolNames[i]], "UI"));
+			this._tools.push(new EditorTool(this._root, this._editor, EditorTools[this._toolNames[i]], "UI"));
 		}
 
 		this.setUI();
