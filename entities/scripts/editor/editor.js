@@ -25,6 +25,8 @@ var Editor = Editor || function(params)
 	this._currentTexture = 0;
 	this._history = new EditorHistory(this._terrain);
 	this._historyPoint = false;
+
+	this._ui = new EditorUI();
 }
 
 _.inherit(Editor, Entity);

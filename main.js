@@ -8,6 +8,7 @@ require("js/utility/enumerator");
 require("js/utility/vector2d");
 require("js/utility/vector3d");
 require("js/utility/world");
+require("js/ui/button");
 
 var RenderTargets = RenderTargets || {
 	default: new RenderTarget("Default"),
