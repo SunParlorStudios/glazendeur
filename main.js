@@ -32,6 +32,8 @@ Game.Initialise = function()
 	ContentManager.load("texture", "textures/rock.png");
 	ContentManager.load("texture", "textures/rock_normal.png");
 	ContentManager.load("texture", "textures/rock_specular.png");
+	
+	ContentManager.load("texture", "textures/tree.png");
 
 	RenderTargets.default.setClearDepth(true);
 	RenderTargets.default.setLightingEnabled(true);

@@ -89,6 +89,9 @@ PSOut PS(VOut input)
 	float y = (input.texcoord.y * AnimationCoords.w) + AnimationCoords.y;
 	float2 coords = float2(x, y);
 
+	float4 diffuse = TexDiffuse.Sample(Sampler, coords);
+	clip(diffuse.a - 0.95);
+
 	float4 normal = normalize(TexNormal.Sample(Sampler, coords) * 2.0f - 1.0f);
 	normal.rgb = lerp(normal.rgb, float3(0, 0, 1), 1.0f - Material.NormalScale);
 
@@ -97,7 +100,7 @@ PSOut PS(VOut input)
 	float4 r = Reflection(input.world_pos, EyePosition, input.normal.rgb);
 	float spec = saturate(Material.SpecularIntensity * TexSpecular.Sample(Sampler, coords).r);
 
-	output.colour = lerp(TexDiffuse.Sample(Sampler, coords), r, saturate(Material.Reflectivity)) * Material.Diffuse * float4(Blend, 1.0f) * input.colour;
+	output.colour = lerp(diffuse, r, saturate(Material.Reflectivity)) * Material.Diffuse * float4(Blend, 1.0f) * input.colour;
 	output.colour.a = Material.SpecularPower / 256;
 	output.normal = float4((normal.rgb + 1.0f) / 2.0f, spec);
 	output.ambient = float4(Material.Ambient.rgb, saturate(TexLight.Sample(Sampler, coords).r * Material.Emissive));

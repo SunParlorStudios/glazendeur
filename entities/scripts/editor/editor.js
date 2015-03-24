@@ -18,6 +18,22 @@ var Editor = Editor || function(params)
 	this._model.spawn("Default");
 	this._model.setTranslation(64, 0, 64);
 
+	this._billies = [];
+
+	for (var i = 0; i < 300; ++i)
+	{
+		var billy = new Billboard();
+		billy.spawn("Default");
+		billy.setTranslation(Math.random() * 256, 0, Math.random() * 256);
+		billy.setDiffuseMap("textures/tree.png");
+		billy.setOffset(0.5, 1);
+		var s = 4 + Math.random() * 4;
+		billy.setSize(s, s);
+
+		this._billies.push(billy);
+	}
+	
+
 	this._terrain = params.terrain;
 	this._editingCircle = this.world().spawn("entities/editor/editing_circle.json", {terrain: this._terrain}, "Default");
 	this._camera = this.world().spawn("entities/editor/editor_camera.json", {camera: Game.camera}, "Default");
@@ -199,6 +215,7 @@ _.extend(Editor.prototype, {
 
 	onUpdate: function(dt)
 	{
+		this._model.rotateBy(0, dt, 0);
 		this.updateCircle(dt);
 	}
 });
