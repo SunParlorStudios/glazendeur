@@ -6,7 +6,7 @@ var Landscape = Landscape || function(params)
 
 	for (var i = 0; i < 10; ++i)
 	{
-		this._terrain.brushTexture("textures/brush.png", "textures/grass.png", 64, 64, 99999, "textures/grass_normal.png", "textures/grass_specular.png");
+		this._terrain.brushTexture("textures/brush.png", "textures/grass.png", 64, 64, 99999, 1.0, "textures/grass_normal.png", "textures/grass_specular.png");
 	}
 }
 

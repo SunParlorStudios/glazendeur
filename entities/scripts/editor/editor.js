@@ -20,15 +20,19 @@ var Editor = Editor || function(params)
 
 	this._billies = [];
 
-	for (var i = 0; i < 300; ++i)
+	Lighting.setAmbientColour(0.3, 0.2, 0.1);
+	Lighting.setShadowColour(0.2, 0.3, 0.5);
+
+	for (var i = 0; i < 100; ++i)
 	{
 		var billy = new Billboard();
 		billy.spawn("Default");
 		billy.setTranslation(Math.random() * 256, 0, Math.random() * 256);
 		billy.setDiffuseMap("textures/tree.png");
+		billy.setNormalMap("textures/tree_normal.png");
 		billy.setOffset(0.5, 1);
-		var s = 4 + Math.random() * 4;
-		billy.setSize(s, s);
+		var s = 4 + Math.random() * 2;
+		billy.setSize(s, s * 1.5);
 
 		this._billies.push(billy);
 	}
@@ -121,7 +125,7 @@ _.extend(Editor.prototype, {
 			{
 				this._terrain.brushTexture("textures/brush.png", 
 					this._textures[this._currentTexture].diffuse, 
-					x2d, z2d, size, 
+					x2d, z2d, size, 0.1,
 					this._textures[this._currentTexture].normal,
 					this._textures[this._currentTexture].specular);
 				

@@ -157,13 +157,11 @@ float4 PS(VOut input) : SV_TARGET
 	float specular_power = diffuse.a * 256;
 
 	normal = normal * 2.0f - 1.0f;
-
 	LightResult result = ComputeLighting(view, position.xyz, normal.rgb, specular_intensity, specular_power);
 	
 	float emissive = ambient.a;
 	ambient = float4(Ambient.rgb + ambient.rgb, 1.0f);
 	float4 final = saturate(saturate(diffuse * ambient) * (Shadow + result.Diffuse)  + result.Specular + emissive);
 	final.a = result.Specular.a;
-
 	return final;
 }

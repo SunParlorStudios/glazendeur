@@ -85,15 +85,16 @@ float4 Reflection(float4 p, float4 eye, float3 normal)
 PSOut PS(VOut input)
 {
 	PSOut output;
+
 	float x = (input.texcoord.x * AnimationCoords.z) + AnimationCoords.x;
 	float y = (input.texcoord.y * AnimationCoords.w) + AnimationCoords.y;
 	float2 coords = float2(x, y);
 
 	float4 diffuse = TexDiffuse.Sample(Sampler, coords);
-	clip(diffuse.a - 0.95);
+	clip(diffuse.a - 0.9);
 
 	float4 normal = normalize(TexNormal.Sample(Sampler, coords) * 2.0f - 1.0f);
-	normal.rgb = lerp(normal.rgb, float3(0, 0, 1), 1.0f - Material.NormalScale);
+	normal.rgb = lerp(normal.rgb, float3(0, 0, 1), 1.0f - 0.2f);
 
 	normal = float4((normal.x * input.tangent) + (normal.y * input.bitangent) + (normal.z * input.normal), 1.0f);
 
