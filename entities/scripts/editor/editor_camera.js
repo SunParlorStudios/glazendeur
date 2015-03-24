@@ -14,8 +14,8 @@ var EditorCamera = EditorCamera || function(params)
 	this._zoom = 32;
 
 	this._angle = {
-		elevation: 0.5,
-		azimuth: 0
+		elevation: 35 * Math.PI / 180,
+		azimuth: 45 * Math.PI / 180
 	}
 
 	this._camera = params.camera;

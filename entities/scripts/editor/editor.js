@@ -1,3 +1,5 @@
+ContentManager.load("model", "models/test_cube.fbx");
+
 Enum("EditorTools", [
 	"Raise",
 	"Paint",
@@ -11,6 +13,10 @@ var Editor = Editor || function(params)
 {
 	Editor._super.constructor.call(this, arguments);
 	this._currentTool = EditorTools.Raise;
+
+	this._model = new Model("models/test_cube.fbx");
+	this._model.spawn("Default");
+	this._model.setTranslation(64, 0, 64);
 
 	this._terrain = params.terrain;
 	this._editingCircle = this.world().spawn("entities/editor/editing_circle.json", {terrain: this._terrain}, "Default");
@@ -27,6 +33,7 @@ var Editor = Editor || function(params)
 	this._currentTexture = 0;
 	this._history = new EditorHistory(this._terrain);
 	this._historyPoint = false;
+	this._inputEnabled = true;
 
 	this._ui = new EditorUI(this);
 }
@@ -34,6 +41,11 @@ var Editor = Editor || function(params)
 _.inherit(Editor, Entity);
 
 _.extend(Editor.prototype, {
+	setInputEnabled: function(input)
+	{
+		this._inputEnabled = input;
+	},
+
 	setTool: function(tool)
 	{
 		this._currentTool = tool;
@@ -41,6 +53,11 @@ _.extend(Editor.prototype, {
 
 	updateCircle: function(dt)
 	{
+		if (this._inputEnabled == false)
+		{
+			return;
+		}
+
 		if (Keyboard.isReleased(Key[1]))
 		{
 			this._currentTexture = 0;
