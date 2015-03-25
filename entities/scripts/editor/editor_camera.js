@@ -28,6 +28,11 @@ _.inherit(EditorCamera, Entity);
 _.extend(EditorCamera.prototype, {
 	onUpdate: function(dt)
 	{
+		if (Keyboard.isDown(Key.Control))
+		{
+			return;
+		}
+		
 		this._angle.elevation = Math.max(0.1, this._angle.elevation);
 		this._angle.elevation = Math.min(Math.PI / 2, this._angle.elevation);
 

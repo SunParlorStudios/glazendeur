@@ -56,6 +56,11 @@ var Editor = Editor || function(params)
 	this._inputEnabled = true;
 
 	this._ui = new EditorUI(this);
+
+	if (IO.exists("json/terrain/map.json"))
+	{
+		this.load();
+	}
 }
 
 _.inherit(Editor, Entity);
@@ -217,9 +222,71 @@ _.extend(Editor.prototype, {
 		}
 	},
 
+	save: function()
+	{
+		Log.info("Saving terrain data");
+		var toSave = {};
+		var terrainIndices = [];
+
+		for (var y = 0; y < this._terrain.height(); ++y)
+		{
+			for (var x = 0; x < this._terrain.width(); ++x)
+			{
+				terrainIndices[y * this._terrain.width() + x] = this._terrain.getHeight(x, y);
+			}
+		}
+
+		toSave.indices = terrainIndices;
+		var mapData = JSON.stringify(toSave);
+		IO.write("json/terrain/map.json", mapData);
+		this._terrain.saveTexture("textures/terrain/map/map");
+		Log.success("Saved terrain data");
+	},
+
+	load: function()
+	{
+		Log.info("Loading terrain data");
+		var json = JSON.load("json/terrain/map.json", true);
+
+		if (json.indices === undefined)
+		{
+			Log.error("Terrain data corrupt, could not find indices list");
+			return;
+		}
+
+		this._terrain.loadTexture("textures/terrain/map/map");
+
+		for (var y = 0; y < this._terrain.height(); ++y)
+		{
+			for (var x = 0; x < this._terrain.width(); ++x)
+			{
+				this._terrain.setHeight(x, y, json.indices[y * this._terrain.width() + x]);
+			}
+		}
+
+		this._terrain.flush();
+		Log.success("Loaded terrain data");
+	},
+
+	updateSaving: function(dt)
+	{
+		if (Keyboard.isDown(Key.Control))
+		{
+			if (Keyboard.isReleased(Key.S))
+			{
+				this.save();
+			}
+			else if (Keyboard.isReleased(Key.O))
+			{
+				this.load();
+			}
+		}
+	},
+
 	onUpdate: function(dt)
 	{
 		this._model.rotateBy(0, dt, 0);
 		this.updateCircle(dt);
+		this.updateSaving(dt);
 	}
 });
