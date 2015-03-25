@@ -54,17 +54,19 @@ var Editor = Editor || function(params)
 	}
 
 	this._currentTexture = 0;
+	this._currentBrush = 0;
+
 	this._history = new EditorHistory(this._terrain);
 	this._historyPoint = false;
 	this._inputEnabled = true;
 
 	this._ui = new EditorUI(this);
 	this._ui.setCurrentTexture(this._textures[this._currentTexture] + ".png");
-	this._ui.setCurrentBrush(this._brushes[0]);
+	this._ui.setCurrentBrush(this._brushes[this._currentBrush]);
 
 	for (var i = 0; i < 10; ++i)
 	{
-		this._terrain.brushTexture(this._brushes[0], "textures/terrain/textures/grass.png", 64, 64, 99999, 1.0, "textures/terrain/textures/grass_normal.png", "textures/terrain/textures/grass_specular.png");
+		this._terrain.brushTexture(this._brushes[this._currentBrush], "textures/terrain/textures/grass.png", 64, 64, 99999, 1.0, "textures/terrain/textures/grass_normal.png", "textures/terrain/textures/grass_specular.png");
 	}
 
 	if (IO.exists("json/terrain/map.json"))
@@ -123,7 +125,7 @@ _.extend(Editor.prototype, {
 		{
 			if (this._currentTool == EditorTools.Paint)
 			{
-				this._terrain.brushTexture(this._brushes[0], 
+				this._terrain.brushTexture(this._brushes[this._currentBrush], 
 					this._textures[this._currentTexture] + ".png",
 					x2d, z2d, size, 0.1,
 					this._textures[this._currentTexture] + "_normal.png",
@@ -261,6 +263,30 @@ _.extend(Editor.prototype, {
 
 		this._terrain.flush();
 		Log.success("Loaded terrain data");
+	},
+
+	changeTexture: function()
+	{
+		++this._currentTexture;
+
+		if (this._currentTexture >= this._textures.length)
+		{
+			this._currentTexture = 0;
+		}
+
+		this._ui.setCurrentTexture(this._textures[this._currentTexture] + ".png");
+	},
+
+	changeBrush: function()
+	{
+		++this._currentBrush;
+
+		if (this._currentBrush >= this._brushes.length)
+		{
+			this._currentBrush = 0;
+		}
+
+		this._ui.setCurrentBrush(this._brushes[this._currentBrush]);
 	},
 
 	updateSaving: function(dt)

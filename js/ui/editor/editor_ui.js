@@ -55,7 +55,9 @@ _.extend(EditorUI.prototype, {
 		}
 
 		this._currentTexture = new Widget(this._root);
+		this._currentTextureMouseArea = new MouseArea(this._currentTexture);
 		this._currentBrush = new Widget(this._currentTexture);
+		this._currentBrushMouseArea = new MouseArea(this._currentBrush);
 
 		this.setUI();
 	},
@@ -99,6 +101,17 @@ _.extend(EditorUI.prototype, {
 		this._currentBrush.setSize(this._metrics.toolWidth, h);
 		this._currentBrush.spawn("UI");
 		this._currentBrush.setTranslation(0, h + this._metrics.toolPadding, EditorUILayer.Widgets);
+
+		this._changeTexture.ctx = this;
+		this._changeBrush.ctx = this;
+		
+		this._currentTextureMouseArea.setOnEnter(this._disableInput);
+		this._currentTextureMouseArea.setOnLeave(this._enableInput);
+		this._currentTextureMouseArea.setOnReleased(this._changeTexture)
+
+		this._currentBrushMouseArea.setOnEnter(this._disableInput);
+		this._currentBrushMouseArea.setOnLeave(this._enableInput);
+		this._currentBrushMouseArea.setOnReleased(this._changeBrush)
 	},
 
 	show: function()
@@ -119,6 +132,16 @@ _.extend(EditorUI.prototype, {
 	setCurrentBrush: function(texture)
 	{
 		this._currentBrush.setDiffuseMap(texture);
+	},
+
+	_changeTexture: function()
+	{
+		this._editor.changeTexture();
+	},
+
+	_changeBrush: function()
+	{
+		this._editor.changeBrush();
 	},
 
 	_disableInput: function()
