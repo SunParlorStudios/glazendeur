@@ -54,6 +54,9 @@ _.extend(EditorUI.prototype, {
 			this._tools.push(new EditorTool(this._root, this._editor, EditorTools[this._toolNames[i]], "UI"));
 		}
 
+		this._currentTexture = new Widget(this._root);
+		this._currentBrush = new Widget(this._currentTexture);
+
 		this.setUI();
 	},
 
@@ -87,6 +90,15 @@ _.extend(EditorUI.prototype, {
 			tool.setTranslation(0, i * (h + this._metrics.toolPadding), EditorUILayer.Widgets);
 			tool.setUI();
 		}
+
+		var h = this._metrics.toolHeight;
+		this._currentTexture.setSize(this._metrics.toolWidth, h);
+		this._currentTexture.spawn("UI");
+		this._currentTexture.setTranslation(0, this._numTools * (h + this._metrics.toolPadding), EditorUILayer.Widgets);
+
+		this._currentBrush.setSize(this._metrics.toolWidth, h);
+		this._currentBrush.spawn("UI");
+		this._currentBrush.setTranslation(0, h + this._metrics.toolPadding, EditorUILayer.Widgets);
 	},
 
 	show: function()
@@ -97,6 +109,16 @@ _.extend(EditorUI.prototype, {
 	hide: function()
 	{
 
+	},
+
+	setCurrentTexture: function(texture)
+	{
+		this._currentTexture.setDiffuseMap(texture);
+	},
+
+	setCurrentBrush: function(texture)
+	{
+		this._currentBrush.setDiffuseMap(texture);
 	},
 
 	_disableInput: function()

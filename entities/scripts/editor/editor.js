@@ -18,25 +18,8 @@ var Editor = Editor || function(params)
 	this._model.spawn("Default");
 	this._model.setTranslation(64, 0, 64);
 
-	this._billies = [];
-
 	Lighting.setAmbientColour(0.3, 0.2, 0.1);
 	Lighting.setShadowColour(0.2, 0.3, 0.5);
-
-	for (var i = 0; i < 100; ++i)
-	{
-		var billy = new Billboard();
-		billy.spawn("Default");
-		billy.setTranslation(Math.random() * 256, 0, Math.random() * 256);
-		billy.setDiffuseMap("textures/tree.png");
-		billy.setNormalMap("textures/tree_normal.png");
-		billy.setOffset(0.5, 1);
-		var s = 4 + Math.random() * 2;
-		billy.setSize(s, s * 1.5);
-
-		this._billies.push(billy);
-	}
-	
 
 	this._terrain = params.terrain;
 	this._editingCircle = this.world().spawn("entities/editor/editing_circle.json", {terrain: this._terrain}, "Default");
@@ -44,11 +27,31 @@ var Editor = Editor || function(params)
 
 	this._radius = 5;
 
-	this._textures = [
-		{diffuse: "textures/grass.png", normal: "textures/grass_normal.png", specular: "textures/grass_specular.png"},
-		{diffuse: "textures/cracked_floor.png", normal: "textures/cracked_floor_normal.png", specular: "textures/cracked_floor_specular.png"},
-		{diffuse: "textures/rock.png", normal: "textures/rock_normal.png", specular: "textures/rock_specular.png"}
-	]
+	this._contentPath = "textures/terrain/"
+	this._brushes = IO.filesInDirectory(this._contentPath + "brushes");
+	for (var i = 0; i < this._brushes.length; ++i)
+	{
+		ContentManager.load("texture", this._brushes[i]);
+	}
+
+	var textures = IO.filesInDirectory(this._contentPath + "textures");
+	var texture, last;
+	var split = [];
+
+	this._textures = [];
+	for (var i = 0; i < textures.length; ++i)
+	{
+		texture = textures[i];
+		ContentManager.load("texture", texture);
+		split = texture.split("/");
+		split = split[split.length - 1].split(".png");
+		last = split[0];
+
+		if (last.split("_normal").length == 1 && last.split("_specular").length == 1)
+		{
+			this._textures.push(this._contentPath + "textures/" + last);
+		}	
+	}
 
 	this._currentTexture = 0;
 	this._history = new EditorHistory(this._terrain);
@@ -56,6 +59,13 @@ var Editor = Editor || function(params)
 	this._inputEnabled = true;
 
 	this._ui = new EditorUI(this);
+	this._ui.setCurrentTexture(this._textures[this._currentTexture] + ".png");
+	this._ui.setCurrentBrush(this._brushes[0]);
+
+	for (var i = 0; i < 10; ++i)
+	{
+		this._terrain.brushTexture(this._brushes[0], "textures/terrain/textures/grass.png", 64, 64, 99999, 1.0, "textures/terrain/textures/grass_normal.png", "textures/terrain/textures/grass_specular.png");
+	}
 
 	if (IO.exists("json/terrain/map.json"))
 	{
@@ -81,21 +91,6 @@ _.extend(Editor.prototype, {
 		if (this._inputEnabled == false)
 		{
 			return;
-		}
-
-		if (Keyboard.isReleased(Key[1]))
-		{
-			this._currentTexture = 0;
-		}
-
-		if (Keyboard.isReleased(Key[2]))
-		{
-			this._currentTexture = 1;
-		}
-
-		if (Keyboard.isReleased(Key[3]))
-		{
-			this._currentTexture = 2;
 		}
 
 		if (Keyboard.isDown(Key.OEM4))
@@ -128,11 +123,11 @@ _.extend(Editor.prototype, {
 		{
 			if (this._currentTool == EditorTools.Paint)
 			{
-				this._terrain.brushTexture("textures/brush.png", 
-					this._textures[this._currentTexture].diffuse, 
+				this._terrain.brushTexture(this._brushes[0], 
+					this._textures[this._currentTexture] + ".png",
 					x2d, z2d, size, 0.1,
-					this._textures[this._currentTexture].normal,
-					this._textures[this._currentTexture].specular);
+					this._textures[this._currentTexture] + "_normal.png",
+					this._textures[this._currentTexture] + "_specular.png");
 				
 				return;
 			}
