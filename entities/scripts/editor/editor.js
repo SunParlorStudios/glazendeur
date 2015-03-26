@@ -3,7 +3,9 @@ ContentManager.load("model", "models/test_cube.fbx");
 Enum("EditorTools", [
 	"Raise",
 	"Paint",
-	"Smooth"
+	"Smooth",
+	"Ramp",
+	"Flatten"
 ]);
 
 require("js/ui/editor/editor_ui");
@@ -55,6 +57,8 @@ var Editor = Editor || function(params)
 
 	this._currentTexture = 0;
 	this._currentBrush = 0;
+	this._currentHeight = 0;
+	this._wasFlattening = false;
 
 	this._history = new EditorHistory(this._terrain);
 	this._historyPoint = false;
@@ -118,6 +122,9 @@ _.extend(Editor.prototype, {
 		var z2d = unprojA.z - f * (unprojB.z - unprojA.z);
 
 		this._editingCircle.setPosition(x2d, z2d);
+
+		var flattenAffected = [];
+		var flattenAverage = 0;
 
 		var size = this._radius;
 		var dist;
@@ -186,15 +193,43 @@ _.extend(Editor.prototype, {
 
 						continue;
 					}
+					else if (this._currentTool == EditorTools.Flatten)
+					{
+						if (t > 0)
+						{
+							flattenAverage += this._terrain.getHeight(indices.x, indices.y);
+							flattenAffected.push({x: indices.x, y: indices.y});
+						}
 
-					if (Mouse.isDown(MouseButton.Left))
-					{
-						this._terrain.setHeight(indices.x, indices.y, h + e * dt);
+						continue;
 					}
-					else
+					else if (this._currentTool == EditorTools.Raise)
 					{
-						this._terrain.setHeight(indices.x, indices.y, h - e * dt);
+						if (Mouse.isDown(MouseButton.Left))
+						{
+							this._terrain.setHeight(indices.x, indices.y, h + e * dt);
+						}
+						else
+						{
+							this._terrain.setHeight(indices.x, indices.y, h - e * dt);
+						}
 					}
+				}
+			}
+
+			if (this._currentTool == EditorTools.Flatten)
+			{
+				if (this._wasFlattening == false)
+				{
+					this._wasFlattening = true;
+					this._currentHeight = flattenAverage / flattenAffected.length;
+				}
+				
+				var indices = {x: 0, y: 0};
+				for (var i = 0; i < flattenAffected.length; ++i)
+				{
+					indices = flattenAffected[i];
+					this._terrain.setHeight(indices.x, indices.y, this._currentHeight);
 				}
 			}
 
@@ -203,6 +238,11 @@ _.extend(Editor.prototype, {
 
 		if (Mouse.isReleased(MouseButton.Left) || Mouse.isReleased(MouseButton.Right))
 		{
+			if (this._wasFlattening == true)
+			{
+				this._wasFlattening = false;
+			}
+
 			this._historyPoint = false;
 			var last = new HistoryPoint(this._terrain);
 			this._history.addPoint(last);

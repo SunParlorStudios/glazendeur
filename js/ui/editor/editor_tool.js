@@ -10,7 +10,9 @@ var EditorTool = EditorTool || function(root, editor, type, layer)
 	this._toolTextures = [
 		{ default: this._path + "tools/raise.png", hover: this._path + "tools/raise_hover.png", pressed: this._path + "tools/raise_pressed.png" },
 		{ default: this._path + "tools/paint.png", hover: this._path + "tools/paint_hover.png", pressed: this._path + "tools/paint_pressed.png" },
-		{ default: this._path + "tools/smooth.png", hover: this._path + "tools/smooth_hover.png", pressed: this._path + "tools/smooth_pressed.png" }
+		{ default: this._path + "tools/smooth.png", hover: this._path + "tools/smooth_hover.png", pressed: this._path + "tools/smooth_pressed.png" },
+		{ default: this._path + "tools/ramp.png", hover: this._path + "tools/ramp_hover.png", pressed: this._path + "tools/ramp_pressed.png" },
+		{ default: this._path + "tools/flatten.png", hover: this._path + "tools/flatten_hover.png", pressed: this._path + "tools/flatten_pressed.png" }
 	]
 
 	this.initialise();

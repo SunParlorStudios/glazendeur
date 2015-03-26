@@ -8,12 +8,20 @@ Enum("EditorUILayer",[
 ContentManager.load("texture", "textures/editor/widgets/tools/raise.png");
 ContentManager.load("texture", "textures/editor/widgets/tools/paint.png");
 ContentManager.load("texture", "textures/editor/widgets/tools/smooth.png");
+ContentManager.load("texture", "textures/editor/widgets/tools/ramp.png");
+ContentManager.load("texture", "textures/editor/widgets/tools/flatten.png");
+
 ContentManager.load("texture", "textures/editor/widgets/tools/raise_hover.png");
 ContentManager.load("texture", "textures/editor/widgets/tools/paint_hover.png");
 ContentManager.load("texture", "textures/editor/widgets/tools/smooth_hover.png");
+ContentManager.load("texture", "textures/editor/widgets/tools/ramp_hover.png");
+ContentManager.load("texture", "textures/editor/widgets/tools/flatten_hover.png");
+
 ContentManager.load("texture", "textures/editor/widgets/tools/raise_pressed.png");
 ContentManager.load("texture", "textures/editor/widgets/tools/paint_pressed.png");
 ContentManager.load("texture", "textures/editor/widgets/tools/smooth_pressed.png");
+ContentManager.load("texture", "textures/editor/widgets/tools/ramp_pressed.png");
+ContentManager.load("texture", "textures/editor/widgets/tools/flatten_pressed.png");
 
 var EditorUI = EditorUI || function(editor, root)
 {
@@ -23,7 +31,9 @@ var EditorUI = EditorUI || function(editor, root)
 	this._toolNames = [
 		"Raise",
 		"Paint",
-		"Smooth"
+		"Smooth",
+		"Ramp",
+		"Flatten"
 	]
 
 	this._numTools = this._toolNames.length;
@@ -104,7 +114,7 @@ _.extend(EditorUI.prototype, {
 
 		this._changeTexture.ctx = this;
 		this._changeBrush.ctx = this;
-		
+
 		this._currentTextureMouseArea.setOnEnter(this._disableInput);
 		this._currentTextureMouseArea.setOnLeave(this._enableInput);
 		this._currentTextureMouseArea.setOnReleased(this._changeTexture)
