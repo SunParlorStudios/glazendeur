@@ -8,6 +8,11 @@ Enum("EditorTools", [
 	"Flatten"
 ]);
 
+Enum("Ramp", [
+	"Start",
+	"End"
+]);
+
 require("js/ui/editor/editor_ui");
 require("entities/scripts/editor/editor_history");
 
@@ -28,6 +33,7 @@ var Editor = Editor || function(params)
 	this._camera = this.world().spawn("entities/editor/editor_camera.json", {camera: Game.camera}, "Default");
 
 	this._radius = 5;
+	this._editingCircle.setBlend(1, 0, 0);
 
 	this._contentPath = "textures/terrain/"
 	this._brushes = IO.filesInDirectory(this._contentPath + "brushes");
@@ -58,6 +64,15 @@ var Editor = Editor || function(params)
 	this._currentTexture = 0;
 	this._currentBrush = 0;
 	this._currentHeight = 0;
+
+	this._rampStartCenter = {x: 0, y: 0};
+	this._rampEndCenter = {x: 0, y: 0};
+	this._affectedStart = [];
+	this._affectedEnd = [];
+
+	this._rampStart = 0;
+	this._rampEnd = 0;
+	this._wasRamping = Ramp.Start;
 	this._wasFlattening = false;
 
 	this._history = new EditorHistory(this._terrain);
@@ -123,8 +138,8 @@ _.extend(Editor.prototype, {
 
 		this._editingCircle.setPosition(x2d, z2d);
 
-		var flattenAffected = [];
-		var flattenAverage = 0;
+		var affected = [];
+		var average = 0;
 
 		var size = this._radius;
 		var dist;
@@ -146,6 +161,18 @@ _.extend(Editor.prototype, {
 				this._historyPoint = true;
 				var hp = new HistoryPoint(this._terrain);
 				this._history.addPoint(hp);
+			}
+
+			if (this._currentTool == EditorTools.Ramp)
+			{
+				if (this._wasRamping == Ramp.Start)
+				{
+					this._rampStartCenter = this._terrain.worldToIndex(x2d, z2d);
+				}
+				else if (this._wasRamping == Ramp.End)
+				{
+					this._rampEndCenter = this._terrain.worldToIndex(x2d, z2d);
+				}
 			}
 
 			for (var x = x2d - size; x < x2d + size; ++x)
@@ -193,12 +220,24 @@ _.extend(Editor.prototype, {
 
 						continue;
 					}
+					else if (this._currentTool == EditorTools.Ramp)
+					{
+						this._editingCircle.setBlend(1, 1, 0);
+
+						if ((this._wasRamping == Ramp.Start || this._wasRamping == Ramp.End) && t > 0)
+						{
+							average += this._terrain.getHeight(indices.x, indices.y);
+							affected.push({x: indices.x, y: indices.y});
+						}
+
+						continue;
+					}
 					else if (this._currentTool == EditorTools.Flatten)
 					{
 						if (t > 0)
 						{
-							flattenAverage += this._terrain.getHeight(indices.x, indices.y);
-							flattenAffected.push({x: indices.x, y: indices.y});
+							average += this._terrain.getHeight(indices.x, indices.y);
+							affected.push({x: indices.x, y: indices.y});
 						}
 
 						continue;
@@ -217,18 +256,34 @@ _.extend(Editor.prototype, {
 				}
 			}
 
-			if (this._currentTool == EditorTools.Flatten)
+			if (this._currentTool == EditorTools.Ramp)
+			{
+				average /= affected.length;
+				if (this._wasRamping == Ramp.Start)
+				{
+					this._affectedStart = affected;
+					this._rampStart = average;
+					this._wasRamping = Ramp.End;
+				}
+				else if (this._wasRamping == Ramp.End)
+				{
+					this._affectedEnd = affected;
+					this._rampEnd = average;
+				}
+			}
+			else if (this._currentTool == EditorTools.Flatten)
 			{
 				if (this._wasFlattening == false)
 				{
+					this._editingCircle.setBlend(0, 1, 0);
 					this._wasFlattening = true;
-					this._currentHeight = flattenAverage / flattenAffected.length;
+					this._currentHeight = average / affected.length;
 				}
 				
 				var indices = {x: 0, y: 0};
-				for (var i = 0; i < flattenAffected.length; ++i)
+				for (var i = 0; i < affected.length; ++i)
 				{
-					indices = flattenAffected[i];
+					indices = affected[i];
 					this._terrain.setHeight(indices.x, indices.y, this._currentHeight);
 				}
 			}
@@ -240,7 +295,50 @@ _.extend(Editor.prototype, {
 		{
 			if (this._wasFlattening == true)
 			{
+				this._editingCircle.setBlend(1, 0, 0);
 				this._wasFlattening = false;
+			}
+
+			if (this._wasRamping == Ramp.End)
+			{
+				var a = this._terrain.indexToWorld(this._rampStartCenter.x, this._rampStartCenter.y);
+				var b = this._terrain.indexToWorld(this._rampEndCenter.x, this._rampEndCenter.y);
+
+				var xx, zz, h, ox, oz;
+				var d = Math.distance(a.x, a.z, b.x, b.z);
+				var index;
+				var size = this._radius;
+				var dist, index;
+
+				for (var i = 0; i < d; ++i)
+				{
+					xx = Math.lerp(a.x, b.x, i / d);
+					zz = Math.lerp(a.z, b.z, i / d);
+
+					for (var rx = xx - size; rx < xx + size; ++rx)
+					{
+						for (var rz = zz - size; rz < zz + size; ++rz)
+						{
+							ox = rx - xx;
+							oz = rz - zz;
+
+							index = this._terrain.worldToIndex(rx, rz);
+
+							if (index.x !== undefined && index.y !== undefined)
+							{
+								dist = Math.distance(rx, rz, b.x - ox, b.z - oz);
+
+								h = Math.lerp(a.y, b.y, 1.0 - dist / d);
+								this._terrain.setHeight(index.x, index.y, h);
+							}
+						}
+					}
+				}
+
+				this._wasRamping = Ramp.Start;
+				this._editingCircle.setBlend(1, 0, 0);
+
+				this._terrain.flush();
 			}
 
 			this._historyPoint = false;

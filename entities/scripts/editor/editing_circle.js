@@ -29,6 +29,11 @@ _.extend(EditingCircle.prototype, {
 		this._radius = r;
 	},
 
+	setBlend: function(r, g, b)
+	{
+		this._circle.setBlend(r, g, b);
+	},
+
 	onUpdate: function(dt)
 	{
 		var ax, az, x, z, xx, zz;
@@ -59,8 +64,8 @@ _.extend(EditingCircle.prototype, {
 				h = Number.MAX_VALUE;
 			}
 
-			this._circle.setVertex(++count, x, h, z, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0);
-			this._circle.setVertex(++count, xx, h, zz, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0);
+			this._circle.setVertex(++count, x, h, z, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0);
+			this._circle.setVertex(++count, xx, h, zz, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0);
 
 			this._circle.setIndex(count - 1, count - 1);
 			this._circle.setIndex(count, count);
