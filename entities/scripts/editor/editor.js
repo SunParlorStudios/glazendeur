@@ -29,6 +29,7 @@ var Editor = Editor || function(params)
 	Lighting.setShadowColour(0.2, 0.3, 0.5);
 
 	this._terrain = params.terrain;
+	this._waterPlane = params.waterPlane;
 	this._editingCircle = this.world().spawn("entities/editor/editing_circle.json", {terrain: this._terrain}, "Default");
 	this._camera = this.world().spawn("entities/editor/editor_camera.json", {camera: Game.camera}, "Default");
 
@@ -88,10 +89,21 @@ var Editor = Editor || function(params)
 		this._terrain.brushTexture(this._brushes[this._currentBrush], "textures/terrain/textures/grass.png", 64, 64, 99999, 1.0, "textures/terrain/textures/grass_normal.png", "textures/terrain/textures/grass_specular.png");
 	}
 
+	for (var i = 0; i < 10; ++i)
+	{
+		this._waterPlane.brushTexture(this._brushes[this._currentBrush], "textures/terrain/textures/grass.png", 64, 64, 99999, 1.0, "textures/terrain/textures/grass_normal.png", "textures/terrain/textures/grass_specular.png");
+	}
+
 	if (IO.exists("json/terrain/map.json"))
 	{
 		this.load();
 	}
+
+	this._waterPlane.setDiffuseMap("textures/terrain/textures/ocean.png");
+	this._waterPlane.setNormalMap("textures/terrain/textures/ocean_normal.png");
+	this._waterPlane.setSpecularMap("textures/terrain/textures/ocean_specular.png");
+	this._waterPlane.setTechnique("Default");
+	this._waterPlane.setEffect("effects/water.effect");
 }
 
 _.inherit(Editor, Entity);
@@ -326,9 +338,7 @@ _.extend(Editor.prototype, {
 
 							if (index.x !== undefined && index.y !== undefined)
 							{
-								dist = Math.distance(rx, rz, b.x - ox, b.z - oz);
-
-								h = Math.lerp(a.y, b.y, 1.0 - dist / d);
+								h = Math.lerp(a.y, b.y, i / d);
 								this._terrain.setHeight(index.x, index.y, h);
 							}
 						}

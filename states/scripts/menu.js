@@ -19,7 +19,7 @@ _.extend(Menu.prototype, {
 		this._light = new Light(LightType.Directional);
 		this._light.setDirection(0, -1, -1);
 		this._landscape = this.world.spawn("entities/landscape.json", {}, "Default");
-		this._editor = this.world.spawn("entities/editor/editor.json", { terrain: this._landscape.terrain() });
+		this._editor = this.world.spawn("entities/editor/editor.json", { terrain: this._landscape.terrain(), waterPlane: this._landscape.waterPlane() });
 	},
 
 	update: function (dt)

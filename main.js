@@ -14,6 +14,7 @@ var RenderTargets = RenderTargets || {
 	default: new RenderTarget("Default"),
 	normals: new RenderTarget("Normals"),
 	lighting: new RenderTarget("Lighting"),
+	forward: new RenderTarget("Forward"),
 	ui: new RenderTarget("UI")
 }
 
@@ -24,7 +25,11 @@ Game.Initialise = function()
 	RenderTargets.default.addMultiTarget(RenderTargets.normals);
 	RenderTargets.default.addMultiTarget(RenderTargets.lighting);
 
-	RenderTargets.ui.setClearDepth(true);
+	RenderTargets.forward.setClearDepth(false);
+	RenderTargets.forward.setLightingEnabled(false);
+	RenderTargets.forward.setTechnique("Diffuse");
+
+	RenderTargets.ui.setClearDepth(false);
 	RenderTargets.ui.setLightingEnabled(false);
 	RenderTargets.ui.setTechnique("Diffuse");
 
@@ -36,6 +41,9 @@ Game.Initialise = function()
 
 	Game.camera = new Camera(CameraType.Perspective);
 	Game.camera.setTranslation(0, 0, 0);
+
+	ContentManager.load("shader", "shaders/water.fx");
+	ContentManager.load("effect", "effects/water.effect");
 
 	StateManager.loadState('states/loader.json');
 	StateManager.loadState('states/menu.json');
@@ -52,11 +60,15 @@ Game.Draw = function(dt)
 {
 	StateManager.draw();
 	Game.render(Game.camera, RenderTargets.default);
+	Game.render(Game.camera, RenderTargets.forward);
 	Game.render(Game.camera, RenderTargets.ui);
 }
 
 Game.Shutdown = function()
 {
+	RenderTargets.default.clear();
+	RenderTargets.forward.clear();
+	RenderTargets.ui.clear();
 	StateManager.shutdown();
 }
 

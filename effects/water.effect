@@ -1,0 +1,12 @@
+{
+	"techniques" : {
+		"Default" : {
+			"passes" : [
+				{
+					"shader" : "shaders/water.fx",
+					"sampling" : "Linear"
+				}
+			]
+		}
+	}
+}

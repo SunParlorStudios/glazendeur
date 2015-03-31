@@ -46,7 +46,6 @@ _.extend(World.prototype, {
 
 				fields = renderable;
 				renderable = new _GLOBAL_[renderable.type]();
-				
 				renderable.spawn(layer);
 
 				for (var field in this._fields)

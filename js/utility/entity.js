@@ -34,11 +34,11 @@ _.extend(Entity.prototype, {
 		}
 	},
 
-	spawn: function()
+	spawn: function(layer)
 	{
 		for (var i = 0; i < this._renderables.length; ++i)
 		{
-			this._renderables[i].spawn();
+			this._renderables[i].spawn(layer);
 		}
 	}
 });

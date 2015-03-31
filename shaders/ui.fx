@@ -45,6 +45,10 @@ VOut VS(float4 position : POSITION, float4 colour : COLOUR, float2 texcoord : TE
 }
 
 Texture2D TexDiffuse : register(t1);
+Texture2D TexNormal : register(t2);
+Texture2D TexSpecular : register(t3);
+Texture2D TexLight : register(t4);
+Texture2D TexDepth : register(t5);
 SamplerState Sampler;
 
 float4 PS(VOut input) : SV_TARGET

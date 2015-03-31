@@ -2,6 +2,9 @@
 	"renderables" : [
 		{
 			"type" : "Terrain"
+		},
+		{
+			"type" : "Terrain"
 		}
 	],
 
