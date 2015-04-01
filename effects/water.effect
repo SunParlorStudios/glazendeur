@@ -7,6 +7,15 @@
 					"sampling" : "Linear"
 				}
 			]
+		},
+
+		"PostProcess" : {
+			"passes" : [
+				{
+					"shader" : "shaders/water_post_processing.fx",
+					"sampling" : "Linear"
+				}
+			]
 		}
 	}
 }

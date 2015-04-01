@@ -62,7 +62,6 @@ Texture2D TexDiffuse : register(t1);
 Texture2D TexNormal : register(t2);
 Texture2D TexSpecular : register(t3);
 Texture2D TexLight : register(t4);
-Texture2D TexDepth : register(t5);
 SamplerState Sampler;
 
 float4 Specular(float3 v, float3 l, float3 n, float i, float p)
@@ -73,11 +72,18 @@ float4 Specular(float3 v, float3 l, float3 n, float i, float p)
     return i * pow(d, p) * float4(1.0f, 1.0f, 1.0f, 1.0f);
 }
 
-float4 PS(VOut input) : SV_TARGET
+struct PSOut
+{
+	float4 diffuse : SV_Target0;
+};
+
+PSOut PS(VOut input)
 {
 	float x = (input.texcoord.x * AnimationCoords.z) + AnimationCoords.x;
 	float y = (input.texcoord.y * AnimationCoords.w) + AnimationCoords.y;
 	float2 coords = float2(x, y);
+	float2 old_coords = coords;
+
 	coords *= 16;
 	coords += Time / 15;
 	float4 diffuse = TexDiffuse.Sample(Sampler, coords);
@@ -92,10 +98,11 @@ float4 PS(VOut input) : SV_TARGET
 
 	float4 view = normalize(EyePosition - input.world_pos);
 	float4 specular = Specular(view.xyz, lightDir, normal.rgb, TexSpecular.Sample(Sampler, coords).r, 1);
-	float depth = TexDepth.Sample(Sampler, coords).r;
 
 	diffuse.rgb *= saturate(dot(-lightDir, normal.rgb));
 	diffuse.rgb += specular.rgb;
-	diffuse.rgb = saturate(diffuse.rgb);
-	return float4(diffuse.rgb, 0.9);
+
+	PSOut output;
+	output.diffuse = float4(diffuse.rgb, 0.9);
+	return output;
 }

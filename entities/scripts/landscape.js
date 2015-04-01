@@ -6,7 +6,7 @@ var Landscape = Landscape || function(params)
 
 	this._waterPlane = this._renderables[1];
 	this._waterPlane.destroy();
-	this._waterPlane.spawn("Forward");
+	this._waterPlane.spawn("Water");
 	this._waterPlane.setTranslation(0, -10, 0);
 }
 

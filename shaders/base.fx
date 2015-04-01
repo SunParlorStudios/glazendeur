@@ -48,7 +48,7 @@ struct VOut
 VOut VS(float4 position : POSITION, float4 colour : COLOUR, float2 texcoord : TEXCOORD0, float3 normal : NORMAL, float3 tangent : TANGENT, float3 bitangent : BITANGENT)
 {
 	VOut output;
-	output.world_pos = position;
+	output.world_pos = mul(position, World);
 	output.position = mul(position, World);
 	output.position = mul(output.position, View);
 	output.position = mul(output.position, Projection);
@@ -73,6 +73,7 @@ struct PSOut
 	float4 colour : SV_Target0;
 	float4 normal : SV_Target1;
 	float4 ambient : SV_Target2;
+	float4 shore : SV_Target3;
 };
 float4 Reflection(float4 p, float4 eye, float3 normal)
 {
@@ -100,11 +101,12 @@ PSOut PS(VOut input)
 
 	float4 r = Reflection(input.world_pos, EyePosition, input.normal.rgb);
 	float spec = saturate(Material.SpecularIntensity * TexSpecular.Sample(Sampler, coords).r);
-	
+
 	output.colour = lerp(diffuse, r, saturate(Material.Reflectivity)) * Material.Diffuse * float4(Blend, 1.0f) * input.colour;
 	output.colour.a = Material.SpecularPower / 256;
 	output.normal = float4((normal.rgb + 1.0f) / 2.0f, spec);
 	output.ambient = float4(Material.Ambient.rgb, saturate(TexLight.Sample(Sampler, coords).r * Material.Emissive));
+	output.shore = input.world_pos.y / 8;
 
 	return output;
 }

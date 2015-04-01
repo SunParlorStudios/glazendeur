@@ -56,7 +56,8 @@ VOut VS(float4 position : POSITION, float4 colour : COLOUR, float2 texcoord : TE
 Texture2D TexColour : register(t0);
 Texture2D TexNormal : register(t1);
 Texture2D TexAmbient : register(t2);
-Texture2D TexDepth : register(t3);
+Texture2D TexShore : register(t3);
+Texture2D TexDepth : register(t4);
 SamplerState Sampler;
 
 struct LightResult

@@ -23,7 +23,7 @@ var Editor = Editor || function(params)
 
 	this._model = new Model("models/test_cube.fbx");
 	this._model.spawn("Default");
-	this._model.setTranslation(64, 0, 64);
+	this._model.setTranslation(64, 0.1, 64);
 
 	Lighting.setAmbientColour(0.3, 0.2, 0.1);
 	Lighting.setShadowColour(0.2, 0.3, 0.5);
