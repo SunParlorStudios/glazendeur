@@ -19,7 +19,7 @@ var EditorCamera = EditorCamera || function(params)
 	}
 
 	this._camera = params.camera;
-	this._camera.setNearPlane(20);
+	this._camera.setNearPlane(1);
 	this._camera.setFarPlane(300);
 }
 

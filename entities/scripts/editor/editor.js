@@ -24,6 +24,10 @@ var Editor = Editor || function(params)
 	this._model = new Model("models/test_cube.fbx");
 	this._model.spawn("Default");
 	this._model.setTranslation(64, 0.1, 64);
+	this._model.setSize(2, 2, 2);
+
+	this._gizmo = this.world().spawn("entities/editor/transform_gizmo.json", {}, "Default");
+	this._gizmo.setPosition(64, 0.1, 64);
 
 	Lighting.setAmbientColour(0.3, 0.2, 0.1);
 	Lighting.setShadowColour(0.2, 0.3, 0.5);

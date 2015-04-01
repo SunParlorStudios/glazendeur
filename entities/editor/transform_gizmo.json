@@ -1,0 +1,25 @@
+{
+	"renderables" : [
+		{
+			"type" : "Model",
+			"path" : "models/editor/gizmos/move_center.fbx"
+		},
+		{
+			"type" : "Model",
+			"path" : "models/editor/gizmos/move_axis.fbx"
+		},
+		{
+			"type" : "Model",
+			"path" : "models/editor/gizmos/move_axis.fbx"
+		},
+		{
+			"type" : "Model",
+			"path" : "models/editor/gizmos/move_axis.fbx"
+		}
+	],
+
+	"script" : {
+		"path" : "entities/scripts/editor/transform_gizmo",
+		"object" : "TransformGizmo"
+	}
+}

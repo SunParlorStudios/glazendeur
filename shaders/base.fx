@@ -43,6 +43,7 @@ struct VOut
 	float3 tangent : TEXCOORD2;
 	float3 bitangent : TEXCOORD3;
 	float4 world_pos : TEXCOORD4;
+	float depth : TEXCOORD5;
 };
 
 VOut VS(float4 position : POSITION, float4 colour : COLOUR, float2 texcoord : TEXCOORD0, float3 normal : NORMAL, float3 tangent : TANGENT, float3 bitangent : BITANGENT)
@@ -57,6 +58,7 @@ VOut VS(float4 position : POSITION, float4 colour : COLOUR, float2 texcoord : TE
 	output.bitangent = normalize(mul(bitangent, (float3x3)InvWorld));
 	output.texcoord = texcoord;
 	output.colour = colour;
+	output.depth = 1 - output.position.z / output.position.w;
 	return output;
 }
 
@@ -107,6 +109,7 @@ PSOut PS(VOut input)
 	output.normal = float4((normal.rgb + 1.0f) / 2.0f, spec);
 	output.ambient = float4(Material.Ambient.rgb, saturate(TexLight.Sample(Sampler, coords).r * Material.Emissive));
 	output.shore = input.world_pos.y / 8;
+	output.shore.a = 1;
 
 	return output;
 }

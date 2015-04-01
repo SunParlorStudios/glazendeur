@@ -36,9 +36,15 @@ SamplerState Sampler;
 
 float4 PS(VOut input) : SV_TARGET
 {
-	float shore = 1 - Shore.Sample(Sampler, input.texcoord).r;
+	float4 shore = Shore.Sample(Sampler, input.texcoord);
 	float4 final = Target.Sample(Sampler, input.texcoord);
-	final.rgb = lerp(final.rgb, float3(0.7,0.8,1), pow(shore + 0.25, 5));
-	final.a *= 1 - shore;
+	if (shore.a == 0)
+	{
+		shore.a = 1;
+		shore.rgb = 1;
+	}
+	final.rgb = lerp(final.rgb, float3(0.7,0.8,1), pow(1 - shore.r + 0.25, 5));
+	final.a *= shore.r;
+
 	return final;
 }

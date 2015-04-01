@@ -24,6 +24,10 @@ Game.Initialise = function()
 	ContentManager.load("shader", "shaders/water.fx");
 	ContentManager.load("shader", "shaders/water_post_processing.fx");
 	ContentManager.load("effect", "effects/water.effect");
+	ContentManager.load("texture", "textures/lenna.png");
+	ContentManager.load("model", "models/editor/gizmos/move_center.fbx");
+	ContentManager.load("model", "models/editor/gizmos/move_axis.fbx");
+
 
 	RenderTargets.shore.setClearAlbedo(false);
 

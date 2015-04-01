@@ -30,6 +30,7 @@ _.extend(World.prototype, {
 		var argc;
 		var argv = [];
 		var fields;
+		var parent;
 
 		if (toRender !== undefined)
 		{
@@ -38,14 +39,21 @@ _.extend(World.prototype, {
 				argv = [];
 				renderable = toRender[i];
 
-				if (_GLOBAL_[renderable.type] === undefined)
+				if (_GLOBAL_[renderable.type] === undefined || renderable.type === undefined)
 				{
 					Log.error("Unknown renderable type " + renderable.type + ", for entity '" + entityPath + "'");
 					continue;
 				}
 
 				fields = renderable;
-				renderable = new _GLOBAL_[renderable.type]();
+				if (renderable.type === "Model")
+				{
+					renderable = new Model(renderable.path === undefined ? parent : [renderable.path, parent]);
+				}
+				else
+				{
+					renderable = new _GLOBAL_[renderable.type](parent);
+				}
 				renderable.spawn(layer);
 
 				for (var field in this._fields)
@@ -64,13 +72,15 @@ _.extend(World.prototype, {
 				}
 
 				renderables.push(renderable);
+
+				if (parent === undefined)
+				{
+					parent = renderable;
+				}
 			}
 		}
 
-		if (constructor.prototype.onUpdate === undefined)
-		{
-			assert("'" + entityPath + "' doesn't have an onUpdate function")
-		}
+		assert(constructor.prototype.onUpdate !== undefined, "'" + entityPath + "' doesn't have an onUpdate function")
 
 		var entity = new constructor(params, renderables, this);
 
