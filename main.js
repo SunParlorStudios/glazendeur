@@ -7,6 +7,7 @@ require("js/utility/json");
 require("js/utility/enumerator");
 require("js/utility/vector2d");
 require("js/utility/vector3d");
+require("js/utility/ray");
 require("js/utility/world");
 require("js/ui/button");
 
@@ -27,6 +28,9 @@ Game.Initialise = function()
 	ContentManager.load("texture", "textures/lenna.png");
 	ContentManager.load("model", "models/editor/gizmos/move_center.fbx");
 	ContentManager.load("model", "models/editor/gizmos/move_axis.fbx");
+	ContentManager.load("model", "models/test_bridge.fbx");
+	ContentManager.load("texture", "textures/test_bridge.png");
+	ContentManager.load("texture", "textures/test_bridge_normal.png");
 
 
 	RenderTargets.shore.setClearAlbedo(false);

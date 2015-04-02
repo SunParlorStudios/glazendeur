@@ -21,21 +21,23 @@ var Editor = Editor || function(params)
 	Editor._super.constructor.call(this, arguments);
 	this._currentTool = EditorTools.Raise;
 
-	this._model = new Model("models/test_cube.fbx");
-	this._model.spawn("Default");
-	this._model.setTranslation(64, 0.1, 64);
-	this._model.setSize(2, 2, 2);
-
-	this._gizmo = this.world().spawn("entities/editor/transform_gizmo.json", {}, "Default");
-	this._gizmo.setPosition(64, 0.1, 64);
-
 	Lighting.setAmbientColour(0.3, 0.2, 0.1);
 	Lighting.setShadowColour(0.2, 0.3, 0.5);
+
+	this._model = new Model("models/test_bridge.fbx");
+	this._model.setDiffuseMap("textures/test_bridge.png");
+	this._model.setNormalMap("textures/test_bridge_normal.png");
+	this._model.spawn("Default");
+	this._model.setScale(0.5, 0.5, 0.5);
+	this._model.setTranslation(164, 30, 64);
 
 	this._terrain = params.terrain;
 	this._waterPlane = params.waterPlane;
 	this._editingCircle = this.world().spawn("entities/editor/editing_circle.json", {terrain: this._terrain}, "Default");
 	this._camera = this.world().spawn("entities/editor/editor_camera.json", {camera: Game.camera}, "Default");
+
+	this._gizmo = this.world().spawn("entities/editor/transform_gizmo.json", {editor: this, camera: this._camera}, "UI");
+	this._gizmo.setPosition(64, 2, 64);
 
 	this._radius = 5;
 	this._editingCircle.setBlend(1, 0, 0);
@@ -125,6 +127,24 @@ _.extend(Editor.prototype, {
 
 	updateCircle: function(dt)
 	{
+		this._editingCircle.setRadius(this._radius);
+
+		var p = this._camera.mouseToWorld();
+		var x2d = p.x;
+		var z2d = p.z;
+
+		this._editingCircle.setPosition(x2d, z2d);
+
+		var t = Game.camera.translation();
+
+		var dir = Vector3D.construct(t.x, t.y, t.z);
+		var m = Vector3D.construct(x2d, 0, z2d);
+
+		dir = Vector3D.normalise(Vector3D.sub(m, dir));
+		var ray = new Ray(t, dir);
+
+		this._gizmo.check(ray);
+
 		if (this._inputEnabled == false)
 		{
 			return;
@@ -138,21 +158,6 @@ _.extend(Editor.prototype, {
 		{
 			this._radius += dt * 10;
 		}
-
-		this._editingCircle.setRadius(this._radius);
-
-		var p = Mouse.position(MousePosition.Relative);
-		p.x = (p.x + RenderSettings.resolution().w / 2);
-		p.y = (p.y + RenderSettings.resolution().h / 2);
-
-		var unprojA = Game.camera.unproject(p.x, p.y, Game.camera.nearPlane());
-		var unprojB = Game.camera.unproject(p.x, p.y, Game.camera.farPlane());
-
-		var f = unprojA.y / (unprojB.y - unprojA.y);
-		var x2d = unprojA.x - f * (unprojB.x - unprojA.x);
-		var z2d = unprojA.z - f * (unprojB.z - unprojA.z);
-
-		this._editingCircle.setPosition(x2d, z2d);
 
 		var affected = [];
 		var average = 0;
@@ -458,7 +463,6 @@ _.extend(Editor.prototype, {
 
 	onUpdate: function(dt)
 	{
-		this._model.rotateBy(0, dt, 0);
 		this.updateCircle(dt);
 		this.updateSaving(dt);
 	}

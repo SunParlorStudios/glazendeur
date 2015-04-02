@@ -26,6 +26,23 @@ var EditorCamera = EditorCamera || function(params)
 _.inherit(EditorCamera, Entity);
 
 _.extend(EditorCamera.prototype, {
+	mouseToWorld: function()
+	{
+		var p = Mouse.position(MousePosition.Relative);
+		p.x = (p.x + RenderSettings.resolution().w / 2);
+		p.y = (p.y + RenderSettings.resolution().h / 2);
+
+		var unprojA = this._camera.unproject(p.x, p.y, this._camera.nearPlane());
+		var unprojB = this._camera.unproject(p.x, p.y, this._camera.farPlane());
+
+		var f = unprojA.y / (unprojB.y - unprojA.y);
+		return {
+			x: unprojA.x - f * (unprojB.x - unprojA.x),
+			y: 0,
+			z: unprojA.z - f * (unprojB.z - unprojA.z)
+		}
+	},
+
 	onUpdate: function(dt)
 	{
 		if (Keyboard.isDown(Key.Control))

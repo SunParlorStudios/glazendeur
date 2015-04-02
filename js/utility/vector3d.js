@@ -81,7 +81,7 @@ _.extend(Vector3D, {
 	 */
 	dot: function (v1, v2)
 	{
-		return this.construct(v1.x * v2.x, v1.y * v2.y, v1.z * v2.z);
+		return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 	},
 
 	/**
@@ -114,7 +114,7 @@ _.extend(Vector3D, {
 	 */
 	length: function (v)
 	{
-		return Math.sqrt(v.x * v.x, v.y * v.y, v.z * v.z);
+		return Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
 	},
 
 	/**

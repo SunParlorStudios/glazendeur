@@ -48,7 +48,7 @@ _.extend(World.prototype, {
 				fields = renderable;
 				if (renderable.type === "Model")
 				{
-					renderable = new Model(renderable.path === undefined ? parent : [renderable.path, parent]);
+					renderable = new Model(renderable.path, parent);
 				}
 				else
 				{

@@ -97,7 +97,7 @@ PSOut PS(VOut input)
 	clip(diffuse.a - 0.9);
 
 	float4 normal = normalize(TexNormal.Sample(Sampler, coords) * 2.0f - 1.0f);
-	normal.rgb = lerp(normal.rgb, float3(0, 0, 1), 1.0f - 0.2f);
+	normal.rgb = lerp(normal.rgb, float3(0, 0, 1), 0.25);
 
 	normal = float4((normal.x * input.tangent) + (normal.y * input.bitangent) + (normal.z * input.normal), 1.0f);
 
