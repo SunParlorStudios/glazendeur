@@ -9,7 +9,7 @@
 	],
 
 	"script" : {
-		"path" : "entities/scripts/landscape",
+		"path" : "entities/scripts/world/visual/landscape",
 		"object" : "Landscape"
 	}
 }

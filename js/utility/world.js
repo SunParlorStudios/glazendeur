@@ -17,7 +17,7 @@ _.extend(World.prototype, {
 		var description = JSON.load(entityPath, entityPath);
 		if (description.script === undefined || description.script.object === undefined || description.script.path === undefined)
 		{
-			assert("'" + entityPath + "' doesn't have a script assigned to it");
+			assert(false, "'" + entityPath + "' doesn't have a script assigned to it");
 		}
 		require(description.script.path);
 
@@ -79,7 +79,7 @@ _.extend(World.prototype, {
 				}
 			}
 		}
-
+		
 		assert(constructor.prototype.onUpdate !== undefined, "'" + entityPath + "' doesn't have an onUpdate function")
 
 		var entity = new constructor(params, renderables, this);

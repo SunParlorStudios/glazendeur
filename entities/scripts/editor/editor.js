@@ -19,57 +19,17 @@ require("entities/scripts/editor/editor_history");
 var Editor = Editor || function(params)
 {
 	Editor._super.constructor.call(this, arguments);
+
+	this._loadTextures();
 	this._currentTool = EditorTools.Raise;
 
-	Lighting.setAmbientColour(0.3, 0.2, 0.1);
-	Lighting.setShadowColour(0.2, 0.3, 0.5);
-
-	this._model = new Model("models/test_bridge.fbx");
-	this._model.setDiffuseMap("textures/test_bridge.png");
-	this._model.setNormalMap("textures/test_bridge_normal.png");
-	this._model.spawn("Default");
-	this._model.setScale(0.5, 0.5, 0.5);
-	this._model.setTranslation(164, 30, 64);
-
 	this._terrain = params.terrain;
-	this._waterPlane = params.waterPlane;
 	this._editingCircle = this.world().spawn("entities/editor/editing_circle.json", {terrain: this._terrain}, "Default");
-	this._camera = this.world().spawn("entities/editor/editor_camera.json", {camera: Game.camera}, "Default");
-
-	this._gizmo = this.world().spawn("entities/editor/transform_gizmo.json", {editor: this, camera: this._camera}, "UI");
-	this._gizmo.setPosition(64, 2, 64);
+	this._camera = params.camera;
 
 	this._radius = 5;
 	this._editingCircle.setBlend(1, 0, 0);
 
-	this._contentPath = "textures/terrain/"
-	this._brushes = IO.filesInDirectory(this._contentPath + "brushes");
-	for (var i = 0; i < this._brushes.length; ++i)
-	{
-		ContentManager.load("texture", this._brushes[i]);
-	}
-
-	var textures = IO.filesInDirectory(this._contentPath + "textures");
-	var texture, last;
-	var split = [];
-
-	this._textures = [];
-	for (var i = 0; i < textures.length; ++i)
-	{
-		texture = textures[i];
-		ContentManager.load("texture", texture);
-		split = texture.split("/");
-		split = split[split.length - 1].split(".png");
-		last = split[0];
-
-		if (last.split("_normal").length == 1 && last.split("_specular").length == 1)
-		{
-			this._textures.push(this._contentPath + "textures/" + last);
-		}	
-	}
-
-	this._currentTexture = 0;
-	this._currentBrush = 0;
 	this._currentHeight = 0;
 
 	this._rampStartCenter = {x: 0, y: 0};
@@ -89,32 +49,43 @@ var Editor = Editor || function(params)
 	this._ui = new EditorUI(this);
 	this._ui.setCurrentTexture(this._textures[this._currentTexture] + ".png");
 	this._ui.setCurrentBrush(this._brushes[this._currentBrush]);
-
-	for (var i = 0; i < 10; ++i)
-	{
-		this._terrain.brushTexture(this._brushes[this._currentBrush], "textures/terrain/textures/grass.png", 64, 64, 99999, 1.0, "textures/terrain/textures/grass_normal.png", "textures/terrain/textures/grass_specular.png");
-	}
-
-	for (var i = 0; i < 10; ++i)
-	{
-		this._waterPlane.brushTexture(this._brushes[this._currentBrush], "textures/terrain/textures/grass.png", 64, 64, 99999, 1.0, "textures/terrain/textures/grass_normal.png", "textures/terrain/textures/grass_specular.png");
-	}
-
-	if (IO.exists("json/terrain/map.json"))
-	{
-		this.load();
-	}
-
-	this._waterPlane.setDiffuseMap("textures/terrain/textures/ocean.png");
-	this._waterPlane.setNormalMap("textures/terrain/textures/ocean_normal.png");
-	this._waterPlane.setSpecularMap("textures/terrain/textures/ocean_specular.png");
-	this._waterPlane.setTechnique("Default");
-	this._waterPlane.setEffect("effects/water.effect");
 }
 
 _.inherit(Editor, Entity);
 
 _.extend(Editor.prototype, {
+	_loadTextures: function()
+	{
+		this._contentPath = "textures/terrain/"
+		this._brushes = IO.filesInDirectory(this._contentPath + "brushes");
+		for (var i = 0; i < this._brushes.length; ++i)
+		{
+			ContentManager.load("texture", this._brushes[i]);
+		}
+
+		var textures = IO.filesInDirectory(this._contentPath + "textures");
+		var texture, last;
+		var split = [];
+
+		this._textures = [];
+		for (var i = 0; i < textures.length; ++i)
+		{
+			texture = textures[i];
+			ContentManager.load("texture", texture);
+			split = texture.split("/");
+			split = split[split.length - 1].split(".png");
+			last = split[0];
+
+			if (last.split("_normal").length == 1 && last.split("_specular").length == 1)
+			{
+				this._textures.push(this._contentPath + "textures/" + last);
+			}	
+		}
+
+		this._currentTexture = 0;
+		this._currentBrush = 0;
+	},
+
 	setInputEnabled: function(input)
 	{
 		this._inputEnabled = input;
@@ -134,16 +105,6 @@ _.extend(Editor.prototype, {
 		var z2d = p.z;
 
 		this._editingCircle.setPosition(x2d, z2d);
-
-		var t = Game.camera.translation();
-
-		var dir = Vector3D.construct(t.x, t.y, t.z);
-		var m = Vector3D.construct(x2d, 0, z2d);
-
-		dir = Vector3D.normalise(Vector3D.sub(m, dir));
-		var ray = new Ray(t, dir);
-
-		this._gizmo.check(ray);
 
 		if (this._inputEnabled == false)
 		{
@@ -378,48 +339,12 @@ _.extend(Editor.prototype, {
 
 	save: function()
 	{
-		Log.info("Saving terrain data");
-		var toSave = {};
-		var terrainIndices = [];
-
-		for (var y = 0; y < this._terrain.height(); ++y)
-		{
-			for (var x = 0; x < this._terrain.width(); ++x)
-			{
-				terrainIndices[y * this._terrain.width() + x] = this._terrain.getHeight(x, y);
-			}
-		}
-
-		toSave.indices = terrainIndices;
-		var mapData = JSON.stringify(toSave);
-		IO.write("json/terrain/map.json", mapData);
-		this._terrain.saveTexture("textures/terrain/map/map");
-		Log.success("Saved terrain data");
+		this._terrain.save();
 	},
 
 	load: function()
 	{
-		Log.info("Loading terrain data");
-		var json = JSON.load("json/terrain/map.json", true);
-
-		if (json.indices === undefined)
-		{
-			Log.error("Terrain data corrupt, could not find indices list");
-			return;
-		}
-
-		this._terrain.loadTexture("textures/terrain/map/map");
-
-		for (var y = 0; y < this._terrain.height(); ++y)
-		{
-			for (var x = 0; x < this._terrain.width(); ++x)
-			{
-				this._terrain.setHeight(x, y, json.indices[y * this._terrain.width() + x]);
-			}
-		}
-
-		this._terrain.flush();
-		Log.success("Loaded terrain data");
+		this._terrain.load();
 	},
 
 	changeTexture: function()
@@ -459,6 +384,11 @@ _.extend(Editor.prototype, {
 				this.load();
 			}
 		}
+	},
+
+	camera: function()
+	{
+		return this._camera;
 	},
 
 	onUpdate: function(dt)

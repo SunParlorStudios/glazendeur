@@ -1,0 +1,6 @@
+{
+	"script" : {
+		"path" : "entities/scripts/world/gameplay/camera_control",
+		"object" : "CameraControl"
+	}
+}

@@ -33,7 +33,7 @@ var TransformGizmo = TransformGizmo || function(params)
 
 	this._radius = 5;
 	this._editor = params.editor;
-	this._camera = params.camera;
+	this._camera = this._editor.camera();
 	this._selected = undefined;
 	this._speed = 0.25;
 
@@ -46,6 +46,8 @@ var TransformGizmo = TransformGizmo || function(params)
 	{
 		this._renderables[i].setTechnique("Diffuse");
 	}
+
+	this._attachedTo = undefined;
 }
 
 _.inherit(TransformGizmo, Entity);
@@ -54,6 +56,11 @@ _.extend(TransformGizmo.prototype, {
 	setPosition: function(x, y, z)
 	{
 		this._root.setTranslation(x, y, z);
+	},
+
+	attachTo: function(child)
+	{
+		this._attachedTo = child;
 	},
 
 	check: function(ray)
@@ -105,12 +112,35 @@ _.extend(TransformGizmo.prototype, {
 		};
 
 		this._root.translateBy((p.x - this._startPosition.x) * o.x * 4, movement.y * o.y * -1, (p.z - this._startPosition.z) * -o.z * 4);
+		
+		var t = this._root.translation();
+		this._attachedTo.setTranslation(t.x, t.y, t.z);
 
 		this._startPosition = this._camera.mouseToWorld();
 	},
 
 	onUpdate: function()
 	{
+		if (this._attachedTo === undefined)
+		{
+			for (var i in this._axis)
+			{
+				this._axis[i].setBlend(0.3, 0.3, 0.3);
+			}
+
+			return;
+		}
+
+		var t = Game.camera.translation();
+		var p = this._camera.mouseToWorld();
+
+		var dir = Vector3D.construct(t.x, t.y, t.z);
+		var m = Vector3D.construct(p.x, 0, p.z);
+
+		dir = Vector3D.normalise(Vector3D.sub(m, dir));
+		var ray = new Ray(t, dir);
+
+		this.check(ray);
 		this.move();
 	}
 });

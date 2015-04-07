@@ -1,0 +1,12 @@
+{
+	"renderables" : [
+		{
+			"type" : "Model"
+		}
+	],
+
+	"script" : {
+		"path" : "entities/scripts/world/visual/prop",
+		"object" : "Prop"
+	}
+}

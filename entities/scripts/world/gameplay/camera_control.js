@@ -1,6 +1,8 @@
-var EditorCamera = EditorCamera || function(params)
+var CameraControl = CameraControl || function(params)
 {
-	EditorCamera._super.constructor.call(this, arguments);
+	CameraControl._super.constructor.call(this, arguments);
+
+	this._editMode = params.editMode;
 
 	this._speed = {
 		movement: 100,
@@ -23,9 +25,9 @@ var EditorCamera = EditorCamera || function(params)
 	this._camera.setFarPlane(300);
 }
 
-_.inherit(EditorCamera, Entity);
+_.inherit(CameraControl, Entity);
 
-_.extend(EditorCamera.prototype, {
+_.extend(CameraControl.prototype, {
 	mouseToWorld: function()
 	{
 		var p = Mouse.position(MousePosition.Relative);

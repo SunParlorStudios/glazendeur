@@ -1,6 +1,0 @@
-{
-	"script" : {
-		"path" : "entities/scripts/editor/editor_camera",
-		"object" : "EditorCamera"
-	}
-}
