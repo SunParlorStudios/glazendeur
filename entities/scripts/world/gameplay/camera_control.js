@@ -45,6 +45,19 @@ _.extend(CameraControl.prototype, {
 		}
 	},
 
+	projectRay: function()
+	{
+		var t = this._camera.translation();
+		var p = this.mouseToWorld();
+
+		var dir = Vector3D.construct(t.x, t.y, t.z);
+		var m = Vector3D.construct(p.x, 0, p.z);
+
+		dir = Vector3D.normalise(Vector3D.sub(m, dir));
+
+		return Ray.construct(t, dir);
+	},
+
 	onUpdate: function(dt)
 	{
 		if (Keyboard.isDown(Key.Control))

@@ -19,6 +19,7 @@ var EditingCircle = EditingCircle || function(params)
 
 	this._circle.create(false);
 	this._circle.setTopology(Topology.TriangleStrip);
+	this._circle.setTechnique("Diffuse");
 }
 
 _.inherit(EditingCircle, Entity);
