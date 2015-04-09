@@ -20,25 +20,28 @@ _.extend(Ray, {
 	 */
 	construct: function(o, d)
 	{
-		this.origin = o;
-		this.direction d;
-	}
+		return {
+			origin: o,
+			direction: d
+		}
+	},
 
 	/**
 	 * Does an intersection check with a 3D sphere
 	 *
 	 * @public
 	 * @method module:Ray#sphereIntersection
+	 * @param {object} ray - The ray to check the intersection for
 	 * @param {object} o - The origin of the sphere represented as a Vector3D
 	 * @param {number} r - The radius of the sphere
 	 * @return {bool} False if no intersection was found, otherwise true
 	 * @author Daniël Konings
 	 */
-	sphereIntersection: function(o, r)
+	sphereIntersection: function(ray, o, r)
 	{
-		var q = Vector3D.sub(o, this.origin);
+		var q = Vector3D.sub(o, ray.origin);
 	   	var c = Vector3D.length(q);
-	   	var v = Vector3D.dot(q, this.direction);
+	   	var v = Vector3D.dot(q, ray.direction);
 	   	var d = r*r - (c*c - v*v);
 
 	   	if (d < 0.0) 

@@ -156,12 +156,11 @@ _.extend(EditorUI.prototype, {
 
 	_disableInput: function()
 	{
-		Log.info("WAT");
-		this._editor.setInputEnabled(false);
+		this._editor.addInputDisable(InputDisable.UI);
 	},
 
 	_enableInput: function()
 	{
-		this._editor.setInputEnabled(true);
+		this._editor.removeInputDisable(InputDisable.UI);
 	}
 });

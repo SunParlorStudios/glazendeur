@@ -82,13 +82,22 @@ _.extend(TransformGizmo.prototype, {
 			c = this._colours[i];
 			axis.setBlend(c[0], c[1], c[2]);
 
-			if (ray.sphereIntersection(Vector3D.add(t, this._offsets[i]), this._radius) == true && found == false)
+			if (Ray.sphereIntersection(ray, Vector3D.add(t, this._offsets[i]), this._radius) == true && found == false)
 			{
 				axis.setBlend(1, 1, 1);
 				this._selected = i;
 				this._startPosition = this._camera.mouseToWorld();
 				found = true;
 			}
+		}
+
+		if (found == true)
+		{
+			this._editor.addInputDisable(InputDisable.Gizmo);
+		}
+		else
+		{
+			this._editor.removeInputDisable(InputDisable.Gizmo);
 		}
 	},
 
