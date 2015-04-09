@@ -56,6 +56,7 @@ _.extend(Landscape.prototype, {
 		}
 
 		this._terrain.flush();
+		
 		Log.success("Loaded terrain data");
 	},
 

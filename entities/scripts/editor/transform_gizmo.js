@@ -48,6 +48,7 @@ var TransformGizmo = TransformGizmo || function(params)
 	}
 
 	this._attachedTo = undefined;
+	this._root.setAlpha(0.3);
 }
 
 _.inherit(TransformGizmo, Entity);
@@ -145,16 +146,7 @@ _.extend(TransformGizmo.prototype, {
 			return;
 		}
 
-		var t = Game.camera.translation();
-		var p = this._camera.mouseToWorld();
-
-		var dir = Vector3D.construct(t.x, t.y, t.z);
-		var m = Vector3D.construct(p.x, 0, p.z);
-
-		dir = Vector3D.normalise(Vector3D.sub(m, dir));
-		var ray = Ray.construct(t, dir);
-
-		this.check(ray);
+		this.check(this._camera.projectRay());
 		this.move();
 	}
 });
