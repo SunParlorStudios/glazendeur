@@ -15,5 +15,9 @@ _.extend(ViewCreator, {
 		}
 
 		data = data.children.nodeobjectdata;
+		for (var i = 0; i < data.length; i++)
+		{
+			var child = data[i];
+		}
 	}
 });

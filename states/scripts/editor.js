@@ -30,13 +30,6 @@ _.extend(EditorState.prototype, {
 		{
 			this._editor = this.world.spawn("entities/editor/editor.json", { terrain: this._landscape, camera: this._camera });
 		}
-		var tex = {
-			diffuse: "textures/test_house.png",
-			normal: "textures/test_house.png",
-			specular: "textures/test_house.png"
-		}
-
-		this._trees = [];
 
 		RenderTargets.water.setPostProcessing("effects/water.effect");
 		RenderTargets.water.setTechnique("PostProcess");
