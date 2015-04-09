@@ -67,7 +67,7 @@ _.extend(Loader.prototype, {
 
 	leave: function()
 	{
-		//this.text.destroy();
+		this.text.destroy();
 	}
 });
 
