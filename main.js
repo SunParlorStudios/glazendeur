@@ -37,6 +37,7 @@ Game.Initialise = function()
 
 	RenderTargets.ui.setClearDepth(true);
 	RenderTargets.ui.setLightingEnabled(false);
+	RenderTargets.ui.setTechnique("Diffuse");
 
 	Window.setName("Project Glazen Deur");
 	Window.setSize(1280, 720);

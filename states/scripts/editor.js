@@ -42,7 +42,6 @@ _.extend(EditorState.prototype, {
 
 		RenderTargets.water.setPostProcessing("effects/water.effect");
 		RenderTargets.water.setTechnique("PostProcess");
-		RenderTargets.ui.setTechnique("Diffuse");
 	},
 
 	update: function (dt)

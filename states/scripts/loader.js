@@ -25,11 +25,25 @@ _.extend(Loader.prototype, {
 		this.info.resourcesPerFrame = data.info.resourcesPerFrame || 1;
 
 		this.currentResource = 0;
+
+		this.text = new Text();
+		this.text.setText("Loading resources, now at 0%...");
+		this.text.setFont("fonts/arial.ttf");
+		this.text.setFontSize(30);
+		this.text.setAlignment(TextAlignment.Center);
+		this.text.setTranslation(0, 0, 0);
+		this.text.spawn("UI");
 	},
 
 	update: function (dt)
 	{
 		Loader._super.update.call(this);
+
+		if (this.resourcesToLoad[this.currentResource] == undefined)
+		{
+			StateManager.switch(this.stateName);
+			return;
+		}
 
 		for (var i = 0; i < this.info.resourcesPerFrame; i++)
 		{
@@ -41,12 +55,19 @@ _.extend(Loader.prototype, {
 				break;
 		}
 
-		Log.Loader('Loader at ' + Math.round((this.currentResource / this.resourcesToLoad.length) * 100) + '%');
+		var percent = Math.round((this.currentResource / this.resourcesToLoad.length) * 100);
+		Log.Loader('Loader at ' + percent + '%');
+		this.text.setText("Loading resources, now at " + percent + "%...");
+	},
 
-		if (this.resourcesToLoad[this.currentResource] == undefined)
-		{
-			StateManager.switch(this.stateName);
-		}
+	draw: function ()
+	{
+		Game.render(Game.camera, RenderTargets.ui);
+	},
+
+	leave: function()
+	{
+		//this.text.destroy();
 	}
 });
 
