@@ -1,0 +1,15 @@
+{
+  "name": "glazendeur",
+  "version": "0.0.0",
+  "description": "glazendeur",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SunParlorStudios/glazendeur.git"
+  },
+  "author": "Riko Ophorst",
+  "license": "MIT",
+  "dependencies": {
+    "grunt": "~0.4.5",
+    "xml2js": "~0.4.6"
+  }
+}

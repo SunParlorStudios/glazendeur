@@ -12,24 +12,26 @@
         <PrePosition X="0.0000" Y="0.0000" />
         <PreSize X="0.0000" Y="0.0000" />
         <Children>
-          <NodeObjectData Name="Sprite_1" ActionTag="254827027" FrameEvent="" Tag="6" LeftMargin="382.4999" RightMargin="531.5001" TopMargin="287.0002" BottomMargin="306.9998" ctype="SpriteObjectData">
-            <Position X="405.4999" Y="329.9998" />
+          <NodeObjectData Name="Sprite_1" ActionTag="254827027" FrameEvent="" Tag="6" LeftMargin="359.1660" RightMargin="554.8340" TopMargin="140.3345" BottomMargin="453.6655" ctype="SpriteObjectData">
+            <Position X="382.1660" Y="476.6655" />
             <Scale ScaleX="5.9130" ScaleY="5.1304" />
             <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
             <CColor A="255" R="255" G="255" B="255" />
             <Size X="46.0000" Y="46.0000" />
-            <PrePosition X="0.4224" Y="0.5156" />
+            <PrePosition X="0.3981" Y="0.7448" />
             <PreSize X="0.0000" Y="0.0000" />
-            <FileData Type="Default" Path="Default/Sprite.png" />
-          </NodeObjectData>
-          <NodeObjectData Name="Sprite_2" ActionTag="2015294611" FrameEvent="" Tag="7" LeftMargin="121.5000" RightMargin="792.5000" TopMargin="448.0000" BottomMargin="146.0000" ctype="SpriteObjectData">
-            <Position X="144.5000" Y="169.0000" />
-            <Scale ScaleX="1.0000" ScaleY="1.0000" />
-            <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
-            <CColor A="255" R="255" G="255" B="255" />
-            <Size X="46.0000" Y="46.0000" />
-            <PrePosition X="0.1505" Y="0.2641" />
-            <PreSize X="0.0000" Y="0.0000" />
+            <Children>
+              <NodeObjectData Name="Sprite_2" ActionTag="2015294611" FrameEvent="" Tag="7" LeftMargin="47.6513" RightMargin="-47.6513" TopMargin="16.4311" BottomMargin="-16.4311" ctype="SpriteObjectData">
+                <Position X="70.6513" Y="6.5689" />
+                <Scale ScaleX="1.0000" ScaleY="1.0000" />
+                <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
+                <CColor A="255" R="255" G="255" B="255" />
+                <Size X="46.0000" Y="46.0000" />
+                <PrePosition X="1.5359" Y="0.1428" />
+                <PreSize X="0.0000" Y="0.0000" />
+                <FileData Type="Default" Path="Default/Sprite.png" />
+              </NodeObjectData>
+            </Children>
             <FileData Type="Default" Path="Default/Sprite.png" />
           </NodeObjectData>
           <NodeObjectData Name="Button_1" ActionTag="84009941" FrameEvent="" Tag="8" LeftMargin="542.5000" RightMargin="371.5000" TopMargin="521.0000" BottomMargin="83.0000" TouchEnable="True" FontSize="14" ButtonText="Button" Scale9Enable="True" Scale9Width="46" Scale9Height="36" ctype="ButtonObjectData">
