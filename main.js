@@ -1,4 +1,5 @@
 require("js/lib/bottom_line");
+require('js/lib/xml2json');
 require("js/utility/broadcaster");
 require("js/utility/state_manager");
 require("js/utility/math_extension");

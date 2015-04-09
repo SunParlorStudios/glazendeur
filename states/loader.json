@@ -13,7 +13,7 @@
 
 	"scripts": {
 		"path": "states/scripts/loader",
-		"ui": "ui/loader.json",
+		"ui": "ui/cocosstudio/loader.csd",
 		"class": "Loader"
 	}
 }

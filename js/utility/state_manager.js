@@ -1,4 +1,5 @@
 require("js/utility/state");
+require("js/ui/view_creator");
 
 /**
  * The StateManager which manages the states
@@ -47,7 +48,7 @@ _.extend(StateManager, {
 				class: stateData.scripts.class,
 				resourcesCached: false,
 				entities: stateData.entities,
-				actual: new _GLOBAL_[stateData.scripts.class](),
+				actual: new _GLOBAL_[stateData.scripts.class](stateData.scripts.ui),
 				autoStart: stateData.autoStart,
 				loader: stateData.loader,
 				initialized: false,

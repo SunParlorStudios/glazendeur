@@ -5,7 +5,7 @@
  * @constructor module:State
  * @author Riko Ophorst
  */
-function State ()
+function State (data)
 {
 	/** 
 	 * The world of this state
@@ -15,6 +15,9 @@ function State ()
 	 * @author Riko Ophorst
 	 */
 	this.world = new World();
+
+	if (data[0] !== undefined)
+		this.ui = ViewCreator.createView(data[0]);
 }
 
 _.extend(State.prototype, {
