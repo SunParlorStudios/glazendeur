@@ -1,11 +1,3 @@
-ContentManager.load("texture", "textures/terrain/ocean/ocean.png");
-ContentManager.load("texture", "textures/terrain/ocean/ocean_normal.png");
-ContentManager.load("texture", "textures/terrain/ocean/ocean_specular.png");
-ContentManager.load("texture", "textures/terrain/textures/grass.png");
-ContentManager.load("texture", "textures/terrain/textures/grass_normal.png");
-ContentManager.load("texture", "textures/terrain/textures/grass_specular.png");
-ContentManager.load("texture", "textures/terrain/brushes/brush_1.png");
-
 var Landscape = Landscape || function(params)
 {
 	Landscape._super.constructor.call(this, arguments);

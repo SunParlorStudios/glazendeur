@@ -1,0 +1,59 @@
+{
+	"name": "editor",
+
+	"entities": [
+
+	],
+
+	"loader": {
+		"resources": [
+			[ "shader", "shaders/water.fx" ],
+			[ "shader", "shaders/water_post_processing.fx" ],
+			[ "effect", "effects/water.effect" ],
+			[ "texture", "textures/lenna.png" ],
+			[ "texture", "textures/test_house.png" ],
+			[ "texture", "textures/test_house_normal.png" ],
+			[ "texture", "textures/test_house_specular.png" ],
+			[ "texture", "textures/tree.png" ],
+			[ "texture", "textures/tree_normal.png" ],
+			[ "texture", "textures/editor/widgets/tools/raise.png" ],
+			[ "texture", "textures/editor/widgets/tools/paint.png" ],
+			[ "texture", "textures/editor/widgets/tools/smooth.png" ],
+			[ "texture", "textures/editor/widgets/tools/ramp.png" ],
+			[ "texture", "textures/editor/widgets/tools/flatten.png" ],
+			[ "texture", "textures/editor/widgets/tools/raise_hover.png" ],
+			[ "texture", "textures/editor/widgets/tools/paint_hover.png" ],
+			[ "texture", "textures/editor/widgets/tools/smooth_hover.png" ],
+			[ "texture", "textures/editor/widgets/tools/ramp_hover.png" ],
+			[ "texture", "textures/editor/widgets/tools/flatten_hover.png" ],
+			[ "texture", "textures/editor/widgets/tools/raise_pressed.png" ],
+			[ "texture", "textures/editor/widgets/tools/paint_pressed.png" ],
+			[ "texture", "textures/editor/widgets/tools/smooth_pressed.png" ],
+			[ "texture", "textures/editor/widgets/tools/ramp_pressed.png" ],
+			[ "texture", "textures/editor/widgets/tools/flatten_pressed.png" ],
+			[ "texture", "textures/terrain/ocean/ocean.png" ],
+			[ "texture", "textures/terrain/ocean/ocean_normal.png" ],
+			[ "texture", "textures/terrain/ocean/ocean_specular.png" ],
+			[ "texture", "textures/terrain/textures/grass.png" ],
+			[ "texture", "textures/terrain/textures/grass_normal.png" ],
+			[ "texture", "textures/terrain/textures/grass_specular.png" ],
+			[ "texture", "textures/terrain/brushes/brush_1.png" ],
+			[ "model", "models/editor/gizmos/move_center.fbx" ],
+			[ "model", "models/editor/gizmos/move_axis.fbx" ],
+			[ "model", "models/test_house.fbx" ],
+			[ "model", "models/test_cube.fbx" ]
+		],
+		"info": {
+			"resourcesPerFrame": 1,
+			"displayName": "WE B LOADIN' THE MENU SCREENIO"
+		}
+	},
+
+	"scripts": {
+		"path": "states/scripts/editor",
+		"ui": "ui/editor.json",
+		"class": "EditorState"
+	},
+
+	"autoStart": false
+}

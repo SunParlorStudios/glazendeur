@@ -41,11 +41,25 @@ _.extend(Loader.prototype, {
 				break;
 		}
 
-		Log.info('[LOADER] Loader at ' + Math.round(((this.currentResource-1) / this.resourcesToLoad.length) * 100) + '%');
+		Log.Loader('Loader at ' + Math.round((this.currentResource / this.resourcesToLoad.length) * 100) + '%');
 
 		if (this.resourcesToLoad[this.currentResource] == undefined)
 		{
 			StateManager.switch(this.stateName);
 		}
+	}
+});
+
+_.extend(Log, {
+	/**
+	 * Logs a JSON message in the console
+	 * 
+	 * @public
+	 * @method module:Log#JSON
+	 * @author Daniël Konings
+	 */
+	Loader: function (str) 
+	{
+		Log.rgb("> " + str, 100, 250, 220, 50, 100, 100);
 	}
 });

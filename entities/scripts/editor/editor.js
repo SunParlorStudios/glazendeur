@@ -1,5 +1,3 @@
-ContentManager.load("model", "models/test_cube.fbx");
-
 Enum("EditorTools", [
 	"Raise",
 	"Paint",

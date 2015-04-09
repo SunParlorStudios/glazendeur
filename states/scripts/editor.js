@@ -1,19 +1,19 @@
 /** 
- * The menu state
+ * The Editor state
  *
  * @public
- * @constructor module:Menu
+ * @constructor module:EditorState
  * @extends module:State
  * @author Riko Ophorst
  */
-var Menu = Menu || function()
+var EditorState = EditorState || function()
 {
-	Menu._super.constructor.call(this, arguments);
+	EditorState._super.constructor.call(this, arguments);
 }
 
-_.inherit(Menu, State);
+_.inherit(EditorState, State);
 
-_.extend(Menu.prototype, {
+_.extend(EditorState.prototype, {
 	init: function()
 	{
 		this._editMode = CVar.get("editMode") == true;
@@ -39,11 +39,22 @@ _.extend(Menu.prototype, {
 		this._model2 = this.world.spawn("entities/world/visual/prop.json", {model: "models/test_house.fbx", textures: tex, editMode: this._editMode, editor: this._editor}, "Default");
 	
 		this._trees = [];
-		
+
+		RenderTargets.water.setPostProcessing("effects/water.effect");
+		RenderTargets.water.setTechnique("PostProcess");
+		RenderTargets.ui.setTechnique("Diffuse");
 	},
 
 	update: function (dt)
 	{
-		Menu._super.update.call(this, dt);
+		EditorState._super.update.call(this, dt);
+	},
+
+	draw: function ()
+	{
+		Game.render(Game.camera, RenderTargets.default);
+		Game.render(Game.camera, RenderTargets.water);
+		Game.render(Game.camera, RenderTargets.ui);
+		RenderTargets.shore.clearAlbedo();
 	}
 });

@@ -5,24 +5,6 @@ Enum("EditorUILayer",[
 	"Widgets"
 ]);
 
-ContentManager.load("texture", "textures/editor/widgets/tools/raise.png");
-ContentManager.load("texture", "textures/editor/widgets/tools/paint.png");
-ContentManager.load("texture", "textures/editor/widgets/tools/smooth.png");
-ContentManager.load("texture", "textures/editor/widgets/tools/ramp.png");
-ContentManager.load("texture", "textures/editor/widgets/tools/flatten.png");
-
-ContentManager.load("texture", "textures/editor/widgets/tools/raise_hover.png");
-ContentManager.load("texture", "textures/editor/widgets/tools/paint_hover.png");
-ContentManager.load("texture", "textures/editor/widgets/tools/smooth_hover.png");
-ContentManager.load("texture", "textures/editor/widgets/tools/ramp_hover.png");
-ContentManager.load("texture", "textures/editor/widgets/tools/flatten_hover.png");
-
-ContentManager.load("texture", "textures/editor/widgets/tools/raise_pressed.png");
-ContentManager.load("texture", "textures/editor/widgets/tools/paint_pressed.png");
-ContentManager.load("texture", "textures/editor/widgets/tools/smooth_pressed.png");
-ContentManager.load("texture", "textures/editor/widgets/tools/ramp_pressed.png");
-ContentManager.load("texture", "textures/editor/widgets/tools/flatten_pressed.png");
-
 var EditorUI = EditorUI || function(editor, root)
 {
 	this._editor = editor;

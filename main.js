@@ -22,19 +22,6 @@ var RenderTargets = RenderTargets || {
 
 Game.Initialise = function()
 {
-	ContentManager.load("shader", "shaders/water.fx");
-	ContentManager.load("shader", "shaders/water_post_processing.fx");
-	ContentManager.load("effect", "effects/water.effect");
-	ContentManager.load("texture", "textures/lenna.png");
-	ContentManager.load("model", "models/editor/gizmos/move_center.fbx");
-	ContentManager.load("model", "models/editor/gizmos/move_axis.fbx");
-	ContentManager.load("model", "models/test_house.fbx");
-	ContentManager.load("texture", "textures/test_house.png");
-	ContentManager.load("texture", "textures/test_house_normal.png");
-	ContentManager.load("texture", "textures/test_house_specular.png");
-	ContentManager.load("texture", "textures/tree.png");
-	ContentManager.load("texture", "textures/tree_normal.png");
-
 
 	RenderTargets.shore.setClearAlbedo(false);
 
@@ -46,13 +33,10 @@ Game.Initialise = function()
 
 	RenderTargets.water.setClearDepth(false);
 	RenderTargets.water.setLightingEnabled(false);
-	RenderTargets.water.setPostProcessing("effects/water.effect");
-	RenderTargets.water.setTechnique("PostProcess");
 	RenderTargets.water.addMultiTarget(RenderTargets.shore);
 
 	RenderTargets.ui.setClearDepth(true);
 	RenderTargets.ui.setLightingEnabled(false);
-	RenderTargets.ui.setTechnique("Diffuse");
 
 	Window.setName("Project Glazen Deur");
 	Window.setSize(1280, 720);
@@ -64,9 +48,8 @@ Game.Initialise = function()
 	Game.camera.setTranslation(0, 0, 0);
 
 	StateManager.loadState('states/loader.json');
-	StateManager.loadState('states/menu.json');
-
-	StateManager.switch('menu');
+	StateManager.loadState('states/editor.json');
+	StateManager.switch('editor');
 }
 
 Game.Update = function(dt)
@@ -77,10 +60,6 @@ Game.Update = function(dt)
 Game.Draw = function(dt)
 {
 	StateManager.draw();
-	Game.render(Game.camera, RenderTargets.default);
-	Game.render(Game.camera, RenderTargets.water);
-	Game.render(Game.camera, RenderTargets.ui);
-	RenderTargets.shore.clearAlbedo();
 }
 
 Game.Shutdown = function()
