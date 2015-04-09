@@ -55,10 +55,10 @@ Game.Initialise = function()
 	RenderTargets.ui.setTechnique("Diffuse");
 
 	Window.setName("Project Glazen Deur");
-	Window.setSize(800, 600);
+	Window.setSize(1280, 720);
 
 	RenderSettings.setVsync(true);
-	RenderSettings.setResolution(800, 600);
+	RenderSettings.setResolution(1280, 720);
 
 	Game.camera = new Camera(CameraType.Perspective);
 	Game.camera.setTranslation(0, 0, 0);

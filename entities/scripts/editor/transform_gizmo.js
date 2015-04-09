@@ -136,7 +136,7 @@ _.extend(TransformGizmo.prototype, {
 		var m = Vector3D.construct(p.x, 0, p.z);
 
 		dir = Vector3D.normalise(Vector3D.sub(m, dir));
-		var ray = new Ray(t, dir);
+		var ray = Ray.construct(t, dir);
 
 		this.check(ray);
 		this.move();
