@@ -8,42 +8,49 @@ _.extend(ViewCreator, {
 }, {
 	createView: function (path)
 	{
-		var data = xml2json.parser(IO.read(path)).gameprojectfile.content.content.objectdata;
-		if (data.children === undefined)
-		{
-			return;
-		}
+		var data = JSON.load(path).GameProjectFile.Content[0].Content[0].ObjectData[0].Children[0].NodeObjectData;
 
 		var view = {};
 
-		Log.info(JSON.stringify(xml2json.parser(IO.read(path))));
+		LogObject(data);
 
-		//LogObject(data);
+		this.parseChildren(view, data);
 
-		//this.parseChildren(view, data);
+		return view;
 	},
 
-	parseChildren: function (view, alldata)
+	parseChildren: function (view, data)
 	{
-		var data = alldata.children.nodeobjectdata;
 		for (var i = 0; i < data.length; i++)
 		{
 			var child = data[i];
-			var childData = child.children;
 
-			switch (child.ctype)
+			switch (child['$'].ctype)
 			{
 				case "SpriteObjectData":
 				case "ImageViewObjectData":
-					Log.info(child.name);
+					var widget = new Widget();
+
+					widget.setTranslation(
+						parseInt(child.Position[0]['$'].X - RenderSettings.resolution().w / 2), 
+						parseInt((child.Position[0]['$'].Y - RenderSettings.resolution().h / 2) * -1), 
+						0
+					);
+
+					ContentManager.load('texture', 'ui/cocosstudio/' + child.FileData[0]['$'].Path);
+					widget.setDiffuseMap('ui/cocosstudio/' + child.FileData[0]['$'].Path);
+
+					widget.setSize(parseInt(child.Size[0]['$'].X), parseInt(child.Size[0]['$'].Y));
+					widget.setOffset(parseInt(child.AnchorPoint[0]['$'].ScaleX), parseInt(child.AnchorPoint[0]['$'].ScaleY));
+
+					widget.spawn('UI');
+
+					view[child['$'].Name] = widget;
 					break;
 				case "ButtonObjectData":
-					Log.info(child.name);
+					Log.info(child['$'].Name);
 					break;
 			}
-
-			//if (child.children !== undefined)
-				//this.parseChildren(view, alldata);
 		}
 	}
 });

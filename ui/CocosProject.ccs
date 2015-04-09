@@ -5,6 +5,9 @@
       <RootFolder Name=".">
         <Project Name="loader.csd" Type="Scene" />
         <Project Name="editor.csd" Type="Scene" />
+        <Folder Name="textures">
+          <Image Name="base.png" />
+        </Folder>
       </RootFolder>
     </Group>
   </SolutionFolder>

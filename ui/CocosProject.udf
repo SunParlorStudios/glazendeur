@@ -1,3 +1,13 @@
 <UserData>
-  <Properties />
+  <Properties>
+    <Item Key="TabsParamsKey">
+      <Value ctype="TabsInfo">
+        <OpenedDocuments>
+          <FilePathData Path="loader.csd" />
+          <FilePathData Path="editor.csd" />
+        </OpenedDocuments>
+        <ActiveDocument Path="loader.csd" />
+      </Value>
+    </Item>
+  </Properties>
 </UserData>

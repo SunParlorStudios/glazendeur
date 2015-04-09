@@ -3,59 +3,44 @@
   <Content ctype="GameProjectContent">
     <Content>
       <Animation Duration="0" Speed="1.0000" />
-      <ObjectData Name="Scene" FrameEvent="" Tag="40" ctype="SingleNodeObjectData">
+      <ObjectData Name="Scene" FrameEvent="" Tag="40" RightMargin="-1280.0000" TopMargin="-720.0000" ctype="SingleNodeObjectData">
         <Position X="0.0000" Y="0.0000" />
         <Scale ScaleX="1.0000" ScaleY="1.0000" />
         <AnchorPoint />
         <CColor A="255" R="255" G="255" B="255" />
-        <Size X="960.0000" Y="640.0000" />
+        <Size X="1280.0000" Y="720.0000" />
         <PrePosition X="0.0000" Y="0.0000" />
         <PreSize X="0.0000" Y="0.0000" />
         <Children>
-          <NodeObjectData Name="Sprite_1" ActionTag="254827027" FrameEvent="" Tag="6" LeftMargin="359.1660" RightMargin="554.8340" TopMargin="140.3345" BottomMargin="453.6655" ctype="SpriteObjectData">
-            <Position X="382.1660" Y="476.6655" />
-            <Scale ScaleX="5.9130" ScaleY="5.1304" />
-            <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
-            <CColor A="255" R="255" G="255" B="255" />
-            <Size X="46.0000" Y="46.0000" />
-            <PrePosition X="0.3981" Y="0.7448" />
-            <PreSize X="0.0000" Y="0.0000" />
-            <Children>
-              <NodeObjectData Name="Sprite_2" ActionTag="2015294611" FrameEvent="" Tag="7" LeftMargin="47.6513" RightMargin="-47.6513" TopMargin="16.4311" BottomMargin="-16.4311" ctype="SpriteObjectData">
-                <Position X="70.6513" Y="6.5689" />
-                <Scale ScaleX="1.0000" ScaleY="1.0000" />
-                <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
-                <CColor A="255" R="255" G="255" B="255" />
-                <Size X="46.0000" Y="46.0000" />
-                <PrePosition X="1.5359" Y="0.1428" />
-                <PreSize X="0.0000" Y="0.0000" />
-                <FileData Type="Default" Path="Default/Sprite.png" />
-              </NodeObjectData>
-            </Children>
-            <FileData Type="Default" Path="Default/Sprite.png" />
-          </NodeObjectData>
-          <NodeObjectData Name="Button_1" ActionTag="84009941" FrameEvent="" Tag="8" LeftMargin="542.5000" RightMargin="371.5000" TopMargin="521.0000" BottomMargin="83.0000" TouchEnable="True" FontSize="14" ButtonText="Button" Scale9Enable="True" Scale9Width="46" Scale9Height="36" ctype="ButtonObjectData">
-            <Position X="565.5000" Y="101.0000" />
+          <NodeObjectData Name="Sprite_3" ActionTag="1751350460" FrameEvent="" Tag="17" LeftMargin="242.2484" RightMargin="671.7516" TopMargin="188.2281" BottomMargin="405.7719" ctype="SpriteObjectData">
+            <Position X="265.2484" Y="428.7719" />
             <Scale ScaleX="1.0000" ScaleY="1.0000" />
             <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
             <CColor A="255" R="255" G="255" B="255" />
-            <Size X="46.0000" Y="36.0000" />
-            <PrePosition X="0.5891" Y="0.1578" />
+            <Size X="50.0000" Y="50.0000" />
+            <PrePosition X="0.2763" Y="0.6700" />
             <PreSize X="0.0000" Y="0.0000" />
-            <TextColor A="255" R="65" G="65" B="70" />
-            <DisabledFileData Type="Default" Path="Default/Button_Disable.png" />
-            <PressedFileData Type="Default" Path="Default/Button_Press.png" />
-            <NormalFileData Type="Default" Path="Default/Button_Normal.png" />
+            <FileData Type="Normal" Path="textures/base.png" />
           </NodeObjectData>
-          <NodeObjectData Name="Image_1" ActionTag="819698787" FrameEvent="" Tag="9" LeftMargin="751.5000" RightMargin="162.5000" TopMargin="285.0000" BottomMargin="309.0000" Scale9Width="46" Scale9Height="46" ctype="ImageViewObjectData">
-            <Position X="774.5000" Y="332.0000" />
+          <NodeObjectData Name="Sprite_4" ActionTag="1534192023" FrameEvent="" Tag="18" LeftMargin="555.0031" RightMargin="674.9969" TopMargin="214.7499" BottomMargin="455.2501" ctype="SpriteObjectData">
+            <Position X="580.0031" Y="480.2501" />
             <Scale ScaleX="1.0000" ScaleY="1.0000" />
             <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
             <CColor A="255" R="255" G="255" B="255" />
-            <Size X="46.0000" Y="46.0000" />
-            <PrePosition X="0.8068" Y="0.5188" />
+            <Size X="50.0000" Y="50.0000" />
+            <PrePosition X="0.4531" Y="0.6670" />
+            <PreSize X="0.0391" Y="0.0694" />
+            <FileData Type="Normal" Path="textures/base.png" />
+          </NodeObjectData>
+          <NodeObjectData Name="Sprite_5" ActionTag="1386005850" FrameEvent="" Tag="19" LeftMargin="382.7422" RightMargin="531.2578" TopMargin="336.0463" BottomMargin="257.9537" ctype="SpriteObjectData">
+            <Position X="405.7422" Y="280.9537" />
+            <Scale ScaleX="1.0000" ScaleY="1.0000" />
+            <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
+            <CColor A="255" R="255" G="255" B="255" />
+            <Size X="50.0000" Y="50.0000" />
+            <PrePosition X="0.4226" Y="0.4390" />
             <PreSize X="0.0000" Y="0.0000" />
-            <FileData Type="Default" Path="Default/ImageFile.png" />
+            <FileData Type="Normal" Path="textures/base.png" />
           </NodeObjectData>
         </Children>
       </ObjectData>

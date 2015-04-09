@@ -2,18 +2,14 @@
 	"name": "loader",
 
 	"entities": [
-		{
-			"json": "entities/landscape.json",
-			"params": { "width": 512, "height": 512, "x": 0 },
-			"layer": "Default"
-		}
+	
 	],
 
 	"loader": false,
 
 	"scripts": {
 		"path": "states/scripts/loader",
-		"ui": "ui/cocosstudio/loader.csd",
+		"ui": "ui/cocosstudio/loader.json",
 		"class": "Loader"
 	}
 }
