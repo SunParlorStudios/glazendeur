@@ -52,6 +52,7 @@ var Editor = Editor || function(params)
 	this._history = new EditorHistory(this._terrain);
 	this._historyPoint = false;
 	this._inputEnabled = [];
+	this._currentGizmo = undefined;
 
 	this._ui = new EditorUI(this);
 	this._ui.setCurrentTexture(this._textures[this._currentTexture] + ".png");
@@ -114,6 +115,16 @@ _.extend(Editor.prototype, {
 		}
 
 		return false;
+	},
+
+	setCurrentGizmo: function(gizmo)
+	{
+		this._currentGizmo = gizmo;
+	},
+
+	currentGizmo: function()
+	{
+		return this._currentGizmo;
 	},
 
 	setTool: function(tool)

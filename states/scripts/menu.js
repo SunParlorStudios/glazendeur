@@ -36,6 +36,7 @@ _.extend(Menu.prototype, {
 			specular: "textures/test_house.png"
 		}
 		this._model = this.world.spawn("entities/world/visual/prop.json", {model: "models/test_house.fbx", textures: tex, editMode: this._editMode, editor: this._editor}, "Default");
+		this._model2 = this.world.spawn("entities/world/visual/prop.json", {model: "models/test_house.fbx", textures: tex, editMode: this._editMode, editor: this._editor}, "Default");
 	
 		this._trees = [];
 		

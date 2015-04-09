@@ -70,6 +70,11 @@ _.extend(TransformGizmo.prototype, {
 			return;
 		}
 
+		if (this._editor.currentGizmo() !== this && this._editor.currentGizmo() !== undefined)
+		{
+			return
+		}
+
 		this._selected = undefined;
 		var t = this._root.translation();
 		var found = false;
@@ -94,10 +99,12 @@ _.extend(TransformGizmo.prototype, {
 		if (found == true)
 		{
 			this._editor.addInputDisable(InputDisable.Gizmo);
+			this._editor.setCurrentGizmo(this);
 		}
 		else
 		{
 			this._editor.removeInputDisable(InputDisable.Gizmo);
+			this._editor.setCurrentGizmo(undefined);
 		}
 	},
 
