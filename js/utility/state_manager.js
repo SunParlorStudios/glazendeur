@@ -92,11 +92,11 @@ _.extend(StateManager, {
 	 */
 	switch: function (name, leaveParams, showParams)
 	{
+		// Handles leaving of the current state
 		var state;
 		if (this._current !== undefined)
 		{
 			state = this._states[this._current];
-
 			state.actual.leave.call(state.actual, leaveParams);
 		}
 		else
@@ -104,6 +104,7 @@ _.extend(StateManager, {
 			showParams = leaveParams;
 		}
 
+		// Starts showing to the new state
 		state = this._states[name];
 		if (state === undefined)
 		{
@@ -111,21 +112,24 @@ _.extend(StateManager, {
 			return;
 		}
 
+		// Wants the loader to preload some assets? If so, was it even loaded already? If that is also the case, then we invoke the loader to load the new state's resources
 		if (!!state.loader && state.resourcesCached !== true)
 		{
 			var loader = this._states['loader'];
+
+			Log.info('[STATEMANAGER] Switching state to loader');
 			loader.actual.show.call(loader.actual, {
 				info: state.loader.info,
 				resources: state.loader.resources,
 				to: state.name
 			});
 
-			Log.info('SWITCHING TO LOADER');
 			this._current = 'loader';
 			state.resourcesCached = true;
 		}
 		else
 		{
+			// Was the state ever initialized? If no, initialize it
 			if (!state.initialized)
 			{
 				if (state.entities !== undefined && state.entities.length > 0)
@@ -138,11 +142,13 @@ _.extend(StateManager, {
 
 				state.initialized = true;
 
+				Log.info('[STATEMANAGER] Initializing state ' + state.name);
 				state.actual.init.call(state.actual);
 			}
 
+			// Switch to the new state
+			Log.info('[STATEMANAGER] Switching state to ' + state.name);
 			state.actual.show.call(state.actual, showParams);
-			Log.info('SWITCHING TO ' + state.name);
 			this._current = state.name;
 		}
 	},
@@ -236,6 +242,7 @@ _.extend(StateManager, {
 	 */
 	current: function ()
 	{
-		return this._states[this._current].actual;
+		// Ternary operation here to prevent undefined errors
+		return this._current !== undefined ? this._states[this._current].actual : undefined;
 	}
 });

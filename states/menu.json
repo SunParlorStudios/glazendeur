@@ -7,7 +7,7 @@
 
 	"loader": {
 		"resources": [
-			
+			[ "shader", "shaders/water.fx" ]
 		],
 		"info": {
 			"resourcesPerFrame": 2,

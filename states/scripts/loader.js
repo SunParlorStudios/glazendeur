@@ -36,7 +36,7 @@ _.extend(Loader.prototype, {
 			var resource = this.resourcesToLoad[this.currentResource++];
 
 			if (resource !== undefined)
-				ContentManager.load(resource.type, resource.path);
+				ContentManager.load(resource[0], resource[1]);
 			else
 				break;
 		}
