@@ -17,6 +17,9 @@ var Prop = Prop || function(params)
 	}
 
 	this.setActivated(false);
+	this._model.setScale(0.5, 0.5, 0.5);
+	this._model.setTranslation(160, 4.5, 168);
+	debugModel = this;
 }
 
 _.inherit(Prop, Entity)

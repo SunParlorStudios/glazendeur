@@ -23,7 +23,9 @@ var Editor = Editor || function(params)
 	this._loadTextures();
 	this._currentTool = EditorTools.Raise;
 
-	this._terrain = params.terrain;
+	this._landscape = params.terrain;
+	this._terrain = params.terrain.terrain();
+
 	this._editingCircle = this.world().spawn("entities/editor/editing_circle.json", {terrain: this._terrain}, "Default");
 	this._camera = params.camera;
 
@@ -339,12 +341,12 @@ _.extend(Editor.prototype, {
 
 	save: function()
 	{
-		this._terrain.save();
+		this._landscape.save();
 	},
 
 	load: function()
 	{
-		this._terrain.load();
+		this._landscape.load();
 	},
 
 	changeTexture: function()

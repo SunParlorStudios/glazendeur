@@ -90,8 +90,6 @@ _.extend(TransformGizmo.prototype, {
 				found = true;
 			}
 		}
-
-		this._editor.setInputEnabled(!found && this._selected === undefined);
 	},
 
 	move: function()

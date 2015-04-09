@@ -28,13 +28,17 @@ _.extend(Menu.prototype, {
 
 		if (this._editMode == true)
 		{
-			this._editor = this.world.spawn("entities/editor/editor.json", { terrain: this._landscape.terrain(), camera: this._camera });
+			this._editor = this.world.spawn("entities/editor/editor.json", { terrain: this._landscape, camera: this._camera });
 		}
 		var tex = {
-			diffuse: "textures/test_bridge.png",
-			normal: "textures/test_bridge_normal.png"
+			diffuse: "textures/test_house.png",
+			normal: "textures/test_house.png",
+			specular: "textures/test_house.png"
 		}
-		this._model = this.world.spawn("entities/world/visual/prop.json", {model: "models/test_bridge.fbx", textures: tex, editMode: this._editMode, editor: this._editor}, "Default");
+		this._model = this.world.spawn("entities/world/visual/prop.json", {model: "models/test_house.fbx", textures: tex, editMode: this._editMode, editor: this._editor}, "Default");
+	
+		this._trees = [];
+		
 	},
 
 	update: function (dt)

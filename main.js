@@ -28,9 +28,12 @@ Game.Initialise = function()
 	ContentManager.load("texture", "textures/lenna.png");
 	ContentManager.load("model", "models/editor/gizmos/move_center.fbx");
 	ContentManager.load("model", "models/editor/gizmos/move_axis.fbx");
-	ContentManager.load("model", "models/test_bridge.fbx");
-	ContentManager.load("texture", "textures/test_bridge.png");
-	ContentManager.load("texture", "textures/test_bridge_normal.png");
+	ContentManager.load("model", "models/test_house.fbx");
+	ContentManager.load("texture", "textures/test_house.png");
+	ContentManager.load("texture", "textures/test_house_normal.png");
+	ContentManager.load("texture", "textures/test_house_specular.png");
+	ContentManager.load("texture", "textures/tree.png");
+	ContentManager.load("texture", "textures/tree_normal.png");
 
 
 	RenderTargets.shore.setClearAlbedo(false);
@@ -52,10 +55,10 @@ Game.Initialise = function()
 	RenderTargets.ui.setTechnique("Diffuse");
 
 	Window.setName("Project Glazen Deur");
-	Window.setSize(1280, 720);
+	Window.setSize(800, 600);
 
 	RenderSettings.setVsync(true);
-	RenderSettings.setResolution(1280, 720);
+	RenderSettings.setResolution(800, 600);
 
 	Game.camera = new Camera(CameraType.Perspective);
 	Game.camera.setTranslation(0, 0, 0);
