@@ -43,7 +43,7 @@ _.extend(ViewCreator, {
 					widget.setSize(parseInt(child.Size[0]['$'].X), parseInt(child.Size[0]['$'].Y));
 					widget.setOffset(parseInt(child.AnchorPoint[0]['$'].ScaleX), parseInt(child.AnchorPoint[0]['$'].ScaleY));
 
-					widget.spawn('UI');
+					//widget.spawn('UI');
 
 					view[child['$'].Name] = widget;
 					break;
