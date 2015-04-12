@@ -1,5 +1,5 @@
 <Solution>
-  <PropertyGroup Name="COCOSP~1" Version="2.2.1.0" Type="CocosStudio" />
+  <PropertyGroup Name="CocosProject" Version="2.2.1.0" Type="CocosStudio" />
   <SolutionFolder>
     <Group ctype="ResourceGroup">
       <RootFolder Name=".">
@@ -7,6 +7,7 @@
         <Project Name="editor.csd" Type="Scene" />
         <Folder Name="textures">
           <Image Name="base.png" />
+          <Image Name="lol.png" />
         </Folder>
       </RootFolder>
     </Group>

@@ -17,7 +17,9 @@ function State (data)
 	this.world = new World();
 
 	if (data[0] !== undefined)
-		this.ui = ViewCreator.createView(data[0]);
+	{
+		this.view = ViewCreator.createView(data[0]);
+	}
 }
 
 _.extend(State.prototype, {
@@ -42,7 +44,10 @@ _.extend(State.prototype, {
 	 */
 	show: function ()
 	{
-
+		if (this.view !== undefined)
+		{
+			this.view.Spawn();
+		}
 	},
 	
 	/** 
@@ -54,7 +59,10 @@ _.extend(State.prototype, {
 	 */
 	leave: function ()
 	{
-
+		if (this.view !== undefined)
+		{
+			this.view.Leave();
+		}
 	},
 	
 	/** 

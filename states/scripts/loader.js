@@ -13,14 +13,38 @@ var Loader = Loader || function()
 
 _.inherit(Loader, State);
 
+_.extend(Loader, {
+	overwrite: false,
+	override: false
+}, {
+	__loaded: false
+});
+
 _.extend(Loader.prototype, {
 	show: function (data)
 	{
+		if (Loader.__loaded !== true)
+		{
+			var resources = this.view.GetResourceList();
+
+			for (var i = 0; i < resources.length; i++)
+			{
+				ContentManager.load(resources[i][0], resources[i][1]);
+			}
+
+			Loader.__loaded = true;
+		}
+
 		Loader._super.show.call(this);
 
 		this.info = data.info;
 		this.resourcesToLoad = data.resources;
 		this.stateName = data.to;
+
+		for (var i = 0; i < data.uiResources.length; i++)
+		{
+			this.resourcesToLoad.push(data.uiResources[i]);
+		}
 
 		this.info.resourcesPerFrame = data.info.resourcesPerFrame || 1;
 
@@ -41,7 +65,7 @@ _.extend(Loader.prototype, {
 
 		if (this.resourcesToLoad[this.currentResource] == undefined)
 		{
-			StateManager.switch(this.stateName);
+			//StateManager.switch(this.stateName);
 			return;
 		}
 
@@ -62,11 +86,15 @@ _.extend(Loader.prototype, {
 
 	draw: function ()
 	{
+		Loader._super.draw.call(this);
+
 		Game.render(Game.camera, RenderTargets.ui);
 	},
 
 	leave: function()
 	{
+		Loader._super.leave.call(this);
+
 		this.text.destroy();
 	}
 });

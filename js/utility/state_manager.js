@@ -113,7 +113,7 @@ _.extend(StateManager, {
 			return;
 		}
 
-		// Wants the loader to preload some assets? If so, was it even loaded already? If that is also the case, then we invoke the loader to load the new state's resources
+		// Wants the state to preload some assets? If so, was it even loaded already? If that is also the case, then we invoke the loader to load the new state's resources
 		if (!!state.loader && state.resourcesCached !== true)
 		{
 			var loader = this._states['loader'];
@@ -122,6 +122,7 @@ _.extend(StateManager, {
 			loader.actual.show.call(loader.actual, {
 				info: state.loader.info,
 				resources: state.loader.resources,
+				uiResources: state.actual.view ? state.actual.view.GetResourceList() : [],
 				to: state.name
 			});
 
