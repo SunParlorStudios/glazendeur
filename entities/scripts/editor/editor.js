@@ -133,12 +133,13 @@ _.extend(Editor.prototype, {
 	updateCircle: function(dt)
 	{
 		var ray = this._camera.projectRay();
-		//Log.info(debugModel.rayIntersection(ray.origin.x, ray.origin.y, ray.origin.z, ray.direction.x, ray.direction.y, ray.direction.z));
+		var d = this._terrain.rayIntersection(ray.origin.x, ray.origin.y, ray.origin.z, ray.direction.x, ray.direction.y, ray.direction.z);
+
 		this._editingCircle.setRadius(this._radius);
 
 		var p = this._camera.mouseToWorld();
-		var x2d = p.x;
-		var z2d = p.z;
+		var x2d = ray.origin.x + ray.direction.x * d;
+		var z2d = ray.origin.z + ray.direction.z * d;
 
 		this._editingCircle.setPosition(x2d, z2d);
 

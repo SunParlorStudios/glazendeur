@@ -54,6 +54,21 @@ _.extend(Vector2D, {
 	},
 
 	/**
+	 * Multiplies a vector2d with a scalar
+	 *
+	 * @public
+	 * @method module:Vector2D#mul
+	 * @param {vector2d} v - a vector2d
+	 * @param {vector2d} s - a scalar
+	 * @return {vector2d} A new Vector2D which is the result of vector * scalar
+	 * @author Riko Ophorst
+	 */
+	mul: function (v, s)
+	{
+		return this.construct(v.x * s, v.y * s);
+	},
+
+	/**
 	 * Multiplies two vectors
 	 *
 	 * @public
@@ -63,7 +78,7 @@ _.extend(Vector2D, {
 	 * @return {vector2d} A new Vector2D which is the result of v1*v2
 	 * @author Riko Ophorst
 	 */
-	mul: function (v1, v2)
+	multiply: function (v1, v2)
 	{
 		return this.construct(v1.x * v2.x, v1.y * v2.y);
 	},

@@ -17,7 +17,7 @@ var CameraControl = CameraControl || function(params)
 
 	this._angle = {
 		elevation: 35 * Math.PI / 180,
-		azimuth: 45 * Math.PI / 180
+		azimuth: 135 * Math.PI / 180
 	}
 
 	this._camera = params.camera;
@@ -36,6 +36,8 @@ _.extend(CameraControl.prototype, {
 
 		var unprojA = this._camera.unproject(p.x, p.y, this._camera.nearPlane());
 		var unprojB = this._camera.unproject(p.x, p.y, this._camera.farPlane());
+
+		//RenderTargets.ui.drawLine(unprojA.x, unprojA.y, unprojA.z, 1, 0, 0, unprojB.x, unprojB.y, unprojB.z, 1, 0, 0);
 
 		var f = unprojA.y / (unprojB.y - unprojA.y);
 		return {
