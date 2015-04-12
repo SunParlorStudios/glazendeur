@@ -59,14 +59,29 @@ _.extend(Vector3D, {
 	 *
 	 * @public
 	 * @method module:Vector3D#mul
+	 * @param {vector3d} v - a vector3d
+	 * @param {vector3d} s - the scalar
+	 * @return {vector3d} A new Vector3D which is the result of vector * scalar
+	 * @author Riko Ophorst
+	 */
+	mul: function (v, s)
+	{
+		return this.construct(v.x * s, v.y * s, v.z * s);
+	},
+
+	/**
+	 * Multiplies a vector3d with another vector
+	 *
+	 * @public
+	 * @method module:Vector3D#mul
 	 * @param {vector3d} v1 - a vector3d
 	 * @param {vector3d} v2 - a vector3d
 	 * @return {vector3d} A new Vector3D which is the result of v1*v2
 	 * @author Riko Ophorst
 	 */
-	mul: function (v, s)
+	multiply: function (v1, v2)
 	{
-		return this.construct(v1.x * s, v1.y * s, v1.z * s);
+		return this.construct(v1.x * v2.x, v1.y * v2.y, v1.z * v2.y);
 	},
 
 	/**
