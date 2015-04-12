@@ -16,13 +16,13 @@ var TransformGizmo = TransformGizmo || function(params)
 	this._axis.z.setBlend(0, 0, 1);
 
 	this._axis.x.setRotation(0, 0, Math.PI / 2);
-	this._axis.z.setRotation(0, Math.PI / 2, Math.PI / 2);
+	this._axis.z.setRotation(0, -Math.PI / 2, Math.PI / 2);
 
 	this._offset = 12;
 	this._offsets = {
 		x: Vector3D.construct(this._offset, 0, 0),
 		y: Vector3D.construct(0, this._offset, 0),
-		z: Vector3D.construct(0, 0, -this._offset)
+		z: Vector3D.construct(0, 0, this._offset)
 	}
 
 	this._colours = {
@@ -48,7 +48,6 @@ var TransformGizmo = TransformGizmo || function(params)
 	}
 
 	this._attachedTo = undefined;
-	this._root.setAlpha(0.3);
 }
 
 _.inherit(TransformGizmo, Entity);
@@ -78,29 +77,38 @@ _.extend(TransformGizmo.prototype, {
 
 		this._selected = undefined;
 		var t = this._root.translation();
-		var found = false;
+		var found = undefined;
 		var c;
 		var axis;
+		var intersection;
+		var lowest = undefined;
 
 		for (var i in this._axis)
 		{
 			axis = this._axis[i];
 			c = this._colours[i];
 			axis.setBlend(c[0], c[1], c[2]);
+			intersection = Ray.sphereIntersection(ray, Vector3D.add(this._root.translation(), this._offsets[i]), this._radius);
+			Log.info(intersection);
 
-			if (Ray.sphereIntersection(ray, Vector3D.add(t, this._offsets[i]), this._radius) == true && found == false)
+			if (intersection !== false)
 			{
-				axis.setBlend(1, 1, 1);
-				this._selected = i;
-				this._startPosition = this._camera.mouseToWorld();
-				found = true;
+				if (lowest === undefined || intersection < lowest)
+				{
+					lowest = intersection;
+					found = axis;
+					this._selected = i;
+				}
 			}
 		}
 
-		if (found == true)
+		if (found !== undefined)
 		{
 			this._editor.addInputDisable(InputDisable.Gizmo);
 			this._editor.setCurrentGizmo(this);
+
+			found.setBlend(1, 1, 1);
+			this._startPosition = this._camera.mouseToWorld();
 		}
 		else
 		{
@@ -123,7 +131,7 @@ _.extend(TransformGizmo.prototype, {
 		var o = {
 			x: offset.x / this._offset * this._speed,
 			y: offset.y / this._offset * this._speed,
-			z: offset.z / this._offset * this._speed
+			z: offset.z / this._offset * this._speed * -1
 		};
 
 		this._root.translateBy((p.x - this._startPosition.x) * o.x * 4, movement.y * o.y * -1, (p.z - this._startPosition.z) * -o.z * 4);

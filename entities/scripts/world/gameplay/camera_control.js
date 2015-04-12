@@ -17,7 +17,7 @@ var CameraControl = CameraControl || function(params)
 
 	this._angle = {
 		elevation: 35 * Math.PI / 180,
-		azimuth: 45 * Math.PI / 180
+		azimuth: 135 * Math.PI / 180
 	}
 
 	this._camera = params.camera;

@@ -29,7 +29,7 @@ var Editor = Editor || function(params)
 	this._landscape = params.terrain;
 	this._terrain = params.terrain.terrain();
 
-	this._editingCircle = this.world().spawn("entities/editor/editing_circle.json", {terrain: this._terrain}, "Default");
+	this._editingCircle = this.world().spawn("entities/editor/editing_circle.json", {terrain: this._terrain}, "UI");
 	this._camera = params.camera;
 
 	this._radius = 5;

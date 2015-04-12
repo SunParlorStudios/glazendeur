@@ -31,6 +31,8 @@ _.extend(EditorState.prototype, {
 			this._editor = this.world.spawn("entities/editor/editor.json", { terrain: this._landscape, camera: this._camera });
 		}
 
+		this._model = this.world.spawn("entities/world/visual/prop.json", { model: "models/test_house.fbx", textures: {}, editor: this._editor, editMode: this._editMode}, "Default");
+
 		RenderTargets.water.setPostProcessing("effects/water.effect");
 		RenderTargets.water.setTechnique("PostProcess");
 	},

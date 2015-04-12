@@ -49,6 +49,6 @@ _.extend(Ray, {
 	   		return false;
 	   	}
 
-	   	return true;
+	   	return d;
 	}
 });
