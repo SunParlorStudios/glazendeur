@@ -65,7 +65,7 @@ _.extend(Loader.prototype, {
 
 		if (this.resourcesToLoad[this.currentResource] == undefined)
 		{
-			//StateManager.switch(this.stateName);
+			StateManager.switch(this.stateName);
 			return;
 		}
 
