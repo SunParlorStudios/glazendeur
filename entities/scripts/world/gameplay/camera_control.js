@@ -37,8 +37,6 @@ _.extend(CameraControl.prototype, {
 		var unprojA = this._camera.unproject(p.x, p.y, this._camera.nearPlane());
 		var unprojB = this._camera.unproject(p.x, p.y, this._camera.farPlane());
 
-		RenderTargets.ui.drawLine(unprojA.x, unprojA.y, unprojA.z, 1, 0, 0, unprojB.x, unprojB.y, unprojB.z, 1, 0, 0);
-
 		var f = unprojA.y / (unprojB.y - unprojA.y);
 		return {
 			x: unprojA.x - f * (unprojB.x - unprojA.x),
@@ -49,15 +47,16 @@ _.extend(CameraControl.prototype, {
 
 	projectRay: function()
 	{
-		var t = this._camera.translation();
-		var p = this.mouseToWorld();
+		var p = Mouse.position(MousePosition.Relative);
+		p.x = (p.x + RenderSettings.resolution().w / 2);
+		p.y = (p.y + RenderSettings.resolution().h / 2);
 
-		var dir = Vector3D.construct(t.x, t.y, t.z);
-		var m = Vector3D.construct(p.x, 0, p.z);
+		var unprojA = this._camera.unproject(p.x, p.y, 0);
+		var unprojB = this._camera.unproject(p.x, p.y, 1);
 
-		dir = Vector3D.normalise(Vector3D.sub(m, dir));
+		dir = Vector3D.normalise(Vector3D.sub(unprojB, unprojA));
 
-		return Ray.construct(t, dir);
+		return Ray.construct(unprojA, dir);
 	},
 
 	onUpdate: function(dt)

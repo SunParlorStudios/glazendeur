@@ -89,7 +89,6 @@ _.extend(TransformGizmo.prototype, {
 			c = this._colours[i];
 			axis.setBlend(c[0], c[1], c[2]);
 			intersection = Ray.sphereIntersection(ray, Vector3D.add(this._root.translation(), this._offsets[i]), this._radius);
-			Log.info(intersection);
 
 			if (intersection !== false)
 			{
