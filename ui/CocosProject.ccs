@@ -4,11 +4,14 @@
     <Group ctype="ResourceGroup">
       <RootFolder Name=".">
         <Project Name="loader.csd" Type="Scene" />
-        <Project Name="editor.csd" Type="Scene" />
         <Folder Name="textures">
-          <Image Name="base.png" />
-          <Image Name="lol.png" />
+          <Image Name="loader_background.png" />
+          <Image Name="button_down.png" />
+          <Image Name="button_hovered.png" />
+          <Image Name="button_idle.png" />
         </Folder>
+        <File Name="arial.ttf" />
+        <Project Name="editor.csd" Type="Scene" />
       </RootFolder>
     </Group>
   </SolutionFolder>

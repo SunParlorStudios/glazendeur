@@ -1,4 +1,5 @@
 require('js/ui/view');
+require('js/ui/button');
 
 var ViewCreator = ViewCreator || {};
 
@@ -8,7 +9,16 @@ _.extend(ViewCreator, {
 }, {
 	createView: function (path)
 	{
-		var data = JSON.load(path).GameProjectFile.Content[0].Content[0].ObjectData[0].Children[0].NodeObjectData;
+		var data = JSON.load(path).GameProjectFile.Content[0].Content[0].ObjectData[0].Children;
+
+		if (data !== undefined)
+		{
+			data = data[0].NodeObjectData;
+		}
+		else
+		{
+			return;
+		}
 
 		var view = new View();
 		view.__elements = data;
@@ -20,6 +30,21 @@ _.extend(ViewCreator, {
 	{
 		var resources = resources || [];
 
+		var isInResources = function(path)
+		{
+			var found = false;
+			for (var j = 0; j < resources.length; j++)
+			{
+				if (resources[j][1] == 'ui/cocosstudio/' + path)
+				{
+					found = true;
+					break;
+				}
+			}
+
+			return found;
+		}
+
 		for (var i = 0; i < data.length; i++)
 		{
 			var child = data[i];
@@ -28,23 +53,27 @@ _.extend(ViewCreator, {
 			{
 				case "SpriteObjectData":
 				case "ImageViewObjectData":
-					var found = false;
-					for (var j = 0; j < resources.length; j++)
-					{
-						if (resources[j][1] == 'ui/cocosstudio/' + child.FileData[0]['$'].Path)
-						{
-							found = true;
-							break;
-						}
-					}
-
-					if (!found) {
+					if (!isInResources(child.FileData[0]['$'].Path)) {
 						resources.push(["texture", 'ui/cocosstudio/' + child.FileData[0]['$'].Path]);
 					}
 
 					if (child.Children !== undefined)
 					{
 						this.getResourceList(child.Children[0].NodeObjectData, resources);
+					}
+					break;
+				case "ButtonObjectData":
+					if (!isInResources(child.NormalFileData[0]['$'].Path))
+					{
+						resources.push(['texture', 'ui/cocosstudio/' + child.NormalFileData[0]['$'].Path]);
+					}
+					if (!isInResources(child.DisabledFileData[0]['$'].Path))
+					{
+						resources.push(['texture', 'ui/cocosstudio/' + child.DisabledFileData[0]['$'].Path]);
+					}
+					if (!isInResources(child.PressedFileData[0]['$'].Path))
+					{
+						resources.push(['texture', 'ui/cocosstudio/' + child.PressedFileData[0]['$'].Path]);
 					}
 					break;
 			}
@@ -72,11 +101,21 @@ _.extend(ViewCreator, {
 
 					break;
 				case "ButtonObjectData":
-					Log.info(child['$'].Name);
-					break;
-				case "TextObjectData":
 					LogObject(child);
 
+					widget = new Button(parent);
+					widget.setTextures(
+						'ui/cocosstudio/' + child.NormalFileData[0]['$'].Path,
+						'ui/cocosstudio/' + child.DisabledFileData[0]['$'].Path,
+						'ui/cocosstudio/' + child.PressedFileData[0]['$'].Path
+					);
+
+					widget.setDiffuseMap('ui/cocosstudio/' + child.NormalFileData[0]['$'].Path);
+					widget.setSize(parseInt(child.Size[0]['$'].X), parseInt(child.Size[0]['$'].Y));
+					widget.setOffset(parseFloat(child.AnchorPoint[0]['$'].ScaleX), parseFloat(child.AnchorPoint[0]['$'].ScaleY));
+
+					break;
+				case "TextObjectData":
 					widget = new Text(parent);
 					widget.setText(child['$'].LabelText);
 					widget.setFont('fonts/' + child.FontResource[0]['$'].Path);
@@ -115,7 +154,7 @@ _.extend(ViewCreator, {
 				widget.setTranslation(
 					parseInt(child.Position[0]['$'].X - RenderSettings.resolution().w / 2), 
 					parseInt((child.Position[0]['$'].Y - RenderSettings.resolution().h / 2) * -1), 
-					0
+					parseInt(child['$'].Tag)
 				);
 
 				if (child['$'].Alpha !== undefined)
@@ -134,11 +173,22 @@ _.extend(ViewCreator, {
 			}
 			else
 			{
-				widget.setTranslation(
-					parseInt(parseInt(child.Position[0]['$'].X) + (parent.size().x * parent.offset().x)), 
-					parseInt((parseInt(child.Position[0]['$'].Y) + (parent.size().y * parent.offset().y)) * -1), 
-					0
-				);
+				if (!parent.setFont)
+				{
+					widget.setTranslation(
+						parseInt(parseInt(child.Position[0]['$'].X) + (parent.size().x * parent.offset().x)), 
+						parseInt((parseInt(child.Position[0]['$'].Y) + (parent.size().y * parent.offset().y)) * -1), 
+						parseInt(child['$'].Tag)
+					);
+				}
+				else
+				{
+					widget.setTranslation(
+						parseInt(parseInt(child.Position[0]['$'].X) + (parent.offset().x)), 
+						parseInt((parseInt(child.Position[0]['$'].Y) + (parent.offset().y)) * -1), 
+						parseInt(child['$'].Tag)
+					);
+				}
 
 				if (child['$'].Alpha !== undefined)
 				{

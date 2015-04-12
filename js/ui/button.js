@@ -3,7 +3,7 @@ var Button = Button || function(root)
 	Button._super.constructor.call(this, root);
 	this._mouseArea = new MouseArea(this);
 
-	this._textures = {}
+	this._textures = {};
 
 	this._onEnter = function(button)
 	{
@@ -19,7 +19,7 @@ var Button = Button || function(root)
 	};
 	this._onReleased = function(button)
 	{
-		this.setDiffuseMap(this._textures.default)
+		this.setDiffuseMap(this._textures.hover)
 	};
 	this._onDown = function(button)
 	{
@@ -92,7 +92,7 @@ _.extend(Button.prototype, {
 		this._onReleased = function(button)
 		{
 			func.call(this, button);
-			this.setDiffuseMap(this._textures.default);
+			this.setDiffuseMap(this._textures.hover);
 		}
 		this._onReleased.ctx = this;
 		this._mouseArea.setOnReleased(this._onReleased);

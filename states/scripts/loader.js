@@ -49,14 +49,6 @@ _.extend(Loader.prototype, {
 		this.info.resourcesPerFrame = data.info.resourcesPerFrame || 1;
 
 		this.currentResource = 0;
-
-		this.text = new Text();
-		this.text.setText("Loading resources, now at 0%...");
-		this.text.setFont("fonts/arial.ttf");
-		this.text.setFontSize(30);
-		this.text.setAlignment(TextAlignment.Center);
-		this.text.setTranslation(0, 0, 0);
-		this.text.spawn("UI");
 	},
 
 	update: function (dt)
@@ -81,7 +73,7 @@ _.extend(Loader.prototype, {
 
 		var percent = Math.round((this.currentResource / this.resourcesToLoad.length) * 100);
 		Log.Loader('Loader at ' + percent + '%');
-		this.text.setText("Loading resources, now at " + percent + "%...");
+		this.view.loader_text.setText("Loading resources, now at " + percent + "%...");
 	},
 
 	draw: function ()
@@ -94,8 +86,6 @@ _.extend(Loader.prototype, {
 	leave: function()
 	{
 		Loader._super.leave.call(this);
-
-		this.text.destroy();
 	}
 });
 

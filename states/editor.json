@@ -51,6 +51,7 @@
 
 	"scripts": {
 		"path": "states/scripts/editor",
+		"ui": "ui/cocosstudio/editor.json",
 		"class": "EditorState"
 	},
 
