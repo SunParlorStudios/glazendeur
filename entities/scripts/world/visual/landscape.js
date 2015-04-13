@@ -4,6 +4,7 @@ var Landscape = Landscape || function(params)
 	this._terrain = this._renderables[0];
 	this._terrain.create(128, 128);
 	this._terrain.setTextureTiling(32, 32);
+	this._gridPosition = {x: 0, y: 0}
 
 	this._waterPlane = this._renderables[1];
 	this._waterPlane.create(128, 128);
@@ -11,7 +12,12 @@ var Landscape = Landscape || function(params)
 	this._waterPlane.spawn("Water");
 	this._waterPlane.setTranslation(0, -10, 0);
 
+	this._terrain.setOffset(this._terrain.width() / 2, 0, this._terrain.height() / 2);
+	this._waterPlane.setOffset(this._waterPlane.width() / 2, 0, this._waterPlane.height() / 2);
+
 	this.initialise();
+
+	terrain = this;
 }
 
 _.inherit(Landscape, Entity);
@@ -91,6 +97,20 @@ _.extend(Landscape.prototype, {
 	waterPlane: function()
 	{
 		return this._waterPlane
+	},
+
+	setGridPosition: function(x, y)
+	{
+		var w = this._terrain.width() - 1;
+		var h = this._terrain.height() - 1;
+
+		this._terrain.setTranslation(w * x, 0, h * y);
+		this._gridPosition = {x: x, y: y}
+	},
+
+	gridPosition: function()
+	{
+		return this._gridPosition;
 	},
 
 	onUpdate: function(dt)

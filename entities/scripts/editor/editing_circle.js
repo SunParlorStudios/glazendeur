@@ -6,7 +6,7 @@ var EditingCircle = EditingCircle || function(params)
 	this._radius = 5;
 	this._thickness = 0.5;
 
-	this._terrain = params.terrain;
+	this._terrain = undefined;
 
 	for (var i = 0; i <= this._segments; ++i)
 	{
@@ -25,6 +25,11 @@ var EditingCircle = EditingCircle || function(params)
 _.inherit(EditingCircle, Entity);
 
 _.extend(EditingCircle.prototype, {
+	setTerrain: function(terrain)
+	{
+		this._terrain = terrain;
+	},
+
 	setRadius: function(r)
 	{
 		this._radius = r;
@@ -37,6 +42,11 @@ _.extend(EditingCircle.prototype, {
 
 	onUpdate: function(dt)
 	{
+		if (this._terrain === undefined)
+		{
+			return;
+		}
+		
 		var ax, az, x, z, xx, zz;
 		var t, indices, h;
 		var count = -1;

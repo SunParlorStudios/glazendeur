@@ -37,17 +37,19 @@ VOut VS(float4 position : POSITION, float4 colour : COLOUR, float2 texcoord : TE
 	float mx = 0.0f;
 	float mz = 0.0f;
 
-	mx += sin(position.z / 10 + Time) / 2;
-	mx += sin(position.x / 4 + Time);
-	mz += cos(position.z / 15 + position.x / 9 + Time) / 2;
+	float4 world_pos = mul(position, World);
 
-	position.y += mx + mz;
-	position.y += sin(Time) * 1.5;
+	mx += sin(world_pos.z / 10 + Time) / 2;
+	mx += sin(world_pos.x / 4 + Time);
+	mz += cos(world_pos.z / 15 + world_pos.x / 9 + Time) / 2;
+
+	world_pos.y += mx + mz;
+	world_pos.y += sin(Time) * 1.5;
 	normal.x += mx / 10;
 	normal.z += mz / 10;
-	output.world_pos = position;
-	output.position = mul(position, World);
-	output.position = mul(position, View);
+	output.world_pos = world_pos;
+	output.position = world_pos;
+	output.position = mul(output.position, View);
 	output.position = mul(output.position, Projection);
 	output.normal = mul(normal, (float3x3)InvWorld);
 	output.texcoord = texcoord;
