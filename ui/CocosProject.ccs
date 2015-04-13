@@ -9,9 +9,19 @@
           <Image Name="button_down.png" />
           <Image Name="button_hovered.png" />
           <Image Name="button_idle.png" />
+          <Folder Name="menu">
+            <Image Name="background.png" />
+            <Image Name="button_down.png" />
+            <Image Name="button_up.png" />
+            <Image Name="cog_back.png" />
+            <Image Name="cog_front.png" />
+            <Image Name="cog_mid.png" />
+            <Image Name="overlay.png" />
+          </Folder>
         </Folder>
         <File Name="arial.ttf" />
         <Project Name="editor.csd" Type="Scene" />
+        <Project Name="menu.csd" Type="Scene" />
       </RootFolder>
     </Group>
   </SolutionFolder>

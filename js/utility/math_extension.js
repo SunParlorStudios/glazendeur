@@ -20,6 +20,27 @@ _.extend(Math, {
 	{
 		return a + (b-a) * ratio;
 	},
+
+	/**
+	 * Clamps a number between two values
+	 * 
+	 * @public
+	 * @method module:Math#clamp
+	 * @param {number} number - the main number
+	 * @param {number} min - the minimal value
+	 * @param {number} max - the maximum value
+	 * @return {number} The clamped number
+	 */
+	clamp: function(number, min, max)
+	{
+		if (number < min)
+			return min;
+		if (number > max)
+			return max;
+
+		return number;
+	},
+
 	/**
 	 * Eases elastic out
 	 * 

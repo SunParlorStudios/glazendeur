@@ -43,14 +43,23 @@ Game.Initialise = function()
 	Window.setSize(1280, 720);
 
 	RenderSettings.setVsync(true);
-	RenderSettings.setResolution(1280, 720);
+	RenderSettings.setResolution(1920, 1080);
 
 	Game.camera = new Camera(CameraType.Perspective);
 	Game.camera.setTranslation(0, 0, 0);
 
 	StateManager.loadState('states/loader.json');
 	StateManager.loadState('states/editor.json');
-	StateManager.switch('editor');
+	StateManager.loadState('states/menu.json');
+
+	if (CVar.get("editMode") == true)
+	{
+		StateManager.switch('editor');
+	}
+	else
+	{
+		StateManager.switch('menu');
+	}
 }
 
 Game.Update = function(dt)

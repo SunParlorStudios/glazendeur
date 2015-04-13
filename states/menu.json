@@ -1,0 +1,24 @@
+{
+	"name": "menu",
+
+	"entities": [
+
+	],
+
+	"loader": {
+		"resources": [
+
+		],
+		"info": {
+			"resourcesPerFrame": 1
+		}
+	},
+
+	"scripts": {
+		"path": "states/scripts/menu",
+		"ui": "ui/cocosstudio/menu.json",
+		"class": "Menu"
+	},
+
+	"autoStart": false
+}

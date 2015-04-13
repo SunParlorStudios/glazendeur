@@ -8,7 +8,8 @@ module.exports = function(grunt) {
 	grunt.registerTask('ui', function() {
 		var files = [
 			"./ui/cocosstudio/editor.csd",
-			"./ui/cocosstudio/loader.csd"
+			"./ui/cocosstudio/loader.csd",
+			"./ui/cocosstudio/menu.csd"
 		];
 
 		var xml2json = require('xml2js');

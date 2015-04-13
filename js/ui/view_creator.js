@@ -63,15 +63,15 @@ _.extend(ViewCreator, {
 					}
 					break;
 				case "ButtonObjectData":
-					if (!isInResources(child.NormalFileData[0]['$'].Path))
+					if (!isInResources(child.NormalFileData[0]['$'].Path) && child.NormalFileData[0]['$'].Path !== 'Default/Button_Normal.png')
 					{
 						resources.push(['texture', 'ui/cocosstudio/' + child.NormalFileData[0]['$'].Path]);
 					}
-					if (!isInResources(child.DisabledFileData[0]['$'].Path))
+					if (!isInResources(child.DisabledFileData[0]['$'].Path) && child.DisabledFileData[0]['$'].Path !== 'Default/Button_Disable.png')
 					{
 						resources.push(['texture', 'ui/cocosstudio/' + child.DisabledFileData[0]['$'].Path]);
 					}
-					if (!isInResources(child.PressedFileData[0]['$'].Path))
+					if (!isInResources(child.PressedFileData[0]['$'].Path) && child.PressedFileData[0]['$'].Path !== 'Default/Button_Pressed.png')
 					{
 						resources.push(['texture', 'ui/cocosstudio/' + child.PressedFileData[0]['$'].Path]);
 					}
@@ -101,13 +101,11 @@ _.extend(ViewCreator, {
 
 					break;
 				case "ButtonObjectData":
-					LogObject(child);
-
 					widget = new Button(parent);
 					widget.setTextures(
-						'ui/cocosstudio/' + child.NormalFileData[0]['$'].Path,
-						'ui/cocosstudio/' + child.DisabledFileData[0]['$'].Path,
-						'ui/cocosstudio/' + child.PressedFileData[0]['$'].Path
+						child.NormalFileData[0]['$'].Path !== 'Default/Button_Normal.png' ? 'ui/cocosstudio/' + child.NormalFileData[0]['$'].Path : null,
+						child.DisabledFileData[0]['$'].Path !== 'Default/Button_Disable.png' ? 'ui/cocosstudio/' + child.DisabledFileData[0]['$'].Path : null,
+						child.PressedFileData[0]['$'].Path !== 'Default/Button_Pressed.png' ? 'ui/cocosstudio/' + child.PressedFileData[0]['$'].Path : null
 					);
 
 					widget.setDiffuseMap('ui/cocosstudio/' + child.NormalFileData[0]['$'].Path);
@@ -142,7 +140,7 @@ _.extend(ViewCreator, {
 					break;
 			}
 
-			widget.setScale(parseInt(child.Scale[0]['$'].ScaleX), parseInt(child.Scale[0]['$'].ScaleY), 1);
+			widget.setScale(parseFloat(child.Scale[0]['$'].ScaleX), parseFloat(child.Scale[0]['$'].ScaleY), 1);
 
 			if (child['$'].Rotation !== undefined)
 			{
