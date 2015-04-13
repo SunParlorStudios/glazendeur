@@ -54,7 +54,7 @@ _.extend(CameraControl.prototype, {
 		var unprojA = this._camera.unproject(p.x, p.y, 0);
 		var unprojB = this._camera.unproject(p.x, p.y, 1);
 
-		dir = Vector3D.normalise(Vector3D.sub(unprojB, unprojA));
+		var dir = Vector3D.normalise(Vector3D.sub(unprojB, unprojA));
 
 		return Ray.construct(unprojA, dir);
 	},

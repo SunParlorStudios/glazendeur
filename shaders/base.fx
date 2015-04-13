@@ -108,7 +108,7 @@ PSOut PS(VOut input)
 	output.colour.a = Material.SpecularPower / 256;
 	output.normal = float4((normal.rgb + 1.0f) / 2.0f, spec);
 	output.ambient = float4(Material.Ambient.rgb, saturate(TexLight.Sample(Sampler, coords).r * Material.Emissive));
-	output.shore = input.world_pos.y / 8;
+	output.shore = input.world_pos.y / 25;
 	output.shore.a = 1;
 
 	return output;

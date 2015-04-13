@@ -23,12 +23,24 @@ _.extend(EditorState.prototype, {
 		Lighting.setAmbientColour(0.3, 0.2, 0.1);
 		Lighting.setShadowColour(0.2, 0.3, 0.5);
 
-		this._landscape = this.world.spawn("entities/world/visual/landscape.json", {}, "Default");
+		this._landscapes = [];
+		this._rowColumns = 3;
+
+		for (var y = -this._rowColumns / 2; y < this._rowColumns / 2; ++y)
+		{
+			for (var x = -this._rowColumns / 2; x < this._rowColumns / 2; ++x)
+			{
+				var l = this.world.spawn("entities/world/visual/landscape.json", {}, "Default");
+				l.setGridPosition(x, y);
+				this._landscapes.push(l);
+			}
+		}
+
 		this._camera = this.world.spawn("entities/world/gameplay/camera_control.json", {camera: Game.camera, editMode: this._editMode});
 
 		if (this._editMode == true)
 		{
-			this._editor = this.world.spawn("entities/editor/editor.json", { terrain: this._landscape, camera: this._camera });
+			this._editor = this.world.spawn("entities/editor/editor.json", { landscapes: this._landscapes, camera: this._camera });
 		}
 
 		this._model = this.world.spawn("entities/world/visual/prop.json", { model: "models/test_house.fbx", textures: {}, editor: this._editor, editMode: this._editMode}, "Default");

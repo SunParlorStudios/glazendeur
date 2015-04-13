@@ -26,8 +26,8 @@ var Editor = Editor || function(params)
 	this._loadTextures();
 	this._currentTool = EditorTools.Raise;
 
-	this._landscape = params.terrain;
-	this._terrain = params.terrain.terrain();
+	this._landscapes = params.landscapes;
+	this._terrain = this._landscapes[0].terrain();
 
 	this._editingCircle = this.world().spawn("entities/editor/editing_circle.json", {terrain: this._terrain}, "UI");
 	this._camera = params.camera;
@@ -130,18 +130,104 @@ _.extend(Editor.prototype, {
 		this._currentTool = tool;
 	},
 
+	getNeighbourLandscapes: function(found)
+	{
+		var gridPos = found.gridPosition();
+		var x = gridPos.x;
+		var y = gridPos.y;
+
+		var landscape;
+
+		var neighbours = [];
+
+		var isNeighbour = function(x, y, landscape)
+		{
+			var grid = landscape.gridPosition();
+			var gx = grid.x;
+			var gy = grid.y;
+
+			for (var yy = -1; yy <= 1; ++yy)
+			{
+				for (var xx = -1; xx <= 1; ++xx)
+				{
+					if (gx == xx && gy == yy && x != gx && y != gy)
+					{
+						return true;
+					}
+				}
+			}
+
+			return false;
+		};
+
+		for (var i = 0; i < this._landscapes.length; ++i)
+		{
+			landscape = this._landscapes[i];
+
+			if (isNeighbour(x, y, landscape) == true)
+			{
+				neighbours.push(landscape);
+			}
+		}
+
+		return neighbours;
+	},
+
 	updateCircle: function(dt)
 	{
+		if (Keyboard.isDown(Key.Control) && Keyboard.isReleased(Key.Z))
+		{
+			this._history.undo();
+		}
+
+		if (Keyboard.isDown(Key.Control) && Keyboard.isReleased(Key.Y))
+		{
+			this._history.redo();
+		}
+
 		var ray = this._camera.projectRay();
-		var d = this._terrain.rayIntersection(ray.origin.x, ray.origin.y, ray.origin.z, ray.direction.x, ray.direction.y, ray.direction.z);
+		var intersection = false;
+		var lowest, found = undefined;
+		var landscape;
+
+		for (var i = 0; i < this._landscapes.length; ++i)
+		{
+			landscape = this._landscapes[i]
+			intersection = landscape.terrain().rayIntersection(ray.origin.x, ray.origin.y, ray.origin.z, ray.direction.x, ray.direction.y, ray.direction.z);
+			
+			if (intersection !== false)
+			{
+				if (found === undefined)
+				{
+					lowest = intersection;
+					found = landscape;
+				}
+				else if (intersection < lowest)
+				{
+					lowest = intersection;
+					found = landscape;
+				}
+			}
+		}
+
+		if (found === undefined)
+		{
+			return;
+		}
+
+		var neighbours = this.getNeighbourLandscapes(found);
+		Log.info(neighbours.length);
+
+		found = found.terrain();
 
 		this._editingCircle.setRadius(this._radius);
 
 		var p = this._camera.mouseToWorld();
-		var x2d = ray.origin.x + ray.direction.x * d;
-		var z2d = ray.origin.z + ray.direction.z * d;
+		var x2d = ray.origin.x + ray.direction.x * lowest;
+		var z2d = ray.origin.z + ray.direction.z * lowest;
 
 		this._editingCircle.setPosition(x2d, z2d);
+		this._editingCircle.setTerrain(found);
 
 		if (this.inputDisabled() == true)
 		{
@@ -166,7 +252,7 @@ _.extend(Editor.prototype, {
 		{
 			if (this._currentTool == EditorTools.Paint)
 			{
-				this._terrain.brushTexture(this._brushes[this._currentBrush], 
+				found.brushTexture(this._brushes[this._currentBrush], 
 					this._textures[this._currentTexture] + ".png",
 					x2d, z2d, size, 0.1,
 					this._textures[this._currentTexture] + "_normal.png",
@@ -178,7 +264,7 @@ _.extend(Editor.prototype, {
 			if (this._historyPoint == false)
 			{
 				this._historyPoint = true;
-				var hp = new HistoryPoint(this._terrain);
+				var hp = new HistoryPoint(found);
 				this._history.addPoint(hp);
 			}
 
@@ -186,11 +272,11 @@ _.extend(Editor.prototype, {
 			{
 				if (this._wasRamping == Ramp.Start)
 				{
-					this._rampStartCenter = this._terrain.worldToIndex(x2d, z2d);
+					this._rampStartCenter = found.worldToIndex(x2d, z2d);
 				}
 				else if (this._wasRamping == Ramp.End)
 				{
-					this._rampEndCenter = this._terrain.worldToIndex(x2d, z2d);
+					this._rampEndCenter = found.worldToIndex(x2d, z2d);
 				}
 			}
 
@@ -198,7 +284,7 @@ _.extend(Editor.prototype, {
 			{
 				for (var y = z2d - size; y < z2d + size; ++y)
 				{
-					var indices = this._terrain.worldToIndex(x, y);
+					var indices = found.worldToIndex(x, y);
 					if (indices.x === undefined || indices.y === undefined)
 					{
 						continue;
@@ -218,7 +304,7 @@ _.extend(Editor.prototype, {
 						e = 0;
 					}
 
-					var h = this._terrain.getHeight(indices.x, indices.y);
+					var h = found.getHeight(indices.x, indices.y);
 
 					if (this._currentTool == EditorTools.Smooth && t > 0)
 					{
@@ -230,12 +316,12 @@ _.extend(Editor.prototype, {
 							for (var adjy = -filterSize; adjy <= filterSize; ++adjy)
 							{
 								++num;
-								avg += this._terrain.getHeight(indices.x + adjx, indices.y + adjy);
+								avg += found.getHeight(indices.x + adjx, indices.y + adjy);
 							}
 						}
 
 						var smooth = avg / num;
-						this._terrain.setHeight(indices.x, indices.y, Math.lerp(h, smooth, t));
+						found.setHeight(indices.x, indices.y, Math.lerp(h, smooth, t));
 
 						continue;
 					}
@@ -245,7 +331,7 @@ _.extend(Editor.prototype, {
 
 						if ((this._wasRamping == Ramp.Start || this._wasRamping == Ramp.End) && t > 0)
 						{
-							average += this._terrain.getHeight(indices.x, indices.y);
+							average += found.getHeight(indices.x, indices.y);
 							affected.push({x: indices.x, y: indices.y});
 						}
 
@@ -255,7 +341,7 @@ _.extend(Editor.prototype, {
 					{
 						if (t > 0)
 						{
-							average += this._terrain.getHeight(indices.x, indices.y);
+							average += found.getHeight(indices.x, indices.y);
 							affected.push({x: indices.x, y: indices.y});
 						}
 
@@ -265,11 +351,11 @@ _.extend(Editor.prototype, {
 					{
 						if (Mouse.isDown(MouseButton.Left))
 						{
-							this._terrain.setHeight(indices.x, indices.y, h + e * dt);
+							found.setHeight(indices.x, indices.y, h + e * dt);
 						}
 						else
 						{
-							this._terrain.setHeight(indices.x, indices.y, h - e * dt);
+							found.setHeight(indices.x, indices.y, h - e * dt);
 						}
 					}
 				}
@@ -303,11 +389,11 @@ _.extend(Editor.prototype, {
 				for (var i = 0; i < affected.length; ++i)
 				{
 					indices = affected[i];
-					this._terrain.setHeight(indices.x, indices.y, this._currentHeight);
+					found.setHeight(indices.x, indices.y, this._currentHeight);
 				}
 			}
 
-			this._terrain.flush();
+			found.flush();
 		}
 
 		if (Mouse.isReleased(MouseButton.Left) || Mouse.isReleased(MouseButton.Right))
@@ -320,8 +406,8 @@ _.extend(Editor.prototype, {
 
 			if (this._wasRamping == Ramp.End)
 			{
-				var a = this._terrain.indexToWorld(this._rampStartCenter.x, this._rampStartCenter.y);
-				var b = this._terrain.indexToWorld(this._rampEndCenter.x, this._rampEndCenter.y);
+				var a = found.indexToWorld(this._rampStartCenter.x, this._rampStartCenter.y);
+				var b = found.indexToWorld(this._rampEndCenter.x, this._rampEndCenter.y);
 
 				var xx, zz, h, ox, oz;
 				var d = Math.distance(a.x, a.z, b.x, b.z);
@@ -341,12 +427,12 @@ _.extend(Editor.prototype, {
 							ox = rx - xx;
 							oz = rz - zz;
 
-							index = this._terrain.worldToIndex(rx, rz);
+							index = found.worldToIndex(rx, rz);
 
 							if (index.x !== undefined && index.y !== undefined)
 							{
 								h = Math.lerp(a.y, b.y, i / d);
-								this._terrain.setHeight(index.x, index.y, h);
+								found.setHeight(index.x, index.y, h);
 							}
 						}
 					}
@@ -355,22 +441,12 @@ _.extend(Editor.prototype, {
 				this._wasRamping = Ramp.Start;
 				this._editingCircle.setBlend(1, 0, 0);
 
-				this._terrain.flush();
+				found.flush();
 			}
 
 			this._historyPoint = false;
-			var last = new HistoryPoint(this._terrain);
+			var last = new HistoryPoint(found);
 			this._history.addPoint(last);
-		}
-
-		if (Keyboard.isDown(Key.Control) && Keyboard.isReleased(Key.Z))
-		{
-			this._history.undo();
-		}
-
-		if (Keyboard.isDown(Key.Control) && Keyboard.isReleased(Key.Y))
-		{
-			this._history.redo();
 		}
 	},
 
