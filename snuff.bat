@@ -1,0 +1,10 @@
+snuffbox.exe -console true
+snuffbox.exe -console true
+snuffbox.exe -console true
+snuffbox.exe -console true
+snuffbox.exe -console true
+snuffbox.exe -console true
+snuffbox.exe -console true
+snuffbox.exe -console true
+snuffbox.exe -console true
+snuffbox.exe -console true
