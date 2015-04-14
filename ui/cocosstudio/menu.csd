@@ -52,8 +52,8 @@
             <PreSize X="0.0000" Y="0.0000" />
             <FileData Type="Normal" Path="textures/menu/cog_front.png" />
           </NodeObjectData>
-          <NodeObjectData Name="overlay_2" ActionTag="-329779638" FrameEvent="" Tag="5" ctype="SpriteObjectData">
-            <Position X="960.0000" Y="540.0000" />
+          <NodeObjectData Name="overlay_2" ActionTag="-329779638" FrameEvent="" Tag="5" TopMargin="-0.0002" BottomMargin="0.0002" ctype="SpriteObjectData">
+            <Position X="960.0000" Y="540.0002" />
             <Scale ScaleX="1.0000" ScaleY="1.0000" />
             <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
             <CColor A="255" R="255" G="255" B="255" />
@@ -100,6 +100,31 @@
             <DisabledFileData Type="Default" Path="Default/Button_Disable.png" />
             <PressedFileData Type="Normal" Path="textures/menu/button_down.png" />
             <NormalFileData Type="Normal" Path="textures/menu/button_up.png" />
+          </NodeObjectData>
+          <NodeObjectData Name="option_slider" ActionTag="1965487750" FrameEvent="" Tag="10" LeftMargin="1920.0000" RightMargin="-600.0000" TopMargin="240.0000" BottomMargin="240.0000" Scale9Width="600" Scale9Height="600" ctype="ImageViewObjectData">
+            <Position X="2220.0000" Y="540.0000" />
+            <Scale ScaleX="1.0000" ScaleY="1.0000" />
+            <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
+            <CColor A="255" R="255" G="255" B="255" />
+            <Size X="600.0000" Y="600.0000" />
+            <PrePosition X="1.1563" Y="0.5000" />
+            <PreSize X="0.3125" Y="0.5556" />
+            <Children>
+              <NodeObjectData Name="option_quit" ActionTag="-1593615541" FrameEvent="" Tag="11" LeftMargin="541.6039" RightMargin="12.3961" TopMargin="7.4199" BottomMargin="556.5801" TouchEnable="True" FontSize="14" ButtonText="" Scale9Enable="True" Scale9Width="468" Scale9Height="468" ctype="ButtonObjectData">
+                <Position X="564.6039" Y="574.5801" />
+                <Scale ScaleX="1.0000" ScaleY="1.0000" />
+                <AnchorPoint ScaleX="0.5000" ScaleY="0.5000" />
+                <CColor A="255" R="255" G="255" B="255" />
+                <Size X="46.0000" Y="36.0000" />
+                <PrePosition X="0.9410" Y="0.9576" />
+                <PreSize X="0.0000" Y="0.0000" />
+                <TextColor A="255" R="65" G="65" B="70" />
+                <DisabledFileData Type="Normal" Path="textures/menu/cog_mid.png" />
+                <PressedFileData Type="Normal" Path="textures/menu/cog_mid.png" />
+                <NormalFileData Type="Normal" Path="textures/menu/cog_mid.png" />
+              </NodeObjectData>
+            </Children>
+            <FileData Type="Normal" Path="textures/menu/option_menu.png" />
           </NodeObjectData>
         </Children>
       </ObjectData>

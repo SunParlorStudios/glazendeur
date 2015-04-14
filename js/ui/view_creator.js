@@ -174,8 +174,8 @@ _.extend(ViewCreator, {
 				if (!parent.setFont)
 				{
 					widget.setTranslation(
-						parseInt(parseInt(child.Position[0]['$'].X) + (parent.size().x * parent.offset().x)), 
-						parseInt((parseInt(child.Position[0]['$'].Y) + (parent.size().y * parent.offset().y)) * -1), 
+						parseInt(parseInt(child.Position[0]['$'].X) + (parent.size().x * (parent.offset().x * -1))), 
+						parseInt((parseInt(child.Position[0]['$'].Y) + (parent.size().y * (parent.offset().y * -1))) * -1), 
 						parseInt(child['$'].Tag)
 					);
 				}

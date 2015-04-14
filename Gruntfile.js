@@ -7,7 +7,7 @@
 module.exports = function(grunt) {
 	grunt.registerTask('ui', function() {
 		var files = [
-			"./ui/cocosstudio/editor.csd",
+			"./ui/cocosstudio/level.csd",
 			"./ui/cocosstudio/loader.csd",
 			"./ui/cocosstudio/menu.csd"
 		];

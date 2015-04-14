@@ -49,17 +49,10 @@ Game.Initialise = function()
 	Game.camera.setTranslation(0, 0, 0);
 
 	StateManager.loadState('states/loader.json');
-	StateManager.loadState('states/editor.json');
+	StateManager.loadState('states/level.json');
 	StateManager.loadState('states/menu.json');
 
-	if (CVar.get("editMode") == true)
-	{
-		StateManager.switch('editor');
-	}
-	else
-	{
-		StateManager.switch('menu');
-	}
+	StateManager.switch('menu');
 }
 
 Game.Update = function(dt)

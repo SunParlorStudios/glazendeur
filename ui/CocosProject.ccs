@@ -17,10 +17,11 @@
             <Image Name="cog_front.png" />
             <Image Name="cog_mid.png" />
             <Image Name="overlay.png" />
+            <Image Name="option_menu.png" />
           </Folder>
         </Folder>
         <File Name="arial.ttf" />
-        <Project Name="editor.csd" Type="Scene" />
+        <Project Name="level.csd" Type="Scene" />
         <Project Name="menu.csd" Type="Scene" />
       </RootFolder>
     </Group>
