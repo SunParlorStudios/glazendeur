@@ -51,18 +51,11 @@ _.extend(Level.prototype, {
 
 		RenderTargets.water.setPostProcessing("effects/water.effect");
 		RenderTargets.water.setTechnique("PostProcess");
-
-		this.thetime = Game.time();
 	},
 
 	update: function (dt)
 	{
 		Level._super.update.call(this, dt);
-
-		if (Game.time() - this.thetime > 4)
-		{
-			StateManager.switch('menu');
-		}
 	},
 
 	draw: function ()

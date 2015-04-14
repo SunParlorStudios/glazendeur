@@ -2,11 +2,11 @@ var EditingCircle = EditingCircle || function(params)
 {
 	EditingCircle._super.constructor.call(this, arguments);
 	this._circle = this._renderables[0];
-	this._segments = 360;
+	this._segments = 60;
 	this._radius = 5;
 	this._thickness = 0.5;
 
-	this._terrain = undefined;
+	this._landscapes = [];
 
 	for (var i = 0; i <= this._segments; ++i)
 	{
@@ -25,9 +25,9 @@ var EditingCircle = EditingCircle || function(params)
 _.inherit(EditingCircle, Entity);
 
 _.extend(EditingCircle.prototype, {
-	setTerrain: function(terrain)
+	setLandscapes: function(scapes)
 	{
-		this._terrain = terrain;
+		this._landscapes = scapes;
 	},
 
 	setRadius: function(r)
@@ -42,15 +42,17 @@ _.extend(EditingCircle.prototype, {
 
 	onUpdate: function(dt)
 	{
-		if (this._terrain === undefined)
+		if (this._landscapes.length == 0)
 		{
 			return;
 		}
 		
 		var ax, az, x, z, xx, zz;
-		var t, indices, h;
+		var t, h;
 		var count = -1;
 		var scalar = Math.PI * 2 / this._segments;
+		var currentIndices = undefined;
+		var chosen = undefined;
 
 		for (var i = 0; i <= Math.PI * 2; i += scalar)
 		{
@@ -64,11 +66,23 @@ _.extend(EditingCircle.prototype, {
 			zz = az * (this._radius - this._thickness);
 
 			t = this._circle.translation();
-			indices = this._terrain.worldToIndex(t.x + xx, t.z + zz);
 
-			if (indices.x !== undefined && indices.y !== undefined)
+			for (var j = 0; j < this._landscapes.length; ++j)
 			{
-				h = -this._terrain.getBilinearHeight(t.x + x, t.z + z);
+				currentIndices = this._landscapes[j].terrain().worldToIndex(t.x + x, t.z + z);
+
+				if (currentIndices.x === undefined || currentIndices.y === undefined)
+				{
+					continue;
+				}
+
+				chosen = this._landscapes[j].terrain();
+				break;
+			}
+
+			if (currentIndices.x !== undefined && currentIndices.y !== undefined)
+			{
+				h = -chosen.getBilinearHeight(t.x + x, t.z + z);
 			}
 			else
 			{
