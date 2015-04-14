@@ -39,7 +39,7 @@ Game.Initialise = function()
 	RenderTargets.ui.setLightingEnabled(false);
 	RenderTargets.ui.setTechnique("Diffuse");
 
-	Window.setName("Project Glazen Deur");
+	Window.setName("Withering Shores");
 	Window.setSize(1280, 720);
 
 	RenderSettings.setVsync(true);
