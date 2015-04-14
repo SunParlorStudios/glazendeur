@@ -16,8 +16,6 @@ var Landscape = Landscape || function(params)
 	this._waterPlane.setOffset(this._waterPlane.width() / 2, 0, this._waterPlane.height() / 2);
 
 	this.initialise();
-
-	terrain = this;
 }
 
 _.inherit(Landscape, Entity);

@@ -14,12 +14,16 @@ var Level = Level || function()
 _.inherit(Level, State);
 
 _.extend(Level.prototype, {
-	init: function()
+	init: function ()
+	{
+		this._light = new Light(LightType.Directional);
+		this._light.setDirection(0, -1, -1);
+	},
+
+	show: function()
 	{
 		this._editMode = CVar.get("editMode") == true;
 
-		this._light = new Light(LightType.Directional);
-		this._light.setDirection(0, -1, -1);
 		Lighting.setAmbientColour(0.3, 0.2, 0.1);
 		Lighting.setShadowColour(0.2, 0.3, 0.5);
 
@@ -30,9 +34,9 @@ _.extend(Level.prototype, {
 		{
 			for (var x = -this._rowColumns / 2; x < this._rowColumns / 2; ++x)
 			{
-				var l = this.world.spawn("entities/world/visual/landscape.json", {}, "Default");
-				l.setGridPosition(x, y);
-				this._landscapes.push(l);
+				var landscape = this.world.spawn("entities/world/visual/landscape.json", {}, "Default");
+				landscape.setGridPosition(x, y);
+				this._landscapes.push(landscape);
 			}
 		}
 
@@ -47,11 +51,18 @@ _.extend(Level.prototype, {
 
 		RenderTargets.water.setPostProcessing("effects/water.effect");
 		RenderTargets.water.setTechnique("PostProcess");
+
+		this.thetime = Game.time();
 	},
 
 	update: function (dt)
 	{
 		Level._super.update.call(this, dt);
+
+		if (Game.time() - this.thetime > 4)
+		{
+			StateManager.switch('menu');
+		}
 	},
 
 	draw: function ()

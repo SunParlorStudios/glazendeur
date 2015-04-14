@@ -63,6 +63,8 @@ _.extend(State.prototype, {
 		{
 			this.view.Leave();
 		}
+
+		this.world.destroy();
 	},
 	
 	/** 

@@ -80,7 +80,7 @@ _.extend(World.prototype, {
 			}
 		}
 		
-		assert(constructor.prototype.onUpdate !== undefined, "'" + entityPath + "' doesn't have an onUpdate function")
+		assert(constructor.prototype.onUpdate !== undefined, "'" + entityPath + "' doesn't have an onUpdate function");
 
 		var entity = new constructor(params, renderables, this);
 
@@ -103,5 +103,15 @@ _.extend(World.prototype, {
 
 			entity.onUpdate(dt);
 		}
+	},
+
+	destroy: function ()
+	{
+		for (var i = this._entities.length - 1; i >= 0; --i)
+		{
+			this._entities[i].destroy();
+		}
+
+		this._entities = [];
 	}
 });

@@ -105,6 +105,8 @@ _.extend(StateManager, {
 			showParams = leaveParams;
 		}
 
+		Game.cleanUp();
+
 		// Starts showing to the new state
 		state = this._states[name];
 		if (state === undefined)
