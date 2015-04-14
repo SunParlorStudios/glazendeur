@@ -46,6 +46,7 @@ var Editor = Editor || function(params)
 	this._rampEnd = 0;
 	this._wasRamping = Ramp.Start;
 	this._wasFlattening = false;
+	this._flattenHeight = 0;
 
 	this._inputEnabled = [];
 	this._currentGizmo = undefined;
@@ -56,6 +57,7 @@ var Editor = Editor || function(params)
 
 	this._neighbours = [];
 	this._cursorPosition = {x: 0, y: 0}
+	this._brushStrength = 40;
 }
 
 _.inherit(Editor, Entity);
@@ -233,16 +235,29 @@ _.extend(Editor.prototype, {
 
 	updateTools: function(dt)
 	{
-		if (Mouse.isDown(MouseButton.Left) == false)
+		if (this.inputDisabled() == true)
 		{
 			return;
 		}
-		
+
+		var averageHeight = [];
+		var affected = [];
+		for (var i = 0; i < this._neighbours.length; ++i)
+		{
+			averageHeight.push(0);
+			affected.push([]);
+		}
+
 		var neighbour;
 		var terrain;
 		var size = this._radius;
 		var cx = this._cursorPosition.x,
 			cy = this._cursorPosition.z;
+
+		var indexPos;
+		var indexHeight;
+		var ratio;
+		var total;
 
 		var indices;
 
@@ -259,10 +274,166 @@ _.extend(Editor.prototype, {
 
 					if (indices.x !== undefined && indices.y !== undefined)
 					{	
-						terrain.setHeight(indices.x, indices.y, 10);
+						indexPos = terrain.indexToWorld(indices.x, indices.y);
+
+						ratio = 1 - Math.distance(indexPos.x, indexPos.z, cx, cy) / size;
+
+						if (ratio < Number.EPSILON)
+						{
+							continue;
+						}
+
+						indexHeight = terrain.getHeight(indices.x, indices.y);
+
+						if (this._currentTool == EditorTools.Raise)
+						{
+							total = dt * Math.easeInOutQuintic(ratio, 0, 1, 1) * this._brushStrength;
+
+							if (Mouse.isDown(MouseButton.Left))
+							{
+								terrain.setHeight(indices.x, indices.y, indexHeight + total);
+							}
+							else if (Mouse.isDown(MouseButton.Right))
+							{
+								terrain.setHeight(indices.x, indices.y, indexHeight - total);
+							}
+						}
+						else if ((this._currentTool == EditorTools.Flatten || this._currentTool == EditorTools.Smooth) && Mouse.isDown(MouseButton.Left))
+						{
+							averageHeight[i] += terrain.getHeight(indices.x, indices.y);
+							indices.ratio = ratio;
+							affected[i].push(indices);
+						}
 					}
 				}
 			}
+		}
+
+		var average = 0;
+		var currentHeight, currentIndices;
+		var currentIndex;
+
+		if (this._currentTool == EditorTools.Flatten || this._currentTool == EditorTools.Smooth)
+		{
+			for (var i = 0; i < this._neighbours.length; ++i)
+			{
+				currentHeight = averageHeight[i];
+				currentIndices = affected[i];
+
+				if (currentIndices.length == 0)
+				{
+					continue;
+				}
+
+				average = currentHeight;
+				average /= currentIndices.length;
+
+				if (Mouse.isDown(MouseButton.Left))
+				{
+					if (this._currentTool == EditorTools.Flatten)
+					{
+						if (this._wasFlattening	== false)
+						{
+							this._wasFlattening	= true;
+							this._flattenHeight = average;
+						}
+
+						for (var j = 0; j < currentIndices.length; ++j)
+						{
+							currentIndex = currentIndices[j];
+							this._neighbours[i].terrain().setHeight(currentIndex.x, currentIndex.y, this._flattenHeight);
+						}
+					}
+					else if (this._currentTool == EditorTools.Smooth)
+					{
+						var neighbourTerrain, smooth, worldPos, shared = [];
+						var adjacentTerrain, adjacentIndex, found;
+						var filterSize = 1;
+						var num = 0;
+						var avg = 0;
+						var fx, fy;
+
+						for (var j = 0; j < currentIndices.length; ++j)
+						{
+							avg = 0;
+							num = 0;
+							neighbourTerrain = this._neighbours[i].terrain();
+							currentIndex = currentIndices[j];
+							smooth = currentIndex.ratio;
+							shared.length = 0;
+
+							for (var adjx = -filterSize; adjx <= filterSize; ++adjx)
+							{
+								for (var adjy = -filterSize; adjy <= filterSize; ++adjy)
+								{
+									fx = currentIndex.x + adjx;
+									fy = currentIndex.y + adjy;
+
+									avg += neighbourTerrain.getHeight(fx, fy);
+
+									if (fx < 0 || fy < 0 || fx >= neighbourTerrain.width() || fy >= neighbourTerrain.height())
+									{
+										found = false;
+										worldPos = terrain.indexToWorld(currentIndex.x, currentIndex.y);
+										for (var n = 0; n < this._neighbours.length; ++n)
+										{
+											if (this._neighbours[n] == this._neighbours[i])
+											{
+												continue;
+											}
+
+											adjacentTerrain = this._neighbours[n].terrain();
+
+											adjacentIndex = adjacentTerrain.worldToIndex(worldPos.x, worldPos.z);
+
+											if (adjacentIndex.x !== undefined && adjacentIndex.y !== undefined)
+											{
+												shared.push({index: adjacentIndex, terrain: adjacentTerrain});
+											}
+
+											adjacentIndex = adjacentTerrain.worldToIndex(worldPos.x + adjx, worldPos.z + adjy);
+
+											if (adjacentIndex.x !== undefined && adjacentIndex.y !== undefined && found == false)
+											{
+												avg += adjacentTerrain.getHeight(adjacentIndex.x, adjacentIndex.y);
+												found = true;
+											}
+											else
+											{
+												continue;
+											}
+										}
+
+										if (found == false)
+										{
+											--num;
+										}
+									}
+									++num;
+								}	
+							}
+							avg /= num;
+							var result = Math.lerp(neighbourTerrain.getHeight(currentIndex.x, currentIndex.y), avg, smooth);
+							neighbourTerrain.setHeight(currentIndex.x, currentIndex.y, result);
+
+							for (var s = 0; s < shared.length; ++s)
+							{
+								if (shared[s].terrain == neighbourTerrain)
+								{
+									continue;
+								}
+								shared[s].terrain.setHeight(shared[s].index.x, shared[s].index.y, result);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (Mouse.isReleased(MouseButton.Left))
+		{
+			this._wasFlattening	= false;
+			this._flattenHeight	= 0;
 		}
 
 		for (var i = 0; i < this._neighbours.length; ++i)
