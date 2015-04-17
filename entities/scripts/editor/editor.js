@@ -1,3 +1,5 @@
+'use strict';
+
 Enum("EditorTools", [
 	"Raise",
 	"Paint",
@@ -244,8 +246,8 @@ _.extend(Editor.prototype, {
 		var affected = [];
 		for (var i = 0; i < this._neighbours.length; ++i)
 		{
-			averageHeight.push(0);
-			affected.push([]);
+			averageHeight[i] = 0;
+			affected[i] = [];
 		}
 
 		var neighbour;
@@ -260,6 +262,28 @@ _.extend(Editor.prototype, {
 		var total;
 
 		var indices;
+
+		if (this._currentTool == EditorTools.Paint && Mouse.isDown(MouseButton.Left))
+		{
+			for (var i = 0; i < this._neighbours.length; ++i)
+			{
+				neighbour = this._neighbours[i];
+				terrain = neighbour.terrain();
+
+				terrain.brushTexture(this._brushes[this._currentBrush],
+					this._textures[this._currentTexture] + ".png",
+					cx, cy, size, 0.1,
+					this._textures[this._currentTexture] + "_normal.png",
+					this._textures[this._currentTexture] + "_specular.png");
+			}
+
+			return;
+		}
+
+		if (!Mouse.isDown(MouseButton.Left) && !Mouse.isDown(MouseButton.Right))
+		{
+			return;
+		}
 
 		for (var x = cx - size; x < cx + size; ++x)
 		{
@@ -361,6 +385,24 @@ _.extend(Editor.prototype, {
 							currentIndex = currentIndices[j];
 							smooth = currentIndex.ratio;
 							shared.length = 0;
+							worldPos = neighbourTerrain.indexToWorld(currentIndex.x, currentIndex.y);
+
+							for (var n = 0; n < this._neighbours.length; ++n)
+							{
+								if (this._neighbours[n] == this._neighbours[i])
+								{
+									continue;
+								}
+
+								adjacentTerrain = this._neighbours[n].terrain();
+
+								adjacentIndex = adjacentTerrain.worldToIndex(worldPos.x, worldPos.z);
+
+								if (adjacentIndex.x !== undefined && adjacentIndex.y !== undefined)
+								{
+									shared.push({index: adjacentIndex, terrain: adjacentTerrain});
+								}
+							}
 
 							for (var adjx = -filterSize; adjx <= filterSize; ++adjx)
 							{
@@ -369,12 +411,8 @@ _.extend(Editor.prototype, {
 									fx = currentIndex.x + adjx;
 									fy = currentIndex.y + adjy;
 
-									avg += neighbourTerrain.getHeight(fx, fy);
-
 									if (fx < 0 || fy < 0 || fx >= neighbourTerrain.width() || fy >= neighbourTerrain.height())
 									{
-										found = false;
-										worldPos = terrain.indexToWorld(currentIndex.x, currentIndex.y);
 										for (var n = 0; n < this._neighbours.length; ++n)
 										{
 											if (this._neighbours[n] == this._neighbours[i])
@@ -382,47 +420,31 @@ _.extend(Editor.prototype, {
 												continue;
 											}
 
-											adjacentTerrain = this._neighbours[n].terrain();
-
-											adjacentIndex = adjacentTerrain.worldToIndex(worldPos.x, worldPos.z);
+											adjacentIndex = adjacentTerrain.worldToIndex(worldPos.x + adjx, worldPos.z + adjy);
 
 											if (adjacentIndex.x !== undefined && adjacentIndex.y !== undefined)
 											{
-												shared.push({index: adjacentIndex, terrain: adjacentTerrain});
-											}
-
-											adjacentIndex = adjacentTerrain.worldToIndex(worldPos.x + adjx, worldPos.z + adjy);
-
-											if (adjacentIndex.x !== undefined && adjacentIndex.y !== undefined && found == false)
-											{
 												avg += adjacentTerrain.getHeight(adjacentIndex.x, adjacentIndex.y);
-												found = true;
+												++num;
+												break;
 											}
-											else
-											{
-												continue;
-											}
-										}
-
-										if (found == false)
-										{
-											--num;
 										}
 									}
-									++num;
+									else
+									{
+										avg += neighbourTerrain.getHeight(fx, fy);
+										++num;
+									}
 								}	
 							}
 							avg /= num;
 							var result = Math.lerp(neighbourTerrain.getHeight(currentIndex.x, currentIndex.y), avg, smooth);
 							neighbourTerrain.setHeight(currentIndex.x, currentIndex.y, result);
-
+							var foundShared;
 							for (var s = 0; s < shared.length; ++s)
 							{
-								if (shared[s].terrain == neighbourTerrain)
-								{
-									continue;
-								}
-								shared[s].terrain.setHeight(shared[s].index.x, shared[s].index.y, result);
+								foundShared = shared[s];
+								foundShared.terrain.setHeight(foundShared.index.x, foundShared.index.y, result);
 							}
 						}
 					}
