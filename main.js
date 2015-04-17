@@ -22,7 +22,6 @@ var RenderTargets = RenderTargets || {
 
 Game.Initialise = function()
 {
-
 	RenderTargets.shore.setClearAlbedo(false);
 
 	RenderTargets.default.setClearDepth(true);
