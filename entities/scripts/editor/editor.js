@@ -28,7 +28,8 @@ var Editor = Editor || function(params)
 	this._loadTextures();
 	this._currentTool = EditorTools.Raise;
 
-	this._landscapes = params.landscapes;
+	this._map = params.map;
+	this._landscapes = this._map.landscapes();
 	this._terrain = this._landscapes[0].terrain();
 
 	this._editingCircle = this.world().spawn("entities/editor/editing_circle.json", {terrain: this._terrain}, "UI");
@@ -60,6 +61,7 @@ var Editor = Editor || function(params)
 	this._neighbours = [];
 	this._cursorPosition = {x: 0, y: 0}
 	this._brushStrength = 40;
+	this._opacity = 0.5;
 }
 
 _.inherit(Editor, Entity);
@@ -265,14 +267,26 @@ _.extend(Editor.prototype, {
 
 		if (this._currentTool == EditorTools.Paint && Mouse.isDown(MouseButton.Left))
 		{
+			var terrainIndex;
 			for (var i = 0; i < this._neighbours.length; ++i)
 			{
 				neighbour = this._neighbours[i];
 				terrain = neighbour.terrain();
+				terrainIndex = terrain.worldToIndex(cx, cy);
+				
+				if (terrainIndex.x !== undefined && terrainIndex.y !== undefined)
+				{
+					var neighbours = this.getLandscapes(neighbour);
+
+					for (var j = 0; j < neighbours.length; ++j)
+					{
+						neighbours[j].setEdited(false, true);
+					}
+				}
 
 				terrain.brushTexture(this._brushes[this._currentBrush],
 					this._textures[this._currentTexture] + ".png",
-					cx, cy, size, 0.1,
+					cx, cy, size, this._opacity,
 					this._textures[this._currentTexture] + "_normal.png",
 					this._textures[this._currentTexture] + "_specular.png");
 			}
@@ -316,10 +330,12 @@ _.extend(Editor.prototype, {
 							if (Mouse.isDown(MouseButton.Left))
 							{
 								terrain.setHeight(indices.x, indices.y, indexHeight + total);
+								neighbour.setEdited(true, false);
 							}
 							else if (Mouse.isDown(MouseButton.Right))
 							{
 								terrain.setHeight(indices.x, indices.y, indexHeight - total);
+								neighbour.setEdited(true, false);
 							}
 						}
 						else if ((this._currentTool == EditorTools.Flatten || this._currentTool == EditorTools.Smooth) && Mouse.isDown(MouseButton.Left))
@@ -366,6 +382,7 @@ _.extend(Editor.prototype, {
 						{
 							currentIndex = currentIndices[j];
 							this._neighbours[i].terrain().setHeight(currentIndex.x, currentIndex.y, this._flattenHeight);
+							this._neighbours[i].setEdited(true, false);
 						}
 					}
 					else if (this._currentTool == EditorTools.Smooth)
@@ -400,7 +417,7 @@ _.extend(Editor.prototype, {
 
 								if (adjacentIndex.x !== undefined && adjacentIndex.y !== undefined)
 								{
-									shared.push({index: adjacentIndex, terrain: adjacentTerrain});
+									shared.push({index: adjacentIndex, landscape: this._neighbours[n]});
 								}
 							}
 
@@ -440,11 +457,14 @@ _.extend(Editor.prototype, {
 							avg /= num;
 							var result = Math.lerp(neighbourTerrain.getHeight(currentIndex.x, currentIndex.y), avg, smooth);
 							neighbourTerrain.setHeight(currentIndex.x, currentIndex.y, result);
+							this._neighbours[i].setEdited(true, false);
+
 							var foundShared;
 							for (var s = 0; s < shared.length; ++s)
 							{
 								foundShared = shared[s];
-								foundShared.terrain.setHeight(foundShared.index.x, foundShared.index.y, result);
+								foundShared.landscape.terrain().setHeight(foundShared.index.x, foundShared.index.y, result);
+								foundShared.landscape.setEdited(true, false);
 							}
 						}
 					}
@@ -466,12 +486,12 @@ _.extend(Editor.prototype, {
 
 	save: function()
 	{
-		this._landscape.save();
+		this._map.save();
 	},
 
 	load: function()
 	{
-		this._landscape.load();
+		this._map.load();
 	},
 
 	changeTexture: function()

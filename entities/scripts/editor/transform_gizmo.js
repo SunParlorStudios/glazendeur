@@ -48,6 +48,7 @@ var TransformGizmo = TransformGizmo || function(params)
 	}
 
 	this._attachedTo = undefined;
+	this._root.setAlpha(0.25);
 }
 
 _.inherit(TransformGizmo, Entity);
@@ -66,6 +67,10 @@ _.extend(TransformGizmo.prototype, {
 	check: function(ray)
 	{
 		if (this._selected !== undefined && Mouse.isDown(MouseButton.Left))
+		{
+			return;
+		}
+		else if (Mouse.isDown(MouseButton.Left))
 		{
 			return;
 		}

@@ -27,27 +27,17 @@ _.extend(Level.prototype, {
 		Lighting.setAmbientColour(0.3, 0.2, 0.1);
 		Lighting.setShadowColour(0.2, 0.3, 0.5);
 
-		this._landscapes = [];
-		this._rowColumns = 3;
-
-		for (var y = -this._rowColumns / 2; y < this._rowColumns / 2; ++y)
-		{
-			for (var x = -this._rowColumns / 2; x < this._rowColumns / 2; ++x)
-			{
-				var landscape = this.world.spawn("entities/world/visual/landscape.json", {}, "Default");
-				landscape.setGridPosition(x, y);
-				this._landscapes.push(landscape);
-			}
-		}
+		this._map = this.world.spawn("entities/world/visual/world_map.json", {});
+		this._map.initialise();
 
 		this._camera = this.world.spawn("entities/world/gameplay/camera_control.json", {camera: Game.camera, editMode: this._editMode});
 
 		if (this._editMode == true)
 		{
-			this._editor = this.world.spawn("entities/editor/editor.json", { landscapes: this._landscapes, camera: this._camera });
+			this._editor = this.world.spawn("entities/editor/editor.json", { map: this._map, camera: this._camera });
 		}
 
-		this._model = this.world.spawn("entities/world/visual/prop.json", { model: "models/test_house.fbx", textures: {}, editor: this._editor, editMode: this._editMode}, "Default");
+		this._model = this.world.spawn("entities/world/visual/prop.json", { model: "models/test_cube.fbx", textures: {}, editor: this._editor, editMode: this._editMode}, "Default");
 
 		RenderTargets.water.setPostProcessing("effects/water.effect");
 		RenderTargets.water.setTechnique("PostProcess");

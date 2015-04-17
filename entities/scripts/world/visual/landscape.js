@@ -14,6 +14,10 @@ var Landscape = Landscape || function(params)
 
 	this._terrain.setOffset(this._terrain.width() / 2, 0, this._terrain.height() / 2);
 	this._waterPlane.setOffset(this._waterPlane.width() / 2, 0, this._waterPlane.height() / 2);
+	this._edited = {
+		height: true,
+		texture: true
+	};
 
 	this.initialise();
 }
@@ -28,11 +32,6 @@ _.extend(Landscape.prototype, {
 			this._terrain.brushTexture("textures/terrain/brushes/brush_1.png", "textures/terrain/textures/grass.png", 64, 64, 99999, 1.0, "textures/terrain/textures/grass_normal.png", "textures/terrain/textures/grass_specular.png");
 		}
 
-		if (IO.exists("json/terrain/map.json"))
-		{
-			this.load();
-		}
-
 		this._waterPlane.setDiffuseMap("textures/terrain/ocean/ocean.png");
 		this._waterPlane.setNormalMap("textures/terrain/ocean/ocean_normal.png");
 		this._waterPlane.setSpecularMap("textures/terrain/ocean/ocean_specular.png");
@@ -40,35 +39,63 @@ _.extend(Landscape.prototype, {
 		this._waterPlane.setEffect("effects/water.effect");
 	},
 
-	load: function()
+	setEdited: function(height, texture)
 	{
-		Log.info("Loading terrain data");
-		var json = JSON.load("json/terrain/map.json", true);
+		this._edited.height = this._edited.height == true ? true : height;
+		this._edited.texture = this._edited.texture == true ? true : texture;
+	},
 
-		if (json.indices === undefined)
+	edited: function()
+	{
+		return this._edited;
+	},
+
+	load: function(index, loadedData)
+	{
+		Log.info("Loading terrain data of segment " + index);
+		var index = "" + this._gridPosition.x + "_" + this._gridPosition.y;
+		var obj = loadedData.grid[index];
+
+		if (obj.indices === undefined)
 		{
 			Log.error("Terrain data corrupt, could not find indices list");
 			return;
 		}
 
-		this._terrain.loadTexture("textures/terrain/map/map");
+		this._terrain.loadTexture("textures/terrain/map/map_" + index);
 
 		for (var y = 0; y < this._terrain.height(); ++y)
 		{
 			for (var x = 0; x < this._terrain.width(); ++x)
 			{
-				this._terrain.setHeight(x, y, json.indices[y * this._terrain.width() + x]);
+				this._terrain.setHeight(x, y, obj.indices[y * this._terrain.width() + x]);
 			}
 		}
 
 		this._terrain.flush();
 		
+		this._edited = {
+			height: false,
+			texture: false
+		}
+		
 		Log.success("Loaded terrain data");
 	},
 
-	save: function()
+	save: function(index)
 	{
-		Log.info("Saving terrain data");
+		if (this._edited.texture == true)
+		{
+			this._terrain.saveTexture("textures/terrain/map/map_" + this._gridPosition.x + "_" + this._gridPosition.y);
+			this.setEdited(false, false);
+		}
+
+		if (this._edited.height == false)
+		{
+			return;
+		}
+
+		Log.info("Saving terrain data of segment " + index);
 		var toSave = {};
 		var terrainIndices = [];
 
@@ -81,10 +108,17 @@ _.extend(Landscape.prototype, {
 		}
 
 		toSave.indices = terrainIndices;
-		var mapData = JSON.stringify(toSave);
-		IO.write("json/terrain/map.json", mapData);
-		this._terrain.saveTexture("textures/terrain/map/map");
 		Log.success("Saved terrain data");
+
+		this._edited = {
+			height: false,
+			texture: false
+		}
+
+		return {
+			pos: this._gridPosition,
+			obj: toSave
+		}
 	},
 
 	terrain: function()

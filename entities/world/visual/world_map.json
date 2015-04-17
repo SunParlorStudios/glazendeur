@@ -1,0 +1,6 @@
+{
+	"script" : {
+		"path" : "entities/scripts/world/visual/world_map",
+		"object" : "WorldMap"
+	}
+}
