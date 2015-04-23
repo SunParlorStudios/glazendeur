@@ -18,7 +18,7 @@ var RenderTargets = RenderTargets || {
 	shore: new RenderTarget("Shore"),
 	water: new RenderTarget("Water"),
 	ui: new RenderTarget("UI")
-}
+};
 
 Game.Initialise = function()
 {
@@ -52,17 +52,17 @@ Game.Initialise = function()
 	StateManager.loadState('states/menu.json');
 
 	StateManager.switch('menu');
-}
+};
 
 Game.Update = function(dt)
 {
 	StateManager.update(dt);
-}
+};
 
 Game.Draw = function(dt)
 {
 	StateManager.draw();
-}
+};
 
 Game.Shutdown = function()
 {
@@ -70,14 +70,14 @@ Game.Shutdown = function()
 	RenderTargets.water.clear();
 	RenderTargets.ui.clear();
 	StateManager.shutdown();
-}
+};
 
 Game.FixedUpdate = function()
 {
 	StateManager.fixedUpdate();
-}
+};
 
 Game.OnReload = function(path)
 {
 	StateManager.reload(path);
-}
+};

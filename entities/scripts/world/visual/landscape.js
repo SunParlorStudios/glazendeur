@@ -4,7 +4,7 @@ var Landscape = Landscape || function(params)
 	this._terrain = this._renderables[0];
 	this._terrain.create(128, 128);
 	this._terrain.setTextureTiling(32, 32);
-	this._gridPosition = {x: 0, y: 0}
+	this._gridPosition = {x: 0, y: 0};
 
 	this._waterPlane = this._renderables[1];
 	this._waterPlane.create(128, 128);
@@ -20,7 +20,7 @@ var Landscape = Landscape || function(params)
 	};
 
 	this.initialise();
-}
+};
 
 _.inherit(Landscape, Entity);
 
@@ -77,7 +77,7 @@ _.extend(Landscape.prototype, {
 		this._edited = {
 			height: false,
 			texture: false
-		}
+		};
 		
 		Log.success("Loaded terrain data");
 	},
@@ -113,22 +113,22 @@ _.extend(Landscape.prototype, {
 		this._edited = {
 			height: false,
 			texture: false
-		}
+		};
 
 		return {
 			pos: this._gridPosition,
 			obj: toSave
-		}
+		};
 	},
 
 	terrain: function()
 	{
-		return this._terrain
+		return this._terrain;
 	},
 
 	waterPlane: function()
 	{
-		return this._waterPlane
+		return this._waterPlane;
 	},
 
 	setGridPosition: function(x, y)

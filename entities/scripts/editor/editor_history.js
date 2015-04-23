@@ -37,7 +37,7 @@ var EditorHistory = EditorHistory || function(terrain)
 	this._terrain = terrain;
 	this._historyIndex = 0;
 	this._history = [];
-}
+};
 
 _.extend(EditorHistory.prototype, {
 	addPoint: function(point)

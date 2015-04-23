@@ -9,7 +9,7 @@ var CameraControl = CameraControl || function(params)
 		angle: 3,
 		zoom: 150,
 		sensitivity: 100
-	}
+	};
 
 	this._border = 0.95;
 	this._lookAt = Vector3D.construct(64, 10, 64);
@@ -18,12 +18,12 @@ var CameraControl = CameraControl || function(params)
 	this._angle = {
 		elevation: 35 * Math.PI / 180,
 		azimuth: 135 * Math.PI / 180
-	}
+	};
 
 	this._camera = params.camera;
 	this._camera.setNearPlane(1);
 	this._camera.setFarPlane(300);
-}
+};
 
 _.inherit(CameraControl, Entity);
 
@@ -57,6 +57,11 @@ _.extend(CameraControl.prototype, {
 		var dir = Vector3D.normalise(Vector3D.sub(unprojB, unprojA));
 
 		return Ray.construct(unprojA, dir);
+	},
+
+	elevation: function()
+	{
+		return this._angle.elevation;
 	},
 
 	onUpdate: function(dt)

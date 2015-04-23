@@ -5,7 +5,7 @@
  * @singleton module:Ray
  * @author Daniël Konings
  */
-var Ray = {}
+var Ray = {};
 
 _.extend(Ray, {
 	/**
@@ -23,7 +23,7 @@ _.extend(Ray, {
 		return {
 			origin: o,
 			direction: d
-		}
+		};
 	},
 
 	/**
@@ -58,6 +58,6 @@ _.extend(Ray, {
 			x: ray.origin.x + ray.direction.x * d, 
 			y: ray.origin.y + ray.direction.y * d,
 			z: ray.origin.z + ray.direction.z * d
-		}
+		};
 	}
 });

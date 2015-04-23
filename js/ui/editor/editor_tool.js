@@ -8,23 +8,36 @@ var EditorTool = EditorTool || function(root, editor, type, layer)
 
 	this._path = "textures/editor/widgets/";
 	this._toolTextures = [
-		{ default: this._path + "tools/raise.png", hover: this._path + "tools/raise_hover.png", pressed: this._path + "tools/raise_pressed.png" },
-		{ default: this._path + "tools/paint.png", hover: this._path + "tools/paint_hover.png", pressed: this._path + "tools/paint_pressed.png" },
-		{ default: this._path + "tools/smooth.png", hover: this._path + "tools/smooth_hover.png", pressed: this._path + "tools/smooth_pressed.png" },
-		{ default: this._path + "tools/ramp.png", hover: this._path + "tools/ramp_hover.png", pressed: this._path + "tools/ramp_pressed.png" },
-		{ default: this._path + "tools/flatten.png", hover: this._path + "tools/flatten_hover.png", pressed: this._path + "tools/flatten_pressed.png" }
-	]
+		this._path + "tools/raise.png",
+		this._path + "tools/paint.png",
+		this._path + "tools/smooth.png",
+		this._path + "tools/ramp.png",
+		this._path + "tools/flatten.png"
+	];
+
+	this._hover = {
+		r: 1,
+		g: 1,
+		b: 0
+	};
+
+	this._pressed = {
+		r: 0.3,
+		g: 0.3,
+		b: 0.3
+	};
 
 	this.initialise();
-}
+};
 
 _.inherit(EditorTool, Button);
 
 _.extend(EditorTool.prototype, {
 	initialise: function()
 	{
-		this.onReleased.ctx = this;
-		this.setOnReleased(this.onReleased);
+		this.setOnReleased(this.onReleased, this);
+		this.setOnEnter(this.onEnter, this);
+		this.setOnLeave(this.onLeave, this);
 	},
 
 	setUI: function()
@@ -32,7 +45,7 @@ _.extend(EditorTool.prototype, {
 		var tex = this._toolTextures[this._type];
 
 		this.setDiffuseMap(tex.default);
-		this.setTextures(tex.default, tex.hover, tex.pressed);
+		this.setTextures(tex.default);
 		this.spawn(this._layer);
 	},
 
@@ -48,6 +61,22 @@ _.extend(EditorTool.prototype, {
 
 	onReleased: function()
 	{
+		this.setBlend(1, 1, 1);
 		this._editor.setTool(this._type);
+	},
+
+	onEnter: function()
+	{
+		this.setBlend(this._hover.r, this._hover.g, this._hover.b);
+	},
+
+	onLeave: function()
+	{
+		this.setBlend(1, 1, 1);
+	},
+
+	onPressed: function()
+	{
+		this.setBlend(this._pressed.r, this._pressed.g, this._pressed.b);
 	}
 });

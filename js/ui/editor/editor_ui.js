@@ -16,7 +16,7 @@ var EditorUI = EditorUI || function(editor, root)
 		"Smooth",
 		"Ramp",
 		"Flatten"
-	]
+	];
 
 	this._numTools = this._toolNames.length;
 
@@ -24,10 +24,10 @@ var EditorUI = EditorUI || function(editor, root)
 		toolWidth: 84,
 		toolHeight: 84,
 		toolPadding: 10
-	}
+	};
 
 	this.initialise();
-}
+};
 
 _.extend(EditorUI.prototype, {
 	initialise: function()

@@ -48,7 +48,6 @@ var TransformGizmo = TransformGizmo || function(params)
 	}
 
 	this._attachedTo = undefined;
-	this._root.setAlpha(0.25);
 }
 
 _.inherit(TransformGizmo, Entity);
@@ -137,6 +136,12 @@ _.extend(TransformGizmo.prototype, {
 			y: offset.y / this._offset * this._speed,
 			z: offset.z / this._offset * this._speed * -1
 		};
+
+		if (this._camera.projectRay().direction.y > 0)
+		{
+			o.x *= -1;
+			o.z *= -1;
+		}
 
 		this._root.translateBy((p.x - this._startPosition.x) * o.x * 4, movement.y * o.y * -1, (p.z - this._startPosition.z) * -o.z * 4);
 		

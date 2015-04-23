@@ -8,7 +8,7 @@ function World()
 		scale: 3, 
 		offset: 3, 
 		texture: 1
-	}
+	};
 }
 
 _.extend(World.prototype, {
@@ -54,7 +54,15 @@ _.extend(World.prototype, {
 				{
 					renderable = new _GLOBAL_[renderable.type](parent);
 				}
-				renderable.spawn(layer);
+
+				if (layer === undefined)
+				{
+					Log.warning("Could not spawn entity '" + entityPath + "' because it has no layer defined");
+				}
+				else
+				{
+					renderable.spawn(layer);
+				}
 
 				for (var field in this._fields)
 				{

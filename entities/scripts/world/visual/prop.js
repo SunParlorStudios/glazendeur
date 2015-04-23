@@ -2,6 +2,8 @@ var Prop = Prop || function(params)
 {
 	Prop._super.constructor.call(this, arguments);
 	this._model = this._renderables[0];
+	this._model.setModel(params.model);
+
 	this._textures = params.textures;
 
 	this._model.setModel(params.model);
@@ -19,11 +21,11 @@ var Prop = Prop || function(params)
 	this.setActivated(false);
 }
 
-_.inherit(Prop, Entity)
+_.inherit(Prop, Entity);
 
 _.extend(Prop.prototype, {
 	onUpdate: function(dt)
 	{
 		
 	}
-})
+});

@@ -1,3 +1,5 @@
+var TestWorld = undefined;
+
 var WorldMap = WorldMap || function(params)
 {
 	WorldMap._super.constructor.call(this, arguments);
@@ -6,7 +8,8 @@ var WorldMap = WorldMap || function(params)
 	this._landscapes = [];
 	this._map = [];
 	this._data = undefined;
-}
+	this._editMode = params.editMode;
+};
 
 _.inherit(WorldMap, Entity);
 
@@ -26,15 +29,39 @@ _.extend(WorldMap.prototype, {
 			}
 		}
 
+		this._props = [];
+
 		if (IO.exists("json/map/map.json") == true)
 		{
 			this.load();
 		}
+
+		TestWorld = this;
+	},
+
+	setEditor: function(editor)
+	{
+		this._editor = editor;
 	},
 
 	landscapes: function()
 	{
 		return this._landscapes;
+	},
+
+	props: function()
+	{
+		return this._props;
+	},
+
+	addProp: function(model, textures)
+	{
+		this.world().spawn("entities/world/visual/prop.json", {
+			model: model, 
+			textures: textures, 
+			editMode: this._editMode,
+			editor: this._editor
+		}, "Default");
 	},
 
 	save: function()
@@ -80,4 +107,4 @@ _.extend(WorldMap.prototype, {
 	{
 
 	}
-})
+});
