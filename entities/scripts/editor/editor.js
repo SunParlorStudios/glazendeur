@@ -55,13 +55,19 @@ var Editor = Editor || function(params)
 	this._currentGizmo = undefined;
 
 	this._ui = new EditorUI(this);
-	this._ui.setCurrentTexture(this._textures[this._currentTexture] + ".png");
-	this._ui.setCurrentBrush(this._brushes[this._currentBrush]);
 
 	this._neighbours = [];
 	this._cursorPosition = {x: 0, y: 0}
-	this._brushStrength = 40;
-	this._opacity = 0.5;
+
+	this._brushStrength = {
+		max: 100,
+		min: 1,
+		current: 0
+	};
+
+	this._brushStrength.current = this._brushStrength.max / 2;
+
+	this._ui.initialise();
 }
 
 _.inherit(Editor, Entity);
@@ -135,6 +141,19 @@ _.extend(Editor.prototype, {
 	setTool: function(tool)
 	{
 		this._currentTool = tool;
+	},
+
+	setBrushStrength: function(v)
+	{
+		v = Math.max(v, this._brushStrength.min);
+		v = Math.min(v, this._brushStrength.max);
+
+		this._brushStrength.current = v;
+	},
+
+	brushStrength: function()
+	{
+		return this._brushStrength;
 	},
 
 	getLandscapes: function(found)
@@ -286,7 +305,7 @@ _.extend(Editor.prototype, {
 
 				terrain.brushTexture(this._brushes[this._currentBrush],
 					this._textures[this._currentTexture] + ".png",
-					cx, cy, size, this._opacity,
+					cx, cy, size, this._brushStrength.current / this._brushStrength.max,
 					this._textures[this._currentTexture] + "_normal.png",
 					this._textures[this._currentTexture] + "_specular.png");
 			}
@@ -325,7 +344,7 @@ _.extend(Editor.prototype, {
 
 						if (this._currentTool == EditorTools.Raise)
 						{
-							total = dt * Math.easeInOutQuintic(ratio, 0, 1, 1) * this._brushStrength;
+							total = dt * Math.easeInOutQuintic(ratio, 0, 1, 1) * this._brushStrength.current;
 
 							if (Mouse.isDown(MouseButton.Left))
 							{

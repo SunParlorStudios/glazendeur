@@ -63,14 +63,15 @@ _.extend(Button.prototype, {
 		}
 	},
 
-	setOnEnter: function(func)
+	setOnEnter: function(func, ctx)
 	{
+		var self = this;
 		this._onEnter = function(button)
 		{
-			func.call(this, button);
-			self.setDiffuseMap(this._textures.hover);
+			func.call(self._onEnter.ctx, button);
+			self.setDiffuseMap(self._textures.hover);
 		}
-		this._onEnter.ctx = this;
+		this._onEnter.ctx = ctx || this;
 		this._mouseArea.setOnEnter(this._onEnter);
 	},
 
@@ -116,7 +117,6 @@ _.extend(Button.prototype, {
 		this._onDown = function(button)
 		{
 			func.call(self._onDown.ctx, button);
-			func(button, this);
 		}
 		this._onDown.ctx = ctx || this;
 		this._mouseArea.setOnDown(this._onDown);

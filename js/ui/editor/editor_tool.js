@@ -1,10 +1,12 @@
-var EditorTool = EditorTool || function(root, editor, type, layer)
+var EditorTool = EditorTool || function(root, editor, editorUI, type, layer)
 {
 	EditorTool._super.constructor.call(this, root);
 
+	this._editorUI = editorUI;
 	this._editor = editor;
 	this._type = type;
 	this._layer = layer || "UI";
+	this._selected = false;
 
 	this._path = "textures/editor/widgets/";
 	this._toolTextures = [
@@ -17,14 +19,20 @@ var EditorTool = EditorTool || function(root, editor, type, layer)
 
 	this._hover = {
 		r: 1,
-		g: 1,
+		g: 0.5,
 		b: 0
 	};
 
 	this._pressed = {
-		r: 0.3,
-		g: 0.3,
-		b: 0.3
+		r: 0.5,
+		g: 0.5,
+		b: 0.5
+	};
+
+	this._selected = {
+		r: 0.95,
+		g: 1,
+		b: 0
 	};
 
 	this.initialise();
@@ -36,17 +44,36 @@ _.extend(EditorTool.prototype, {
 	initialise: function()
 	{
 		this.setOnReleased(this.onReleased, this);
+		this.setOnPressed(this.onPressed, this);
 		this.setOnEnter(this.onEnter, this);
 		this.setOnLeave(this.onLeave, this);
 	},
 
 	setUI: function()
 	{
+		this._setDefaultBlend();
 		var tex = this._toolTextures[this._type];
 
-		this.setDiffuseMap(tex.default);
-		this.setTextures(tex.default);
+		this.setDiffuseMap(tex);
+		this.setTextures(tex);
 		this.spawn(this._layer);
+	},
+
+	setSelected: function(v)
+	{
+		this._isSelected = v;
+		this._setDefaultBlend();
+	},
+
+	_setDefaultBlend: function()
+	{
+		if (this._isSelected == true)
+		{
+			this.setBlend(this._selected.r, this._selected.g, this._selected.b);
+			return;
+		}
+
+		this.setBlend(1, 1, 1);
 	},
 
 	show: function()
@@ -61,8 +88,15 @@ _.extend(EditorTool.prototype, {
 
 	onReleased: function()
 	{
-		this.setBlend(1, 1, 1);
+		this.setSelected(true);
+
 		this._editor.setTool(this._type);
+		this._editorUI.toolNotification(this._type);
+	},
+
+	type: function()
+	{
+		return this._type;
 	},
 
 	onEnter: function()
@@ -72,7 +106,7 @@ _.extend(EditorTool.prototype, {
 
 	onLeave: function()
 	{
-		this.setBlend(1, 1, 1);
+		this._setDefaultBlend()
 	},
 
 	onPressed: function()
