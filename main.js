@@ -20,6 +20,39 @@ var RenderTargets = RenderTargets || {
 	ui: new RenderTarget("UI")
 };
 
+_.extend(Log, {
+	lime: function(str)
+	{
+		Log.rgb(str, 0, 0, 0, 225, 255, 0);
+	},
+
+	choc: function(str)
+	{
+		Log.rgb(str, 255, 125, 0, 80, 40, 0);
+	},
+
+	cyan: function(str)
+	{
+		Log.rgb(str, 0, 0, 0, 0, 255, 255);
+	},
+
+	mod: function(str)
+	{
+		var max = 80;
+		var c = Math.sin(Game.time()) * max;
+
+		var r1 = (255 - max) - c
+		var r2 = max - c / 2;
+
+		Log.rgb(str, r1, 0, r1, r2, 0, r2);
+	},
+
+	black: function(str)
+	{
+		Log.rgb(str, 255, 255, 255, 0, 0, 0);
+	}
+})
+
 Game.Initialise = function()
 {
 	RenderTargets.shore.setClearAlbedo(false);
@@ -57,6 +90,7 @@ Game.Initialise = function()
 Game.Update = function(dt)
 {
 	StateManager.update(dt);
+	Log.mod("Hiahhahaha");
 };
 
 Game.Draw = function(dt)
