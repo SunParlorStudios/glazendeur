@@ -1,6 +1,8 @@
 require("js/ui/editor/editor_tool");
+require("js/ui/editor/editor_slider");
 
 Enum("EditorUILayer",[
+	"Input",
 	"Root",
 	"Widgets"
 ]);
@@ -25,8 +27,6 @@ var EditorUI = EditorUI || function(editor, root)
 		toolHeight: 84,
 		toolPadding: 10
 	};
-
-	this.initialise();
 };
 
 _.extend(EditorUI.prototype, {
@@ -40,16 +40,16 @@ _.extend(EditorUI.prototype, {
 			this._root = new Widget();
 		}
 
+		this._rootArea = new MouseArea(this._root);
+
 		this._tools = [];
 		for (var i = 0; i < this._numTools; ++i)
 		{
-			this._tools.push(new EditorTool(this._root, this._editor, EditorTools[this._toolNames[i]], "UI"));
+			this._tools.push(new EditorTool(this._root, this._editor, this, EditorTools[this._toolNames[i]], "UI"));
 		}
 
-		this._currentTexture = new Widget(this._root);
-		this._currentTextureMouseArea = new MouseArea(this._currentTexture);
-		this._currentBrush = new Widget(this._currentTexture);
-		this._currentBrushMouseArea = new MouseArea(this._currentBrush);
+		var strength = this._editor.brushStrength();
+		this._slider = new EditorSlider(strength.min, strength.max, this._root);
 
 		this.setUI();
 	},
@@ -63,7 +63,7 @@ _.extend(EditorUI.prototype, {
 		this._disableInput.ctx = this;
 		this._enableInput.ctx = this;
 
-		this._inputWidget.setZ(EditorUILayer.Root);
+		this._inputWidget.setZ(EditorUILayer.Input);
 		this._inputWidget.setSize(res.w, res.h);
 		this._inputWidget.setOffset(0.5, 0.5);
 
@@ -71,8 +71,17 @@ _.extend(EditorUI.prototype, {
 		this._inputArea.setOnLeave(this._disableInput);
 
 		this._root.setTranslation(
-			res.w / 2 - this._metrics.toolWidth - this._metrics.toolPadding, 
-			-res.h / 2 + this._metrics.toolPadding, 0);
+			this._metrics.toolPadding, 
+			res.h / 2 - this._metrics.toolHeight - this._metrics.toolPadding * 2, EditorUILayer.Root);
+
+		var totalWidth = this._metrics.toolPadding + this._numTools * (this._metrics.toolWidth + this._metrics.toolPadding);
+		var totalHeight = this._metrics.toolPadding * 2 + this._metrics.toolHeight;
+
+		this._root.translateBy(-totalWidth / 2, 0, 0);
+		this._root.spawn("UI");
+
+		this._root.setSize(totalWidth, totalHeight);
+		this._root.setBlend(0, 0, 0);
 
 		for (var i = 0; i < this._numTools; ++i)
 		{
@@ -81,29 +90,34 @@ _.extend(EditorUI.prototype, {
 			var h = this._metrics.toolHeight;
 
 			tool.setSize(w, h);
-			tool.setTranslation(0, i * (h + this._metrics.toolPadding), EditorUILayer.Widgets);
+			tool.setTranslation(this._metrics.toolPadding + i * (w + this._metrics.toolPadding), this._metrics.toolPadding, EditorUILayer.Widgets);
 			tool.setUI();
 		}
 
-		var h = this._metrics.toolHeight;
-		this._currentTexture.setSize(this._metrics.toolWidth, h);
-		this._currentTexture.spawn("UI");
-		this._currentTexture.setTranslation(0, this._numTools * (h + this._metrics.toolPadding), EditorUILayer.Widgets);
+		this._slider.setUI();
+		this._slider.setZIndex(EditorUILayer.Widgets + 1);
 
-		this._currentBrush.setSize(this._metrics.toolWidth, h);
-		this._currentBrush.spawn("UI");
-		this._currentBrush.setTranslation(0, h + this._metrics.toolPadding, EditorUILayer.Widgets);
+		var strength = this._editor.brushStrength();
+		this._slider.setValue(strength.current);
+		this._slider.setOnChange(this._onSliderChange, this);
 
-		this._changeTexture.ctx = this;
-		this._changeBrush.ctx = this;
+		this._slider.setTranslation(-this._slider.size().x - this._metrics.toolPadding, 0);
 
-		this._currentTextureMouseArea.setOnEnter(this._disableInput);
-		this._currentTextureMouseArea.setOnLeave(this._enableInput);
-		this._currentTextureMouseArea.setOnReleased(this._changeTexture)
+		this._tools[0].setSelected(true);
+		this._enableInput();
+	},
 
-		this._currentBrushMouseArea.setOnEnter(this._disableInput);
-		this._currentBrushMouseArea.setOnLeave(this._enableInput);
-		this._currentBrushMouseArea.setOnReleased(this._changeBrush)
+	toolNotification: function(type)
+	{
+		var tool;
+		for (var i = 0; i < this._tools.length; ++i)
+		{
+			tool = this._tools[i];
+			if (tool.type() !== type)
+			{
+				tool.setSelected(false);
+			}
+		}
 	},
 
 	show: function()
@@ -116,33 +130,20 @@ _.extend(EditorUI.prototype, {
 
 	},
 
-	setCurrentTexture: function(texture)
-	{
-		this._currentTexture.setDiffuseMap(texture);
-	},
-
-	setCurrentBrush: function(texture)
-	{
-		this._currentBrush.setDiffuseMap(texture);
-	},
-
-	_changeTexture: function()
-	{
-		this._editor.changeTexture();
-	},
-
-	_changeBrush: function()
-	{
-		this._editor.changeBrush();
-	},
-
 	_disableInput: function()
 	{
 		this._editor.addInputDisable(InputDisable.UI);
+		this._root.setAlpha(1);
 	},
 
 	_enableInput: function()
 	{
 		this._editor.removeInputDisable(InputDisable.UI);
+		this._root.setAlpha(0.5);
+	},
+
+	_onSliderChange: function(v)
+	{
+		this._editor.setBrushStrength(v);
 	}
 });
