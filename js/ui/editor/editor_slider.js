@@ -77,7 +77,6 @@ _.extend(EditorSlider.prototype, {
 		var rootTrans = this._root === undefined ? Vector2D.construct(0, 0) : this._root.translation();
 		var local = Vector2D.sub(p, Vector2D.add(rootTrans, Vector2D.add(this.translation(), this._slider.translation())));
 
-		Log.info(local.x);
 		local.x = Math.max(local.x, 0);
 		local.x = Math.min(local.x, this._metrics.width);
 
