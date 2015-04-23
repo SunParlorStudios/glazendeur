@@ -1,0 +1,11 @@
+{
+	"techniques" : {
+		"Diffuse" : {
+			"passes" : [
+				{
+					"shader" : "shaders/grid.fx"
+				}
+			]
+		}
+	}
+}

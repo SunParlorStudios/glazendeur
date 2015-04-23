@@ -1,0 +1,16 @@
+{
+	"techniques" : {
+		"Diffuse" : {
+			"passes" : [
+				{
+					"rasterizer" : {
+						"CullMode" : "None"
+					},
+
+					"shader" : "shaders/base_diffuse.fx",
+					"sampling" : "Linear"
+				}
+			]
+		}
+	}
+}

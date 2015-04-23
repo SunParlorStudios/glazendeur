@@ -16,12 +16,12 @@ _.inherit(WorldMap, Entity);
 _.extend(WorldMap.prototype, {
 	initialise: function()
 	{
-		var size = 3;
+		this.landscapesPerAxis = 3;
 		var landscape;
 
-		for (var y = 0; y < size; ++y)
+		for (var y = 0; y < this.landscapesPerAxis; ++y)
 		{
-			for (var x = 0; x < size; ++x)
+			for (var x = 0; x < this.landscapesPerAxis; ++x)
 			{
 				landscape = this.world().spawn("entities/world/visual/landscape.json", {}, "Default");
 				landscape.setGridPosition(x, y);

@@ -1,0 +1,6 @@
+{
+	"script" : {
+		"path" : "entities/scripts/world/utility/grid",
+		"object" : "WorldGrid"
+	}
+}
