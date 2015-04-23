@@ -9,9 +9,12 @@ var WorldGrid = WorldGrid || function (params)
 	}
 
 	this._map = params.map;
-	this._cellWidth = params.cellWidth - 1;
-	this._cellHeight = params.cellHeight - 1;
 	this._grids = [];
+
+	for (var i = 0; i < this._map.landscapes().length; i++)
+	{
+		this._map.landscapes()[i]._grid = this;
+	}
 
 	this.calculate();
 };
@@ -28,19 +31,46 @@ _.extend(WorldGrid.prototype, {
 			t.create(128, 128);
 			t.setTranslation(128 * landscapes[i].gridPosition().x, 1, 128 * landscapes[i].gridPosition().y);
 			t.translateBy(-128 * 0.5, 0, -128 * 0.5);
-			t.setTextureTiling(128 / 8, 128 / 8);
+			t.setTextureTiling(128, 128);
 			t.brushTexture("textures/terrain/brushes/brush_1.png", "textures/tile.png", 64, 64, 99999, 1.0, "textures/tile_normal.png", "textures/tile_specular.png");
-			t.setUniform(Uniform.Float, 'CellWidth', this._cellWidth);
-			t.setUniform(Uniform.Float, 'CellHeight', this._cellHeight);
 			t.spawn('Default');
 
 			this._grids.push(t);
 		}
+
+		for (var x = 0; x < 3; x++)
+		{
+			for (var y = 0; y < 3; y++)
+			{
+				t = this._grids[x + 3 * y];
+
+				for (var row = 0; row < 128; row++)
+				{
+					for (var col = 0; col < 128; col++)
+					{
+						t.setHeight(row - x, col - y, landscapes[x + 3 * y].terrain().getHeight(row, col) + 0.02);
+					}
+				}
+
+				t.flush();
+			}
+		}
 	},
 
-	display: function ()
+	updateHeight: function (landscape, row, col)
 	{
-		
+		var gridPos = landscape.gridPosition();
+		var grid = this._grids[gridPos.x + 3 * gridPos.y];
+
+		grid.setHeight(row - gridPos.x, col - gridPos.y, landscape.terrain().getHeight(row, col) + 0.02);
+	},
+
+	flush: function (landscape)
+	{
+		var gridPos = landscape.gridPosition();
+		var grid = this._grids[gridPos.x + 3 * gridPos.y];
+
+		grid.flush();
 	},
 
 	onUpdate: function (dt)

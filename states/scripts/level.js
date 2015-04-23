@@ -50,11 +50,8 @@ _.extend(Level.prototype, {
 		* The grid
 		*/
 		this._grid = this.world.spawn("entities/world/utility/grid.json", {
-			map: this._map,
-			cellWidth: 8,
-			cellHeight: 8
+			map: this._map
 		});
-		this._grid.display();
 
 		if (this._editMode == true)
 		{

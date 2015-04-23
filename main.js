@@ -90,7 +90,6 @@ Game.Initialise = function()
 Game.Update = function(dt)
 {
 	StateManager.update(dt);
-	Log.mod("Hiahhahaha");
 };
 
 Game.Draw = function(dt)

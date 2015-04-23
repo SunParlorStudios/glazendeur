@@ -145,6 +145,16 @@ _.extend(Landscape.prototype, {
 		return this._gridPosition;
 	},
 
+	flushGrid: function ()
+	{
+		this._grid.flush(this);
+	},
+
+	grid: function()
+	{
+		return this._grid;
+	},
+
 	onUpdate: function(dt)
 	{
 		

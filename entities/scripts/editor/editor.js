@@ -75,7 +75,7 @@ _.inherit(Editor, Entity);
 _.extend(Editor.prototype, {
 	_loadTextures: function()
 	{
-		this._contentPath = "textures/terrain/"
+		this._contentPath = "textures/terrain/";
 		this._brushes = IO.filesInDirectory(this._contentPath + "brushes");
 		for (var i = 0; i < this._brushes.length; ++i)
 		{
@@ -349,11 +349,13 @@ _.extend(Editor.prototype, {
 							if (Mouse.isDown(MouseButton.Left))
 							{
 								terrain.setHeight(indices.x, indices.y, indexHeight + total);
+								neighbour.grid().updateHeight(neighbour, indices.x, indices.y, indexHeight + total);
 								neighbour.setEdited(true, false);
 							}
 							else if (Mouse.isDown(MouseButton.Right))
 							{
 								terrain.setHeight(indices.x, indices.y, indexHeight - total);
+								neighbour.grid().updateHeight(neighbour, indices.x, indices.y, indexHeight - total);
 								neighbour.setEdited(true, false);
 							}
 						}
@@ -401,6 +403,7 @@ _.extend(Editor.prototype, {
 						{
 							currentIndex = currentIndices[j];
 							this._neighbours[i].terrain().setHeight(currentIndex.x, currentIndex.y, this._flattenHeight);
+							this._neighbours[i].grid().updateHeight(this._neighbours[i], currentIndex.x, currentIndex.y, this._flattenHeight);
 							this._neighbours[i].setEdited(true, false);
 						}
 					}
@@ -476,6 +479,7 @@ _.extend(Editor.prototype, {
 							avg /= num;
 							var result = Math.lerp(neighbourTerrain.getHeight(currentIndex.x, currentIndex.y), avg, smooth);
 							neighbourTerrain.setHeight(currentIndex.x, currentIndex.y, result);
+							this._neighbours[i].grid().updateHeight(this._neighbours[i], currentIndex.x, currentIndex.y, result);
 							this._neighbours[i].setEdited(true, false);
 
 							var foundShared;
@@ -483,6 +487,7 @@ _.extend(Editor.prototype, {
 							{
 								foundShared = shared[s];
 								foundShared.landscape.terrain().setHeight(foundShared.index.x, foundShared.index.y, result);
+								foundShared.landscape.grid().updateHeight(foundShared.landscape, foundShared.index.x, foundShared.index.y, result);
 								foundShared.landscape.setEdited(true, false);
 							}
 						}
@@ -500,6 +505,7 @@ _.extend(Editor.prototype, {
 		for (var i = 0; i < this._neighbours.length; ++i)
 		{
 			this._neighbours[i].terrain().flush();
+			this._neighbours[i].flushGrid();
 		}
 	},
 
