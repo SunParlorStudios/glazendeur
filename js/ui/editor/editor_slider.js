@@ -106,6 +106,22 @@ _.extend(EditorSlider.prototype, {
 		this._slider.setScale(r, 1);
 	},
 
+	show: function ()
+	{
+		this._slider.spawn("UI");
+		this.spawn("UI");
+		this._box.spawn("UI");
+		this._text.spawn("UI");
+	},
+
+	hide: function ()
+	{
+		this._slider.destroy();
+		this.destroy();
+		this._box.destroy();
+		this._text.destroy();
+	},
+
 	value: function()
 	{
 		return this._value;

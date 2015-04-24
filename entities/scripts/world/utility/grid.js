@@ -33,7 +33,6 @@ _.extend(WorldGrid.prototype, {
 			t.translateBy(-128 * 0.5, 0, -128 * 0.5);
 			t.setTextureTiling(128, 128);
 			t.brushTexture("textures/terrain/brushes/brush_1.png", "textures/tile.png", 64, 64, 99999, 1.0, "textures/tile_normal.png", "textures/tile_specular.png");
-			t.spawn('Default');
 
 			this._grids.push(t);
 		}
@@ -71,6 +70,22 @@ _.extend(WorldGrid.prototype, {
 		var grid = this._grids[gridPos.x + 3 * gridPos.y];
 
 		grid.flush();
+	},
+
+	display: function ()
+	{
+		for (var i = 0; i < this._grids.length; i++)
+		{
+			this._grids[i].spawn('Default');
+		}
+	},
+
+	disappear: function ()
+	{	
+		for (var i = 0; i < this._grids.length; i++)
+		{
+			this._grids[i].destroy();
+		}
 	},
 
 	onUpdate: function (dt)

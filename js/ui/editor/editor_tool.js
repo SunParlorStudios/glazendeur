@@ -1,21 +1,8 @@
-var EditorTool = EditorTool || function(root, editor, editorUI, type, layer)
+var EditorTool = EditorTool || function(editor, button, tool)
 {
-	EditorTool._super.constructor.call(this, root);
-
-	this._editorUI = editorUI;
 	this._editor = editor;
-	this._type = type;
-	this._layer = layer || "UI";
-	this._selected = false;
-
-	this._path = "textures/editor/widgets/";
-	this._toolTextures = [
-		this._path + "tools/raise.png",
-		this._path + "tools/paint.png",
-		this._path + "tools/smooth.png",
-		this._path + "tools/ramp.png",
-		this._path + "tools/flatten.png"
-	];
+	this._button = button;
+	this._tool = tool;
 
 	this._hover = {
 		r: 1,
@@ -35,82 +22,45 @@ var EditorTool = EditorTool || function(root, editor, editorUI, type, layer)
 		b: 0
 	};
 
-	this.initialise();
+	this._button.setOnReleased(this.onReleased, this);
+	this._button.setOnPressed(this.onPressed, this);
+	this._button.setOnEnter(this.onEnter, this);
+	this._button.setOnLeave(this.onLeave, this);
 };
 
-_.inherit(EditorTool, Button);
-
 _.extend(EditorTool.prototype, {
-	initialise: function()
-	{
-		this.setOnReleased(this.onReleased, this);
-		this.setOnPressed(this.onPressed, this);
-		this.setOnEnter(this.onEnter, this);
-		this.setOnLeave(this.onLeave, this);
-	},
-
-	setUI: function()
-	{
-		this._setDefaultBlend();
-		var tex = this._toolTextures[this._type];
-
-		this.setDiffuseMap(tex);
-		this.setTextures(tex);
-		this.spawn(this._layer);
-	},
-
 	setSelected: function(v)
 	{
 		this._isSelected = v;
-		this._setDefaultBlend();
+		this.setDefaultBlend();
 	},
 
-	_setDefaultBlend: function()
+	setDefaultBlend: function()
 	{
 		if (this._isSelected == true)
-		{
-			this.setBlend(this._selected.r, this._selected.g, this._selected.b);
-			return;
-		}
-
-		this.setBlend(1, 1, 1);
-	},
-
-	show: function()
-	{
-
-	},
-
-	hide: function()
-	{
-
+			this._button.setBlend(this._selected.r, this._selected.g, this._selected.b);
+		else
+			this._button.setBlend(1, 1, 1);
 	},
 
 	onReleased: function()
 	{
 		this.setSelected(true);
-
-		this._editor.setTool(this._type);
-		this._editorUI.toolNotification(this._type);
-	},
-
-	type: function()
-	{
-		return this._type;
+		this._editor.setTool(this._tool);
 	},
 
 	onEnter: function()
 	{
-		this.setBlend(this._hover.r, this._hover.g, this._hover.b);
+		this._button.setBlend(this._hover.r, this._hover.g, this._hover.b);
 	},
 
 	onLeave: function()
 	{
-		this._setDefaultBlend()
+		this.setDefaultBlend();
 	},
 
 	onPressed: function()
 	{
-		this.setBlend(this._pressed.r, this._pressed.g, this._pressed.b);
+		this._button.setBlend(this._pressed.r, this._pressed.g, this._pressed.b);
 	}
 });

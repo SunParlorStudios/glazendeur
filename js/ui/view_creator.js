@@ -71,7 +71,7 @@ _.extend(ViewCreator, {
 					{
 						resources.push(['texture', 'ui/cocosstudio/' + child.DisabledFileData[0]['$'].Path]);
 					}
-					if (!isInResources(child.PressedFileData[0]['$'].Path) && child.PressedFileData[0]['$'].Path !== 'Default/Button_Pressed.png')
+					if (!isInResources(child.PressedFileData[0]['$'].Path) && child.PressedFileData[0]['$'].Path !== 'Default/Button_Press.png')
 					{
 						resources.push(['texture', 'ui/cocosstudio/' + child.PressedFileData[0]['$'].Path]);
 					}
@@ -105,7 +105,7 @@ _.extend(ViewCreator, {
 					widget.setTextures(
 						child.NormalFileData[0]['$'].Path !== 'Default/Button_Normal.png' ? 'ui/cocosstudio/' + child.NormalFileData[0]['$'].Path : null,
 						child.DisabledFileData[0]['$'].Path !== 'Default/Button_Disable.png' ? 'ui/cocosstudio/' + child.DisabledFileData[0]['$'].Path : null,
-						child.PressedFileData[0]['$'].Path !== 'Default/Button_Pressed.png' ? 'ui/cocosstudio/' + child.PressedFileData[0]['$'].Path : null
+						child.PressedFileData[0]['$'].Path !== 'Default/Button_Press.png' ? 'ui/cocosstudio/' + child.PressedFileData[0]['$'].Path : null
 					);
 
 					widget.setDiffuseMap('ui/cocosstudio/' + child.NormalFileData[0]['$'].Path);

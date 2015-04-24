@@ -8,6 +8,16 @@ Enum("EditorTools", [
 	"Flatten"
 ]);
 
+Enum("PathTools", [
+	"Walkable",
+	"Unwalkable"
+]);
+
+Enum("EditMode", [
+	"World",
+	"Path"
+]);
+
 Enum("Ramp", [
 	"Start",
 	"End"
@@ -25,8 +35,10 @@ var Editor = Editor || function(params)
 {
 	Editor._super.constructor.call(this, arguments);
 
-	this._loadTextures();
+	this.view = params.view;
+
 	this._currentTool = EditorTools.Raise;
+	this._editMode = EditMode.World;
 
 	this._map = params.map;
 	this._landscapes = this._map.landscapes();
@@ -54,8 +66,6 @@ var Editor = Editor || function(params)
 	this._inputEnabled = [];
 	this._currentGizmo = undefined;
 
-	this._ui = new EditorUI(this);
-
 	this._neighbours = [];
 	this._cursorPosition = {x: 0, y: 0}
 
@@ -67,7 +77,11 @@ var Editor = Editor || function(params)
 
 	this._brushStrength.current = this._brushStrength.max / 2;
 
-	this._ui.initialise();
+	this._grid = undefined;
+
+	this._loadTextures();
+
+	this._ui = new EditorUI(this);
 }
 
 _.inherit(Editor, Entity);
@@ -258,254 +272,309 @@ _.extend(Editor.prototype, {
 
 	updateTools: function(dt)
 	{
-		if (this.inputDisabled() == true)
+		if (this._editMode == EditMode.World)
 		{
-			return;
-		}
-
-		var averageHeight = [];
-		var affected = [];
-		for (var i = 0; i < this._neighbours.length; ++i)
-		{
-			averageHeight[i] = 0;
-			affected[i] = [];
-		}
-
-		var neighbour;
-		var terrain;
-		var size = this._radius;
-		var cx = this._cursorPosition.x,
-			cy = this._cursorPosition.z;
-
-		var indexPos;
-		var indexHeight;
-		var ratio;
-		var total;
-
-		var indices;
-
-		if (this._currentTool == EditorTools.Paint && Mouse.isDown(MouseButton.Left))
-		{
-			var terrainIndex;
-			for (var i = 0; i < this._neighbours.length; ++i)
+			if (Keyboard.isPressed(Key.P))
 			{
-				neighbour = this._neighbours[i];
-				terrain = neighbour.terrain();
-				terrainIndex = terrain.worldToIndex(cx, cy);
-				
-				if (terrainIndex.x !== undefined && terrainIndex.y !== undefined)
-				{
-					var neighbours = this.getLandscapes(neighbour);
+				this._editMode = EditMode.Path;
+				this._currentTool = PathTools.Undefined;
 
-					for (var j = 0; j < neighbours.length; ++j)
-					{
-						neighbours[j].setEdited(false, true);
-					}
-				}
+				this._ui.switchTo(this._editMode);
 
-				terrain.brushTexture(this._brushes[this._currentBrush],
-					this._textures[this._currentTexture] + ".png",
-					cx, cy, size, this._brushStrength.current / this._brushStrength.max,
-					this._textures[this._currentTexture] + "_normal.png",
-					this._textures[this._currentTexture] + "_specular.png");
+				this._grid.display();
+				return;
 			}
 
-			return;
-		}
-
-		if (!Mouse.isDown(MouseButton.Left) && !Mouse.isDown(MouseButton.Right))
-		{
-			return;
-		}
-
-		for (var x = cx - size; x < cx + size; ++x)
-		{
-			for (var y = cy - size; y < cy + size; ++y)
+			if (this.inputDisabled() == true)
 			{
+				return;
+			}
+
+			var averageHeight = [];
+			var affected = [];
+			for (var i = 0; i < this._neighbours.length; ++i)
+			{
+				averageHeight[i] = 0;
+				affected[i] = [];
+			}
+
+			var neighbour;
+			var terrain;
+			var size = this._radius;
+			var cx = this._cursorPosition.x,
+				cy = this._cursorPosition.z;
+
+			var indexPos;
+			var indexHeight;
+			var ratio;
+			var total;
+
+			var indices;
+
+			if (this._currentTool == EditorTools.Paint && Mouse.isDown(MouseButton.Left))
+			{
+				var terrainIndex;
 				for (var i = 0; i < this._neighbours.length; ++i)
 				{
 					neighbour = this._neighbours[i];
 					terrain = neighbour.terrain();
+					terrainIndex = terrain.worldToIndex(cx, cy);
+					
+					if (terrainIndex.x !== undefined && terrainIndex.y !== undefined)
+					{
+						var neighbours = this.getLandscapes(neighbour);
 
-					indices = terrain.worldToIndex(x, y);
-
-					if (indices.x !== undefined && indices.y !== undefined)
-					{	
-						indexPos = terrain.indexToWorld(indices.x, indices.y);
-
-						ratio = 1 - Math.distance(indexPos.x, indexPos.z, cx, cy) / size;
-
-						if (ratio < Number.EPSILON)
+						for (var j = 0; j < neighbours.length; ++j)
 						{
-							continue;
+							neighbours[j].setEdited(false, true);
 						}
+					}
 
-						indexHeight = terrain.getHeight(indices.x, indices.y);
+					terrain.brushTexture(this._brushes[this._currentBrush],
+						this._textures[this._currentTexture] + ".png",
+						cx, cy, size, this._brushStrength.current / this._brushStrength.max,
+						this._textures[this._currentTexture] + "_normal.png",
+						this._textures[this._currentTexture] + "_specular.png");
+				}
 
-						if (this._currentTool == EditorTools.Raise)
-						{
-							total = dt * Math.easeInOutQuintic(ratio, 0, 1, 1) * this._brushStrength.current;
+				return;
+			}
 
-							if (Mouse.isDown(MouseButton.Left))
+			if (!Mouse.isDown(MouseButton.Left) && !Mouse.isDown(MouseButton.Right))
+			{
+				return;
+			}
+
+			for (var x = cx - size; x < cx + size; ++x)
+			{
+				for (var y = cy - size; y < cy + size; ++y)
+				{
+					for (var i = 0; i < this._neighbours.length; ++i)
+					{
+						neighbour = this._neighbours[i];
+						terrain = neighbour.terrain();
+
+						indices = terrain.worldToIndex(x, y);
+
+						if (indices.x !== undefined && indices.y !== undefined)
+						{	
+							indexPos = terrain.indexToWorld(indices.x, indices.y);
+
+							ratio = 1 - Math.distance(indexPos.x, indexPos.z, cx, cy) / size;
+
+							if (ratio < Number.EPSILON)
 							{
-								terrain.setHeight(indices.x, indices.y, indexHeight + total);
-								neighbour.grid().updateHeight(neighbour, indices.x, indices.y, indexHeight + total);
-								neighbour.setEdited(true, false);
+								continue;
 							}
-							else if (Mouse.isDown(MouseButton.Right))
+
+							indexHeight = terrain.getHeight(indices.x, indices.y);
+
+							if (this._currentTool == EditorTools.Raise)
 							{
-								terrain.setHeight(indices.x, indices.y, indexHeight - total);
-								neighbour.grid().updateHeight(neighbour, indices.x, indices.y, indexHeight - total);
-								neighbour.setEdited(true, false);
+								total = dt * Math.easeInOutQuintic(ratio, 0, 1, 1) * this._brushStrength.current;
+
+								if (Mouse.isDown(MouseButton.Left))
+								{
+									terrain.setHeight(indices.x, indices.y, indexHeight + total);
+									neighbour.grid().updateHeight(neighbour, indices.x, indices.y, indexHeight + total);
+									neighbour.setEdited(true, false);
+								}
+								else if (Mouse.isDown(MouseButton.Right))
+								{
+									terrain.setHeight(indices.x, indices.y, indexHeight - total);
+									neighbour.grid().updateHeight(neighbour, indices.x, indices.y, indexHeight - total);
+									neighbour.setEdited(true, false);
+								}
 							}
-						}
-						else if ((this._currentTool == EditorTools.Flatten || this._currentTool == EditorTools.Smooth) && Mouse.isDown(MouseButton.Left))
-						{
-							averageHeight[i] += terrain.getHeight(indices.x, indices.y);
-							indices.ratio = ratio;
-							affected[i].push(indices);
+							else if ((this._currentTool == EditorTools.Flatten || this._currentTool == EditorTools.Smooth) && Mouse.isDown(MouseButton.Left))
+							{
+								averageHeight[i] += terrain.getHeight(indices.x, indices.y);
+								indices.ratio = ratio;
+								affected[i].push(indices);
+							}
 						}
 					}
 				}
 			}
-		}
 
-		var average = 0;
-		var currentHeight, currentIndices;
-		var currentIndex;
+			var average = 0;
+			var currentHeight, currentIndices;
+			var currentIndex;
 
-		if (this._currentTool == EditorTools.Flatten || this._currentTool == EditorTools.Smooth)
-		{
-			for (var i = 0; i < this._neighbours.length; ++i)
+			if (this._currentTool == EditorTools.Flatten || this._currentTool == EditorTools.Smooth)
 			{
-				currentHeight = averageHeight[i];
-				currentIndices = affected[i];
-
-				if (currentIndices.length == 0)
+				for (var i = 0; i < this._neighbours.length; ++i)
 				{
-					continue;
-				}
+					currentHeight = averageHeight[i];
+					currentIndices = affected[i];
 
-				average = currentHeight;
-				average /= currentIndices.length;
-
-				if (Mouse.isDown(MouseButton.Left))
-				{
-					if (this._currentTool == EditorTools.Flatten)
+					if (currentIndices.length == 0)
 					{
-						if (this._wasFlattening	== false)
-						{
-							this._wasFlattening	= true;
-							this._flattenHeight = average;
-						}
-
-						for (var j = 0; j < currentIndices.length; ++j)
-						{
-							currentIndex = currentIndices[j];
-							this._neighbours[i].terrain().setHeight(currentIndex.x, currentIndex.y, this._flattenHeight);
-							this._neighbours[i].grid().updateHeight(this._neighbours[i], currentIndex.x, currentIndex.y, this._flattenHeight);
-							this._neighbours[i].setEdited(true, false);
-						}
+						continue;
 					}
-					else if (this._currentTool == EditorTools.Smooth)
+
+					average = currentHeight;
+					average /= currentIndices.length;
+
+					if (Mouse.isDown(MouseButton.Left))
 					{
-						var neighbourTerrain, smooth, worldPos, shared = [];
-						var adjacentTerrain, adjacentIndex, found;
-						var filterSize = 1;
-						var num = 0;
-						var avg = 0;
-						var fx, fy;
-
-						for (var j = 0; j < currentIndices.length; ++j)
+						if (this._currentTool == EditorTools.Flatten)
 						{
-							avg = 0;
-							num = 0;
-							neighbourTerrain = this._neighbours[i].terrain();
-							currentIndex = currentIndices[j];
-							smooth = currentIndex.ratio;
-							shared.length = 0;
-							worldPos = neighbourTerrain.indexToWorld(currentIndex.x, currentIndex.y);
-
-							for (var n = 0; n < this._neighbours.length; ++n)
+							if (this._wasFlattening	== false)
 							{
-								if (this._neighbours[n] == this._neighbours[i])
-								{
-									continue;
-								}
-
-								adjacentTerrain = this._neighbours[n].terrain();
-
-								adjacentIndex = adjacentTerrain.worldToIndex(worldPos.x, worldPos.z);
-
-								if (adjacentIndex.x !== undefined && adjacentIndex.y !== undefined)
-								{
-									shared.push({index: adjacentIndex, landscape: this._neighbours[n]});
-								}
+								this._wasFlattening	= true;
+								this._flattenHeight = average;
 							}
 
-							for (var adjx = -filterSize; adjx <= filterSize; ++adjx)
+							for (var j = 0; j < currentIndices.length; ++j)
 							{
-								for (var adjy = -filterSize; adjy <= filterSize; ++adjy)
+								currentIndex = currentIndices[j];
+								this._neighbours[i].terrain().setHeight(currentIndex.x, currentIndex.y, this._flattenHeight);
+								this._neighbours[i].grid().updateHeight(this._neighbours[i], currentIndex.x, currentIndex.y, this._flattenHeight);
+								this._neighbours[i].setEdited(true, false);
+							}
+						}
+						else if (this._currentTool == EditorTools.Smooth)
+						{
+							var neighbourTerrain, smooth, worldPos, shared = [];
+							var adjacentTerrain, adjacentIndex, found;
+							var filterSize = 1;
+							var num = 0;
+							var avg = 0;
+							var fx, fy;
+
+							for (var j = 0; j < currentIndices.length; ++j)
+							{
+								avg = 0;
+								num = 0;
+								neighbourTerrain = this._neighbours[i].terrain();
+								currentIndex = currentIndices[j];
+								smooth = currentIndex.ratio;
+								shared.length = 0;
+								worldPos = neighbourTerrain.indexToWorld(currentIndex.x, currentIndex.y);
+
+								for (var n = 0; n < this._neighbours.length; ++n)
 								{
-									fx = currentIndex.x + adjx;
-									fy = currentIndex.y + adjy;
-
-									if (fx < 0 || fy < 0 || fx >= neighbourTerrain.width() || fy >= neighbourTerrain.height())
+									if (this._neighbours[n] == this._neighbours[i])
 									{
-										for (var n = 0; n < this._neighbours.length; ++n)
+										continue;
+									}
+
+									adjacentTerrain = this._neighbours[n].terrain();
+
+									adjacentIndex = adjacentTerrain.worldToIndex(worldPos.x, worldPos.z);
+
+									if (adjacentIndex.x !== undefined && adjacentIndex.y !== undefined)
+									{
+										shared.push({index: adjacentIndex, landscape: this._neighbours[n]});
+									}
+								}
+
+								for (var adjx = -filterSize; adjx <= filterSize; ++adjx)
+								{
+									for (var adjy = -filterSize; adjy <= filterSize; ++adjy)
+									{
+										fx = currentIndex.x + adjx;
+										fy = currentIndex.y + adjy;
+
+										if (fx < 0 || fy < 0 || fx >= neighbourTerrain.width() || fy >= neighbourTerrain.height())
 										{
-											if (this._neighbours[n] == this._neighbours[i])
+											for (var n = 0; n < this._neighbours.length; ++n)
 											{
-												continue;
-											}
+												if (this._neighbours[n] == this._neighbours[i])
+												{
+													continue;
+												}
 
-											adjacentIndex = adjacentTerrain.worldToIndex(worldPos.x + adjx, worldPos.z + adjy);
+												adjacentIndex = adjacentTerrain.worldToIndex(worldPos.x + adjx, worldPos.z + adjy);
 
-											if (adjacentIndex.x !== undefined && adjacentIndex.y !== undefined)
-											{
-												avg += adjacentTerrain.getHeight(adjacentIndex.x, adjacentIndex.y);
-												++num;
-												break;
+												if (adjacentIndex.x !== undefined && adjacentIndex.y !== undefined)
+												{
+													avg += adjacentTerrain.getHeight(adjacentIndex.x, adjacentIndex.y);
+													++num;
+													break;
+												}
 											}
 										}
-									}
-									else
-									{
-										avg += neighbourTerrain.getHeight(fx, fy);
-										++num;
-									}
-								}	
-							}
-							avg /= num;
-							var result = Math.lerp(neighbourTerrain.getHeight(currentIndex.x, currentIndex.y), avg, smooth);
-							neighbourTerrain.setHeight(currentIndex.x, currentIndex.y, result);
-							this._neighbours[i].grid().updateHeight(this._neighbours[i], currentIndex.x, currentIndex.y, result);
-							this._neighbours[i].setEdited(true, false);
+										else
+										{
+											avg += neighbourTerrain.getHeight(fx, fy);
+											++num;
+										}
+									}	
+								}
+								avg /= num;
+								var result = Math.lerp(neighbourTerrain.getHeight(currentIndex.x, currentIndex.y), avg, smooth);
+								neighbourTerrain.setHeight(currentIndex.x, currentIndex.y, result);
+								this._neighbours[i].grid().updateHeight(this._neighbours[i], currentIndex.x, currentIndex.y, result);
+								this._neighbours[i].setEdited(true, false);
 
-							var foundShared;
-							for (var s = 0; s < shared.length; ++s)
-							{
-								foundShared = shared[s];
-								foundShared.landscape.terrain().setHeight(foundShared.index.x, foundShared.index.y, result);
-								foundShared.landscape.grid().updateHeight(foundShared.landscape, foundShared.index.x, foundShared.index.y, result);
-								foundShared.landscape.setEdited(true, false);
+								var foundShared;
+								for (var s = 0; s < shared.length; ++s)
+								{
+									foundShared = shared[s];
+									foundShared.landscape.terrain().setHeight(foundShared.index.x, foundShared.index.y, result);
+									foundShared.landscape.grid().updateHeight(foundShared.landscape, foundShared.index.x, foundShared.index.y, result);
+									foundShared.landscape.setEdited(true, false);
+								}
 							}
 						}
 					}
 				}
 			}
-		}
 
-		if (Mouse.isReleased(MouseButton.Left))
-		{
-			this._wasFlattening	= false;
-			this._flattenHeight	= 0;
-		}
+			if (Mouse.isReleased(MouseButton.Left))
+			{
+				this._wasFlattening	= false;
+				this._flattenHeight	= 0;
+			}
 
-		for (var i = 0; i < this._neighbours.length; ++i)
+			for (var i = 0; i < this._neighbours.length; ++i)
+			{
+				this._neighbours[i].terrain().flush();
+				this._neighbours[i].flushGrid();
+			}
+		}
+		else if (this._editMode == EditMode.Path)
 		{
-			this._neighbours[i].terrain().flush();
-			this._neighbours[i].flushGrid();
+			if (Keyboard.isPressed(Key.P))
+			{
+				this._editMode = EditMode.World;
+				this._ui.switchTo(this._editMode);
+				this._grid.disappear();
+				return;
+			}
+
+			if (this.inputDisabled() == true)
+			{
+				return;
+			}
+
+			switch (this._currentTool)
+			{
+				case PathTools.Walkable:
+					if (Mouse.isPressed(MouseButton.Left))
+					{
+
+					}
+
+					if (Mouse.isReleased(MouseButton.Right))
+					{
+
+					}
+					break;
+				case PathTools.Unwalkable:
+					if (Mouse.isPressed(MouseButton.Left))
+					{
+
+					}
+
+					if (Mouse.isReleased(MouseButton.Right))
+					{
+
+					}
+					break;
+			}
 		}
 	},
 

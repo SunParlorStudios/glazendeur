@@ -7,139 +7,265 @@ Enum("EditorUILayer",[
 	"Widgets"
 ]);
 
+/**
+*
+*
+*
+* Yo Daniël, aangezien jij hier morgen waarschijnlijk eerder naar kijkt dan ik..
+* Ik ben nog bezig geweest met de file, zoals je wel hebt gezien :')
+* Heb de UI editor erin verwerkt nu, en is nog niet volledig vlekkeloos nu,
+* dus voordat je erin duikt - laat mij nog heel ff hier mee rotzooien zodat 't
+* een iets overzichtelijkere chaos word in vergelijking met hiervoor :)
+*
+* - Hajje? Haije? Haïje? w/e houdoe en bedankt
+*
+*
+*/
+
+/**
+*
+*
+*
+* Yo Daniël, aangezien jij hier morgen waarschijnlijk eerder naar kijkt dan ik..
+* Ik ben nog bezig geweest met de file, zoals je wel hebt gezien :')
+* Heb de UI editor erin verwerkt nu, en is nog niet volledig vlekkeloos nu,
+* dus voordat je erin duikt - laat mij nog heel ff hier mee rotzooien zodat 't
+* een iets overzichtelijkere chaos word in vergelijking met hiervoor :)
+*
+* - Hajje? Haije? Haïje? w/e houdoe en bedankt
+*
+*
+*/
+
+/**
+*
+*
+*
+* Yo Daniël, aangezien jij hier morgen waarschijnlijk eerder naar kijkt dan ik..
+* Ik ben nog bezig geweest met de file, zoals je wel hebt gezien :')
+* Heb de UI editor erin verwerkt nu, en is nog niet volledig vlekkeloos nu,
+* dus voordat je erin duikt - laat mij nog heel ff hier mee rotzooien zodat 't
+* een iets overzichtelijkere chaos word in vergelijking met hiervoor :)
+*
+* - Hajje? Haije? Haïje? w/e houdoe en bedankt
+*
+*
+*/
+
+/**
+*
+*
+*
+* Yo Daniël, aangezien jij hier morgen waarschijnlijk eerder naar kijkt dan ik..
+* Ik ben nog bezig geweest met de file, zoals je wel hebt gezien :')
+* Heb de UI editor erin verwerkt nu, en is nog niet volledig vlekkeloos nu,
+* dus voordat je erin duikt - laat mij nog heel ff hier mee rotzooien zodat 't
+* een iets overzichtelijkere chaos word in vergelijking met hiervoor :)
+*
+* - Hajje? Haije? Haïje? w/e houdoe en bedankt
+*
+*
+*/
+
+/**
+*
+*
+*
+* Yo Daniël, aangezien jij hier morgen waarschijnlijk eerder naar kijkt dan ik..
+* Ik ben nog bezig geweest met de file, zoals je wel hebt gezien :')
+* Heb de UI editor erin verwerkt nu, en is nog niet volledig vlekkeloos nu,
+* dus voordat je erin duikt - laat mij nog heel ff hier mee rotzooien zodat 't
+* een iets overzichtelijkere chaos word in vergelijking met hiervoor :)
+*
+* - Hajje? Haije? Haïje? w/e houdoe en bedankt
+*
+*
+*/
+
+/**
+*
+*
+*
+* Yo Daniël, aangezien jij hier morgen waarschijnlijk eerder naar kijkt dan ik..
+* Ik ben nog bezig geweest met de file, zoals je wel hebt gezien :')
+* Heb de UI editor erin verwerkt nu, en is nog niet volledig vlekkeloos nu,
+* dus voordat je erin duikt - laat mij nog heel ff hier mee rotzooien zodat 't
+* een iets overzichtelijkere chaos word in vergelijking met hiervoor :)
+*
+* - Hajje? Haije? Haïje? w/e houdoe en bedankt
+*
+*
+*/
+
 var EditorUI = EditorUI || function(editor, root)
 {
 	this._editor = editor;
-	this._inputWidget = undefined;
-	this._root = root || undefined;
-	this._toolNames = [
-		"Raise",
-		"Paint",
-		"Smooth",
-		"Ramp",
-		"Flatten"
-	];
+	this.view = editor.view;
 
-	this._numTools = this._toolNames.length;
-
-	this._metrics = {
-		toolWidth: 84,
-		toolHeight: 84,
-		toolPadding: 10
+	this._hover = {
+		r: 1,
+		g: 0.5,
+		b: 0
 	};
+
+	this._pressed = {
+		r: 0.5,
+		g: 0.5,
+		b: 0.5
+	};
+
+	this._selected = {
+		r: 0.95,
+		g: 1,
+		b: 0
+	};
+
+	// resize the visuals for the roots
+	this.view.root_world.setSize(500, 200);
+	this.view.root_world.setBlend(0, 0, 0);
+	this.view.root_path.setSize(500, 200);
+	this.view.root_path.setBlend(0, 0, 0);
+
+	// define the visuals for the world toolset
+	this._worldTools =
+	{
+		raise: new EditorTool(this, this.view.root_world.raise, EditorTools.Raise),
+		paint: new EditorTool(this, this.view.root_world.paint, EditorTools.Paint),
+		smooth: new EditorTool(this, this.view.root_world.smooth, EditorTools.Smooth),
+		ramp: new EditorTool(this, this.view.root_world.ramp, EditorTools.Ramp),
+		flatten: new EditorTool(this, this.view.root_world.flatten, EditorTools.Flatten)
+	};
+
+	// define the visuals for the path toolset
+	this._pathTools = 
+	{
+		walkable: new EditorTool(this, this.view.root_path.walkable, PathTools.Walkable),
+		unwalkable: new EditorTool(this, this.view.root_path.unwalkable, PathTools.Unwalkable)
+	}
+
+	// ugly slider code
+	var strength = this._editor.brushStrength();
+	this._slider = new EditorSlider(strength.min, strength.max, this.view.root_world);
+	this._slider.setUI();
+
+	this._slider.setValue(strength.current);
+	this._slider.setOnChange(this._onSliderChange, this);
+	this._slider.setTranslation(-540, -42);
+	this._slider.setZIndex(EditorUILayer.Widgets + 1);
+
+	// switch the UI to whatever mode the editor is supposed to be in
+	this.switchTo(this._editor._editMode);
+
+	// Input disabling and stuff, ripped from old editor ui..
+	this._inputWidget = new Widget();
+	this._inputArea = new MouseArea(this._inputWidget);
+	this._inputWidget.setZ(EditorUILayer.Input);
+	this._inputWidget.setSize(RenderSettings.resolution().w, RenderSettings.resolution().h);
+	this._inputWidget.setOffset(0.5, 0.5);
+
+	this._disableInput.ctx = this;
+	this._enableInput.ctx = this;
+	this._inputArea.setOnEnter(this._enableInput);
+	this._inputArea.setOnLeave(this._disableInput);
+
+	this._rootArea = new MouseArea(this.view.input);
 };
 
 _.extend(EditorUI.prototype, {
-	initialise: function()
+	switchTo: function (mode)
 	{
-		this._inputWidget = new Widget();
-		this._inputArea = new MouseArea(this._inputWidget);
+		// disable all UI
+		this._slider.hide();
 
-		if (this._root === undefined)
+		this.view.root_world.destroy();
+		for (var k in this._worldTools)
 		{
-			this._root = new Widget();
+			this._worldTools[k]._button.destroy();
+			this._worldTools[k]._button._mouseArea.setActivated(false);
+		}
+		
+		this.view.root_path.destroy();
+		for (var k in this._pathTools)
+		{
+			this._pathTools[k]._button.destroy();
+			this._pathTools[k]._button._mouseArea.setActivated(false);
 		}
 
-		this._rootArea = new MouseArea(this._root);
-
-		this._tools = [];
-		for (var i = 0; i < this._numTools; ++i)
+		// enable the UI we need
+		switch(mode)
 		{
-			this._tools.push(new EditorTool(this._root, this._editor, this, EditorTools[this._toolNames[i]], "UI"));
+			case EditMode.World:
+				this.view.root_world.spawn("UI");
+
+				for (var k in this._worldTools)
+				{
+					this._worldTools[k]._button.spawn("UI");
+					this._worldTools[k]._button._mouseArea.setActivated(true);
+				}
+
+				this._slider.show();
+				this.setTool(EditorTools.Raise);
+				break;
+
+			case EditMode.Path:
+				this.view.root_path.spawn("UI");
+
+				for (var k in this._pathTools)
+				{
+					this._pathTools[k]._button.spawn("UI");
+					this._pathTools[k]._button._mouseArea.setActivated(true);
+				}
+
+				this.setTool(PathTools.Walkable);
+				break;
 		}
-
-		var strength = this._editor.brushStrength();
-		this._slider = new EditorSlider(strength.min, strength.max, this._root);
-
-		this.setUI();
 	},
 
-	setUI: function()
+	setTool: function(type)
 	{
-		var res = RenderSettings.resolution();
+		var tool, tools;
 
-		this._root.setZ(EditorUILayer.Widgets);
-
-		this._disableInput.ctx = this;
-		this._enableInput.ctx = this;
-
-		this._inputWidget.setZ(EditorUILayer.Input);
-		this._inputWidget.setSize(res.w, res.h);
-		this._inputWidget.setOffset(0.5, 0.5);
-
-		this._inputArea.setOnEnter(this._enableInput);
-		this._inputArea.setOnLeave(this._disableInput);
-
-		this._root.setTranslation(
-			this._metrics.toolPadding, 
-			res.h / 2 - this._metrics.toolHeight - this._metrics.toolPadding * 2, EditorUILayer.Root);
-
-		var totalWidth = this._metrics.toolPadding + this._numTools * (this._metrics.toolWidth + this._metrics.toolPadding);
-		var totalHeight = this._metrics.toolPadding * 2 + this._metrics.toolHeight;
-
-		this._root.translateBy(-totalWidth / 2, 0, 0);
-		this._root.spawn("UI");
-
-		this._root.setSize(totalWidth, totalHeight);
-		this._root.setBlend(0, 0, 0);
-
-		for (var i = 0; i < this._numTools; ++i)
+		// decice which toolset we're using
+		switch (this._editor._editMode)
 		{
-			var tool = this._tools[i];
-			var w = this._metrics.toolWidth;
-			var h = this._metrics.toolHeight;
-
-			tool.setSize(w, h);
-			tool.setTranslation(this._metrics.toolPadding + i * (w + this._metrics.toolPadding), this._metrics.toolPadding, EditorUILayer.Widgets);
-			tool.setUI();
+			case EditMode.World:
+				tools = this._worldTools;
+				break;
+			case EditMode.Path:
+				tools = this._pathTools;
+				break;
 		}
 
-		this._slider.setUI();
-		this._slider.setZIndex(EditorUILayer.Widgets + 1);
-
-		var strength = this._editor.brushStrength();
-		this._slider.setValue(strength.current);
-		this._slider.setOnChange(this._onSliderChange, this);
-
-		this._slider.setTranslation(-this._slider.size().x - this._metrics.toolPadding, 0);
-
-		this._tools[0].setSelected(true);
-		this._enableInput();
-	},
-
-	toolNotification: function(type)
-	{
-		var tool;
-		for (var i = 0; i < this._tools.length; ++i)
+		// highlight the selected tool in the UI
+		for (var k in tools)
 		{
-			tool = this._tools[i];
-			if (tool.type() !== type)
+			tool = tools[k];
+			if (tool._tool !== type)
 			{
 				tool.setSelected(false);
 			}
+			else
+			{
+				tool.setSelected(true);	
+			}
 		}
-	},
 
-	show: function()
-	{
-
-	},
-
-	hide: function()
-	{
-
+		// let the actual editor know we are using a new tool
+		this._editor.setTool(type);
 	},
 
 	_disableInput: function()
 	{
 		this._editor.addInputDisable(InputDisable.UI);
-		this._root.setAlpha(1);
+		this.view.root_world.setAlpha(1);
+		this.view.root_path.setAlpha(1);
 	},
 
 	_enableInput: function()
 	{
 		this._editor.removeInputDisable(InputDisable.UI);
-		this._root.setAlpha(0.5);
+		this.view.root_world.setAlpha(0.5);
+		this.view.root_path.setAlpha(0.5);
 	},
 
 	_onSliderChange: function(v)

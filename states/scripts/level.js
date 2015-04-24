@@ -16,12 +16,16 @@ _.inherit(Level, State);
 _.extend(Level.prototype, {
 	init: function ()
 	{
+		Level._super.init.call(this);
+
 		this._light = new Light(LightType.Directional);
 		this._light.setDirection(0, -1, -1);
 	},
 
 	show: function()
 	{
+		Level._super.show.call(this);
+
 		this._editMode = CVar.get("editMode") == true;
 
 		Lighting.setAmbientColour(0.3, 0.2, 0.1);
@@ -52,14 +56,21 @@ _.extend(Level.prototype, {
 		this._grid = this.world.spawn("entities/world/utility/grid.json", {
 			map: this._map
 		});
+		this._map._grid = this._grid;
 
 		if (this._editMode == true)
 		{
 			this._editor = this.world.spawn("entities/editor/editor.json", { 
 				map: this._map, 
-				camera: this._camera 
+				camera: this._camera,
+				view: this.view
 			});
 			this._map.setEditor(this._editor);
+			this._editor._grid = this._grid;
+		}
+		else
+		{
+			this.view.root_world.destroy();
 		}
 	},
 
@@ -70,6 +81,8 @@ _.extend(Level.prototype, {
 
 	draw: function ()
 	{
+		Level._super.draw.call(this);
+
 		Game.render(Game.camera, RenderTargets.default);
 		Game.render(Game.camera, RenderTargets.water);
 		Game.render(Game.camera, RenderTargets.ui);
