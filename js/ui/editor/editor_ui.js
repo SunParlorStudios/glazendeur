@@ -1,5 +1,6 @@
 require("js/ui/editor/editor_tool");
 require("js/ui/editor/editor_slider");
+require("js/ui/editor/editor_model_view");
 
 Enum("EditorUILayer",[
 	"Input",
@@ -22,80 +23,6 @@ Enum("EditorUILayer",[
 *
 */
 
-/**
-*
-*
-*
-* Yo Daniël, aangezien jij hier morgen waarschijnlijk eerder naar kijkt dan ik..
-* Ik ben nog bezig geweest met de file, zoals je wel hebt gezien :')
-* Heb de UI editor erin verwerkt nu, en is nog niet volledig vlekkeloos nu,
-* dus voordat je erin duikt - laat mij nog heel ff hier mee rotzooien zodat 't
-* een iets overzichtelijkere chaos word in vergelijking met hiervoor :)
-*
-* - Hajje? Haije? Haïje? w/e houdoe en bedankt
-*
-*
-*/
-
-/**
-*
-*
-*
-* Yo Daniël, aangezien jij hier morgen waarschijnlijk eerder naar kijkt dan ik..
-* Ik ben nog bezig geweest met de file, zoals je wel hebt gezien :')
-* Heb de UI editor erin verwerkt nu, en is nog niet volledig vlekkeloos nu,
-* dus voordat je erin duikt - laat mij nog heel ff hier mee rotzooien zodat 't
-* een iets overzichtelijkere chaos word in vergelijking met hiervoor :)
-*
-* - Hajje? Haije? Haïje? w/e houdoe en bedankt
-*
-*
-*/
-
-/**
-*
-*
-*
-* Yo Daniël, aangezien jij hier morgen waarschijnlijk eerder naar kijkt dan ik..
-* Ik ben nog bezig geweest met de file, zoals je wel hebt gezien :')
-* Heb de UI editor erin verwerkt nu, en is nog niet volledig vlekkeloos nu,
-* dus voordat je erin duikt - laat mij nog heel ff hier mee rotzooien zodat 't
-* een iets overzichtelijkere chaos word in vergelijking met hiervoor :)
-*
-* - Hajje? Haije? Haïje? w/e houdoe en bedankt
-*
-*
-*/
-
-/**
-*
-*
-*
-* Yo Daniël, aangezien jij hier morgen waarschijnlijk eerder naar kijkt dan ik..
-* Ik ben nog bezig geweest met de file, zoals je wel hebt gezien :')
-* Heb de UI editor erin verwerkt nu, en is nog niet volledig vlekkeloos nu,
-* dus voordat je erin duikt - laat mij nog heel ff hier mee rotzooien zodat 't
-* een iets overzichtelijkere chaos word in vergelijking met hiervoor :)
-*
-* - Hajje? Haije? Haïje? w/e houdoe en bedankt
-*
-*
-*/
-
-/**
-*
-*
-*
-* Yo Daniël, aangezien jij hier morgen waarschijnlijk eerder naar kijkt dan ik..
-* Ik ben nog bezig geweest met de file, zoals je wel hebt gezien :')
-* Heb de UI editor erin verwerkt nu, en is nog niet volledig vlekkeloos nu,
-* dus voordat je erin duikt - laat mij nog heel ff hier mee rotzooien zodat 't
-* een iets overzichtelijkere chaos word in vergelijking met hiervoor :)
-*
-* - Hajje? Haije? Haïje? w/e houdoe en bedankt
-*
-*
-*/
 
 var EditorUI = EditorUI || function(editor, root)
 {
@@ -121,9 +48,9 @@ var EditorUI = EditorUI || function(editor, root)
 	};
 
 	// resize the visuals for the roots
-	this.view.root_world.setSize(500, 200);
+	this.view.root_world.setSize(600, 200);
 	this.view.root_world.setBlend(0, 0, 0);
-	this.view.root_path.setSize(500, 200);
+	this.view.root_path.setSize(600, 200);
 	this.view.root_path.setBlend(0, 0, 0);
 
 	// define the visuals for the world toolset
@@ -133,7 +60,8 @@ var EditorUI = EditorUI || function(editor, root)
 		paint: new EditorTool(this, this.view.root_world.paint, EditorTools.Paint),
 		smooth: new EditorTool(this, this.view.root_world.smooth, EditorTools.Smooth),
 		ramp: new EditorTool(this, this.view.root_world.ramp, EditorTools.Ramp),
-		flatten: new EditorTool(this, this.view.root_world.flatten, EditorTools.Flatten)
+		flatten: new EditorTool(this, this.view.root_world.flatten, EditorTools.Flatten),
+		props: new EditorTool(this, this.view.root_world.props, EditorTools.Props)
 	};
 
 	// define the visuals for the path toolset
@@ -150,8 +78,13 @@ var EditorUI = EditorUI || function(editor, root)
 
 	this._slider.setValue(strength.current);
 	this._slider.setOnChange(this._onSliderChange, this);
-	this._slider.setTranslation(-540, -42);
+	this._slider.setTranslation(-600, -42);
 	this._slider.setZIndex(EditorUILayer.Widgets + 1);
+
+	// this is not supported in the ui editor yet, so I'm doing this. Shit needs to be done so sorry
+	this._modelView = new EditorModelView(this, this._editor.props(), "UI");
+	this._modelView.setUI();
+	this._modelView.setPosition(600, 128);
 
 	// switch the UI to whatever mode the editor is supposed to be in
 	this.switchTo(this._editor._editMode);
@@ -259,6 +192,7 @@ _.extend(EditorUI.prototype, {
 		this._editor.addInputDisable(InputDisable.UI);
 		this.view.root_world.setAlpha(1);
 		this.view.root_path.setAlpha(1);
+		this._modelView.setAlpha(1);
 	},
 
 	_enableInput: function()
@@ -266,6 +200,7 @@ _.extend(EditorUI.prototype, {
 		this._editor.removeInputDisable(InputDisable.UI);
 		this.view.root_world.setAlpha(0.5);
 		this.view.root_path.setAlpha(0.5);
+		this._modelView.setAlpha(0.5);
 	},
 
 	_onSliderChange: function(v)

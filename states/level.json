@@ -25,6 +25,7 @@
 			[ "texture", "textures/editor/widgets/tools/smooth.png" ],
 			[ "texture", "textures/editor/widgets/tools/ramp.png" ],
 			[ "texture", "textures/editor/widgets/tools/flatten.png" ],
+			[ "texture", "textures/editor/widgets/tools/props.png" ],
 			[ "texture", "textures/terrain/ocean/ocean.png" ],
 			[ "texture", "textures/terrain/ocean/ocean_normal.png" ],
 			[ "texture", "textures/terrain/ocean/ocean_specular.png" ],
@@ -33,9 +34,7 @@
 			[ "texture", "textures/terrain/textures/grass_specular.png" ],
 			[ "texture", "textures/terrain/brushes/brush_1.png" ],
 			[ "model", "models/editor/gizmos/move_center.fbx" ],
-			[ "model", "models/editor/gizmos/move_axis.fbx" ],
-			[ "model", "models/test_house.fbx" ],
-			[ "model", "models/test_cube.fbx" ]
+			[ "model", "models/editor/gizmos/move_axis.fbx" ]
 		],
 		"info": {
 			"resourcesPerFrame": 1,

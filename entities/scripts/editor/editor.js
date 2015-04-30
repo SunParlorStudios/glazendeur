@@ -5,7 +5,8 @@ Enum("EditorTools", [
 	"Paint",
 	"Smooth",
 	"Ramp",
-	"Flatten"
+	"Flatten",
+	"Props"
 ]);
 
 Enum("PathTools", [
@@ -80,6 +81,7 @@ var Editor = Editor || function(params)
 	this._grid = undefined;
 
 	this._loadTextures();
+	this._loadProps();
 
 	this._ui = new EditorUI(this);
 }
@@ -89,14 +91,14 @@ _.inherit(Editor, Entity);
 _.extend(Editor.prototype, {
 	_loadTextures: function()
 	{
-		this._contentPath = "textures/terrain/";
-		this._brushes = IO.filesInDirectory(this._contentPath + "brushes");
+		this._texturePath = "textures/terrain/";
+		this._brushes = IO.filesInDirectory(this._texturePath + "brushes");
 		for (var i = 0; i < this._brushes.length; ++i)
 		{
 			ContentManager.load("texture", this._brushes[i]);
 		}
 
-		var textures = IO.filesInDirectory(this._contentPath + "textures");
+		var textures = IO.filesInDirectory(this._texturePath + "textures");
 		var texture, last;
 		var split = [];
 
@@ -111,12 +113,67 @@ _.extend(Editor.prototype, {
 
 			if (last.split("_normal").length == 1 && last.split("_specular").length == 1)
 			{
-				this._textures.push(this._contentPath + "textures/" + last);
+				this._textures.push(this._texturePath + "textures/" + last);
 			}	
 		}
 
 		this._currentTexture = 0;
 		this._currentBrush = 0;
+	},
+
+	_loadProps: function()
+	{
+		this._modelPath = "models/props";
+		this._props = [];
+
+		var directories = IO.filesInDirectory(this._modelPath, true);
+		var prop;
+		var path;
+
+		var texturesToLoad = [
+			"_diffuse",
+			"_normal",
+			"_specular"
+		];
+
+		var texturePath;
+
+		for (var i = 0; i < directories.length; ++i)
+		{
+			prop = directories[i].split("/");
+			prop = prop[prop.length - 1];
+			Log.debug("Found prop '" + prop + "'");
+
+			path = this._modelPath + "/" + prop + "/" + prop;
+
+			if (IO.exists(path + ".fbx") == false)
+			{
+				Log.error("No .fbx file was found for prop '" + prop + "'\nProp will not be loaded");
+				continue;
+			}
+
+			ContentManager.load("model",  path + ".fbx");
+
+			for (var j = 0; j < texturesToLoad.length; ++j)
+			{
+				texturePath = path + texturesToLoad[j] + ".png";
+				if (IO.exists(texturePath) == false)
+				{
+					Log.warning("Could not load texture '" + texturesToLoad[j] + "' for prop '" + prop + "'");
+					continue;
+				}
+
+				ContentManager.load("texture", texturePath);
+			}
+
+			Log.success("Loaded prop '" + prop + "'");
+			this._props.push(prop);
+		}
+	},
+
+	props: function()
+	{
+		return this._props;
 	},
 
 	addInputDisable: function(type)
