@@ -40,7 +40,6 @@ _.extend(Level.prototype, {
 		this._map = this.world.spawn("entities/world/visual/world_map.json", { 
 			editMode: this._editMode
 		});
-		this._map.initialise();
 
 		/**
 		* The camera
@@ -71,6 +70,19 @@ _.extend(Level.prototype, {
 		else
 		{
 			this.view.root_world.destroy();
+		}
+
+		this._map.initialise();
+		this._grid.calculate();
+
+		if (this._editMode == true)
+		{
+			this._editor.initialise();
+		}
+
+		if (IO.exists("json/map/map.json") == true)
+		{
+			this._map.load();
 		}
 	},
 

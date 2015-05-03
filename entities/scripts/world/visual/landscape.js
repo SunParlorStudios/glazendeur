@@ -12,12 +12,17 @@ var Landscape = Landscape || function(params)
 	this._waterPlane.spawn("Water");
 	this._waterPlane.setTranslation(0, -10, 0);
 
+	this._editMode = params.editMode;
+	this._editor = params.editor;
+
 	this._terrain.setOffset(this._terrain.width() / 2, 0, this._terrain.height() / 2);
 	this._waterPlane.setOffset(this._waterPlane.width() / 2, 0, this._waterPlane.height() / 2);
 	this._edited = {
 		height: true,
 		texture: true
 	};
+
+	this._props = [];
 
 	this.initialise();
 };
@@ -39,10 +44,11 @@ _.extend(Landscape.prototype, {
 		this._waterPlane.setEffect("effects/water.effect");
 	},
 
-	setEdited: function(height, texture)
+	setEdited: function(height, texture, props)
 	{
 		this._edited.height = this._edited.height == true ? true : height;
 		this._edited.texture = this._edited.texture == true ? true : texture;
+		this._edited.props = this._edited.props == true ? true : props;
 	},
 
 	edited: function()
@@ -53,14 +59,9 @@ _.extend(Landscape.prototype, {
 	load: function(index, loadedData)
 	{
 		Log.info("Loading terrain data of segment " + index);
+
 		var index = "" + this._gridPosition.x + "_" + this._gridPosition.y;
 		var obj = loadedData.grid[index];
-
-		if (obj.indices === undefined)
-		{
-			Log.error("Terrain data corrupt, could not find indices list");
-			return;
-		}
 
 		this._terrain.loadTexture("textures/terrain/map/map_" + index);
 
@@ -72,11 +73,33 @@ _.extend(Landscape.prototype, {
 			}
 		}
 
+		this._props = [];
+
+		if (obj.props !== undefined)
+		{
+			var propData;
+			var prop;
+			for (var i = 0; i < obj.props.length; ++i)
+			{
+				propData = obj.props[i];
+				prop = this.world().spawn("entities/world/visual/prop.json", {
+					editMode: this._editMode,
+					editor: this._editor,
+					definition: propData.definition,
+					translation: Vector3D.construct(0, 0, 0)
+				}, "Default");
+
+				prop.load(propData);
+				prop.place(this);
+			}
+		}
+
 		this._terrain.flush();
 		
 		this._edited = {
 			height: false,
-			texture: false
+			texture: false,
+			props: false
 		};
 		
 		Log.success("Loaded terrain data");
@@ -90,7 +113,7 @@ _.extend(Landscape.prototype, {
 			this.setEdited(false, false);
 		}
 
-		if (this._edited.height == false)
+		if (this._edited.height == false && this._edited.props == false)
 		{
 			return;
 		}
@@ -108,11 +131,20 @@ _.extend(Landscape.prototype, {
 		}
 
 		toSave.indices = terrainIndices;
+		toSave.props = [];
+
+		Log.info("Saving prop data of segment " + index);
+		for (var i = 0; i < this._props.length; ++i)
+		{
+			toSave.props.push(this._props[i].save());
+		}
+
 		Log.success("Saved terrain data");
 
 		this._edited = {
 			height: false,
-			texture: false
+			texture: false,
+			props: false
 		};
 
 		return {
@@ -158,5 +190,63 @@ _.extend(Landscape.prototype, {
 	onUpdate: function(dt)
 	{
 		
+	},
+
+	addProp: function(prop)
+	{
+		this._props.push(prop);
+		this.setEdited(false, false, true);
+	},
+
+	removeProp: function(prop)
+	{
+		for (var i = this._props.length - 1; i >= 0; --i)
+		{
+			if (this._props[i] == prop)
+			{
+				this._props.splice(i, 1);
+				break;
+			}
+		}
+
+		this.setEdited(false, false, true);
+	},
+
+	pickProp: function(ox, oy, oz, dx, dy, dz)
+	{
+		var found = undefined;
+		var lowest = undefined;
+		var prop = undefined;
+		var intersection = undefined;
+
+		for (var i = 0; i < this._props.length; ++i)
+		{
+			prop = this._props[i];
+			intersection = prop.model().rayIntersection(ox, oy, oz, dx, dy, dz);
+
+			if (intersection !== false)
+			{
+				if (found === undefined)
+				{
+					found = prop;
+					lowest = intersection;
+				}
+				else if (intersection < lowest)
+				{
+					found = prop;
+					lowest = intersection;
+				}
+			}
+		}
+
+		if (found === undefined)
+		{
+			return false;
+		}
+
+		return {
+			distance: lowest,
+			prop: prop
+		};
 	}
 });

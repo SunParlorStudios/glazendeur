@@ -9,6 +9,7 @@ var WorldMap = WorldMap || function(params)
 	this._map = [];
 	this._data = undefined;
 	this._editMode = params.editMode;
+	this._editor = params.editor;
 };
 
 _.inherit(WorldMap, Entity);
@@ -23,18 +24,13 @@ _.extend(WorldMap.prototype, {
 		{
 			for (var x = 0; x < this.landscapesPerAxis; ++x)
 			{
-				landscape = this.world().spawn("entities/world/visual/landscape.json", {}, "Default");
+				landscape = this.world().spawn("entities/world/visual/landscape.json", {editMode: this._editMode, editor: this._editor}, "Default");
 				landscape.setGridPosition(x, y);
 				this._landscapes.push(landscape);
 			}
 		}
 
 		this._props = [];
-
-		if (IO.exists("json/map/map.json") == true)
-		{
-			this.load();
-		}
 
 		TestWorld = this;
 	},
@@ -52,16 +48,6 @@ _.extend(WorldMap.prototype, {
 	props: function()
 	{
 		return this._props;
-	},
-
-	addProp: function(model, textures)
-	{
-		this.world().spawn("entities/world/visual/prop.json", {
-			model: model, 
-			textures: textures, 
-			editMode: this._editMode,
-			editor: this._editor
-		}, "Default");
 	},
 
 	save: function()

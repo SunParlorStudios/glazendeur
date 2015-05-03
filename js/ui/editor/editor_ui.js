@@ -206,5 +206,10 @@ _.extend(EditorUI.prototype, {
 	_onSliderChange: function(v)
 	{
 		this._editor.setBrushStrength(v);
+	},
+
+	selectedProp: function()
+	{
+		return this._modelView.selected().path();
 	}
 });

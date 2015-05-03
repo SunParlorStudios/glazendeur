@@ -88,5 +88,10 @@ _.extend(EditorModelView.prototype, {
 	setAlpha: function(a)
 	{
 		this._top.setAlpha(a);
+	},
+
+	selected: function()
+	{
+		return this._selected;
 	}
 });

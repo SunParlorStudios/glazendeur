@@ -48,6 +48,7 @@ var TransformGizmo = TransformGizmo || function(params)
 	}
 
 	this._attachedTo = undefined;
+	this._root.setAlpha(0.5);
 }
 
 _.inherit(TransformGizmo, Entity);
@@ -112,11 +113,13 @@ _.extend(TransformGizmo.prototype, {
 
 			found.setBlend(1, 1, 1);
 			this._startPosition = this._camera.mouseToWorld();
+			this._root.setAlpha(1);
 		}
 		else
 		{
 			this._editor.removeInputDisable(InputDisable.Gizmo);
 			this._editor.setCurrentGizmo(undefined);
+			this._root.setAlpha(0.5);
 		}
 	},
 
@@ -129,6 +132,25 @@ _.extend(TransformGizmo.prototype, {
 
 		var movement = Mouse.movement();
 		var p = this._camera.mouseToWorld();
+
+		if (Keyboard.isDown(Key.Control))
+		{
+			var speed = movement.x / 40;
+			if (this._selected === "x")
+			{
+				this._attachedTo.rotateBy(speed, 0, 0);
+			}
+			else if (this._selected === "y")
+			{
+				this._attachedTo.rotateBy(0, speed, 0);
+			}
+			else if (this._selected === "z")
+			{
+				this._attachedTo.rotateBy(0, 0, speed);
+			}
+
+			return;
+		}
 
 		var offset = this._offsets[this._selected];
 		var o = {

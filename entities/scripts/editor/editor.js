@@ -42,53 +42,56 @@ var Editor = Editor || function(params)
 	this._editMode = EditMode.World;
 
 	this._map = params.map;
-	this._landscapes = this._map.landscapes();
-	this._terrain = this._landscapes[0].terrain();
-
-	this._editingCircle = this.world().spawn("entities/editor/editing_circle.json", {terrain: this._terrain}, "UI");
 	this._camera = params.camera;
-
-	this._radius = 5;
-	this._editingCircle.setBlend(1, 0, 0);
-
-	this._currentHeight = 0;
-
-	this._rampStartCenter = {x: 0, y: 0};
-	this._rampEndCenter = {x: 0, y: 0};
-	this._affectedStart = [];
-	this._affectedEnd = [];
-
-	this._rampStart = 0;
-	this._rampEnd = 0;
-	this._wasRamping = Ramp.Start;
-	this._wasFlattening = false;
-	this._flattenHeight = 0;
-
-	this._inputEnabled = [];
-	this._currentGizmo = undefined;
-
-	this._neighbours = [];
-	this._cursorPosition = {x: 0, y: 0}
-
-	this._brushStrength = {
-		max: 100,
-		min: 1,
-		current: 0
-	};
-
-	this._brushStrength.current = this._brushStrength.max / 2;
-
-	this._grid = undefined;
-
-	this._loadTextures();
-	this._loadProps();
-
-	this._ui = new EditorUI(this);
 }
 
 _.inherit(Editor, Entity);
 
 _.extend(Editor.prototype, {
+	initialise: function()
+	{
+		this._landscapes = this._map.landscapes();
+		this._terrain = this._landscapes[0].terrain();
+
+		this._editingCircle = this.world().spawn("entities/editor/editing_circle.json", {terrain: this._terrain}, "UI");
+
+		this._radius = 5;
+		this._editingCircle.setBlend(1, 0, 0);
+
+		this._currentHeight = 0;
+
+		this._rampStartCenter = {x: 0, y: 0};
+		this._rampEndCenter = {x: 0, y: 0};
+		this._affectedStart = [];
+		this._affectedEnd = [];
+
+		this._rampStart = 0;
+		this._rampEnd = 0;
+		this._wasRamping = Ramp.Start;
+		this._wasFlattening = false;
+		this._flattenHeight = 0;
+
+		this._inputEnabled = [];
+		this._currentGizmo = undefined;
+
+		this._neighbours = [];
+		this._cursorPosition = {x: 0, y: 0}
+
+		this._brushStrength = {
+			max: 100,
+			min: 1,
+			current: 0
+		};
+
+		this._brushStrength.current = this._brushStrength.max / 2;
+
+		this._loadTextures();
+		this._loadProps();
+
+		this._ui = new EditorUI(this);
+		this._placedProp = false;
+	},
+	
 	_loadTextures: function()
 	{
 		this._texturePath = "textures/terrain/";
@@ -125,21 +128,30 @@ _.extend(Editor.prototype, {
 	{
 		this._modelPath = "models/props";
 		this._props = [];
+		this._propDefinitions = [];
+
+		var definition = {
+			textures: {}
+		};
 
 		var directories = IO.filesInDirectory(this._modelPath, true);
 		var prop;
 		var path;
 
 		var texturesToLoad = [
-			"_diffuse",
-			"_normal",
-			"_specular"
+			"diffuse",
+			"normal",
+			"specular"
 		];
 
 		var texturePath;
 
 		for (var i = 0; i < directories.length; ++i)
 		{
+			definition = {
+				textures: {}
+			};
+
 			prop = directories[i].split("/");
 			prop = prop[prop.length - 1];
 			Log.debug("Found prop '" + prop + "'");
@@ -152,22 +164,25 @@ _.extend(Editor.prototype, {
 				continue;
 			}
 
-			ContentManager.load("model",  path + ".fbx");
+			definition.model = path + ".fbx";
+			ContentManager.load("model", definition.model);
 
 			for (var j = 0; j < texturesToLoad.length; ++j)
 			{
-				texturePath = path + texturesToLoad[j] + ".png";
+				texturePath = path + "_" + texturesToLoad[j] + ".png";
 				if (IO.exists(texturePath) == false)
 				{
 					Log.warning("Could not load texture '" + texturesToLoad[j] + "' for prop '" + prop + "'");
 					continue;
 				}
 
+				definition.textures[texturesToLoad[j]] = texturePath;
 				ContentManager.load("texture", texturePath);
 			}
 
 			Log.success("Loaded prop '" + prop + "'");
 			this._props.push(prop);
+			this._propDefinitions[prop] = definition;
 		}
 	},
 
@@ -344,6 +359,98 @@ _.extend(Editor.prototype, {
 
 			if (this.inputDisabled() == true)
 			{
+				return;
+			}
+
+			if (this._currentTool == EditorTools.Props)
+			{
+				var h;
+				var index;
+				var n;
+				var cx = this._cursorPosition.x,
+					cz = this._cursorPosition.z;
+
+				var found = undefined;
+
+				for (var i = 0; i < this._neighbours.length; ++i)
+				{
+					n = this._neighbours[i];
+					index = n.terrain().worldToIndex(cx, cz);
+
+					if (index.x !== undefined && index.y !== undefined)
+					{
+						h = n.terrain().getBilinearHeight(cx, cz);
+						found = n;
+						break;
+					}
+				}
+
+				if (this._placedProp === false)
+				{
+					if (Mouse.isPressed(MouseButton.Left))
+					{
+						var selectedProp = this._ui.selectedProp();
+						var definition = this._propDefinitions[selectedProp];
+
+						this._newProp = this.world().spawn("entities/world/visual/prop.json", 
+						{
+							definition: definition, 
+							editMode: true, 
+							editor: this,
+							translation: Vector3D.construct(cx, h, cz)
+						},
+						"Default");
+
+						this._placedProp = true;
+					}
+				}
+				else
+				{
+					if (Mouse.isReleased(MouseButton.Left) && found !== undefined)
+					{
+						this._newProp.place(found);
+						this._placedProp = false;
+						this._newProp = undefined;
+						return;
+					}
+
+					this._newProp.setPosition(cx, h, cz);
+				}
+
+				if (Mouse.isReleased(MouseButton.Right))
+				{
+					var found = undefined;
+					var lowest = 0;
+					var ray = this._camera.projectRay();
+					var landscape = undefined;
+					var data = false;
+
+					for (var i = 0; i < this._landscapes.length; ++i)
+					{
+						landscape = this._landscapes[i]
+						data = landscape.pickProp(ray.origin.x, ray.origin.y, ray.origin.z, ray.direction.x, ray.direction.y, ray.direction.z);
+						
+						if (data !== false)
+						{
+							if (found === undefined)
+							{
+								lowest = data.distance;
+								found = data.prop;
+							}
+							else if (data.distance < lowest)
+							{
+								lowest = data.distance;
+								found = data.prop;
+							}
+						}
+					}
+
+					if (found !== undefined)
+					{
+						found.remove();
+					}
+				}
+
 				return;
 			}
 

@@ -10,13 +10,6 @@ var WorldGrid = WorldGrid || function (params)
 
 	this._map = params.map;
 	this._grids = [];
-
-	for (var i = 0; i < this._map.landscapes().length; i++)
-	{
-		this._map.landscapes()[i]._grid = this;
-	}
-
-	this.calculate();
 };
 
 _.inherit(WorldGrid, Entity);
@@ -24,6 +17,11 @@ _.inherit(WorldGrid, Entity);
 _.extend(WorldGrid.prototype, {
 	calculate: function ()
 	{
+		for (var i = 0; i < this._map.landscapes().length; i++)
+		{
+			this._map.landscapes()[i]._grid = this;
+		}
+		
 		var landscapes = this._map.landscapes();
 		for (var i = 0; i < landscapes.length; i++)
 		{

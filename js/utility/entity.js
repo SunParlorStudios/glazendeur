@@ -40,5 +40,10 @@ _.extend(Entity.prototype, {
 		{
 			this._renderables[i].spawn(layer);
 		}
+	},
+
+	renderable: function(idx)
+	{
+		return this._renderables[idx];
 	}
 });
