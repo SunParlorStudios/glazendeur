@@ -18,7 +18,7 @@ var TransformGizmo = TransformGizmo || function(params)
 	this._axis.x.setRotation(0, 0, Math.PI / 2);
 	this._axis.z.setRotation(0, -Math.PI / 2, Math.PI / 2);
 
-	this._offset = 12;
+	this._offset = 4;
 	this._offsets = {
 		x: Vector3D.construct(this._offset, 0, 0),
 		y: Vector3D.construct(0, this._offset, 0),
@@ -31,7 +31,7 @@ var TransformGizmo = TransformGizmo || function(params)
 		z: [0, 0, 1]	
 	}
 
-	this._radius = 5;
+	this._radius = 2;
 	this._editor = params.editor;
 	this._camera = this._editor.camera();
 	this._selected = undefined;
@@ -49,6 +49,9 @@ var TransformGizmo = TransformGizmo || function(params)
 
 	this._attachedTo = undefined;
 	this._root.setAlpha(0.5);
+	this._root.setScale(0.33, 0.33, 0.33);
+
+	this._rotation = Vector3D.construct(0, 0, 0);
 }
 
 _.inherit(TransformGizmo, Entity);
@@ -123,9 +126,31 @@ _.extend(TransformGizmo.prototype, {
 		}
 	},
 
-	move: function()
+	move: function(dt)
 	{
-		if (!Mouse.isDown(MouseButton.Left) || this._selected === undefined)
+		if (this._selected === undefined)
+		{
+			return;
+		}
+		
+		if (Keyboard.isDown(Key.Z))
+		{
+			var s = this._attachedTo.scale();
+			s.x = Math.max(0.05, s.x - dt);
+			s.y = Math.max(0.05, s.y - dt);
+			s.z = Math.max(0.05, s.z - dt);
+
+			this._attachedTo.setScale(s.x, s.y, s.z);
+			return;
+		}
+		else if (Keyboard.isDown(Key.X))
+		{
+			var s = this._attachedTo.scale();
+
+			this._attachedTo.setScale(s.x + dt, s.y + dt, s.z + dt);
+		}
+
+		if (!Mouse.isDown(MouseButton.Left))
 		{
 			return;
 		}
@@ -136,18 +161,9 @@ _.extend(TransformGizmo.prototype, {
 		if (Keyboard.isDown(Key.Control))
 		{
 			var speed = movement.x / 40;
-			if (this._selected === "x")
-			{
-				this._attachedTo.rotateBy(speed, 0, 0);
-			}
-			else if (this._selected === "y")
-			{
-				this._attachedTo.rotateBy(0, speed, 0);
-			}
-			else if (this._selected === "z")
-			{
-				this._attachedTo.rotateBy(0, 0, speed);
-			}
+			this._rotation[this._selected] += speed;
+
+			this._attachedTo.setRotation(this._rotation.x, this._rotation.y, this._rotation.z);
 
 			return;
 		}
@@ -173,7 +189,7 @@ _.extend(TransformGizmo.prototype, {
 		this._startPosition = this._camera.mouseToWorld();
 	},
 
-	onUpdate: function()
+	onUpdate: function(dt)
 	{
 		if (this._attachedTo === undefined)
 		{
@@ -186,6 +202,6 @@ _.extend(TransformGizmo.prototype, {
 		}
 
 		this.check(this._camera.projectRay());
-		this.move();
+		this.move(dt);
 	}
 });

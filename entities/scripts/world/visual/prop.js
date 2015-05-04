@@ -26,7 +26,8 @@ _.inherit(Prop, Entity);
 _.extend(Prop.prototype, {
 	onUpdate: function(dt)
 	{
-		
+		var r = Vector3D.lookAt(this._model.translation(), Game.camera.translation());
+		this._model.setRotation(r.x, r.y, r.z);
 	},
 
 	setPosition: function(x, y, z)

@@ -11,11 +11,11 @@ var EditorModelView = EditorModelView || function(ui, props, layer)
 
 	this._metrics = {
 		size: {
-			width: 640,
-			height: 480
+			width: 320,
+			height: 240
 		},
 
-		position: Vector2D.construct(0, 0)
+		position: Vector2D.construct(600, 256)
 	};
 
 	this._entryOffset = 40;
@@ -29,6 +29,7 @@ _.inherit(EditorModelView, ScrollArea);
 _.extend(EditorModelView.prototype, {
 	initialise: function()
 	{
+		this._background = new Widget();
 		for (var i = 0; i < this._props.length; ++i)
 		{
 			this._entries.push(
@@ -46,6 +47,12 @@ _.extend(EditorModelView.prototype, {
 		var m = this._metrics;
 		this.setSize(m.size.width, m.size.height);
 		this.setPosition(m.position.x, m.position.y);
+
+		this._background.setSize(m.size.width, m.size.height);
+		this._background.setTranslation(m.position.x, m.position.y);
+
+		this._background.setBlend(0.1, 0.1, 0.1);
+		this._background.spawn("UI");
 
 		if (this._entries.length == 0)
 		{

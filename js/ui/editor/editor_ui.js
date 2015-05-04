@@ -84,7 +84,6 @@ var EditorUI = EditorUI || function(editor, root)
 	// this is not supported in the ui editor yet, so I'm doing this. Shit needs to be done so sorry
 	this._modelView = new EditorModelView(this, this._editor.props(), "UI");
 	this._modelView.setUI();
-	this._modelView.setPosition(600, 128);
 
 	// switch the UI to whatever mode the editor is supposed to be in
 	this.switchTo(this._editor._editMode);
