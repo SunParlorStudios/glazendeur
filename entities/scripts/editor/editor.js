@@ -504,6 +504,12 @@ _.extend(Editor.prototype, {
 				return;
 			}
 
+			if (Mouse.isReleased(MouseButton.Left))
+			{
+				this._wasFlattening	= false;
+				this._flattenHeight	= 0;
+			}
+
 			if (!Mouse.isDown(MouseButton.Left) && !Mouse.isDown(MouseButton.Right))
 			{
 				return;
@@ -668,7 +674,7 @@ _.extend(Editor.prototype, {
 									}	
 								}
 								avg /= num;
-								var result = Math.lerp(neighbourTerrain.getHeight(currentIndex.x, currentIndex.y), avg, smooth);
+								var result = Math.lerp(neighbourTerrain.getHeight(currentIndex.x, currentIndex.y), avg, smooth * this._brushStrength.current / this._brushStrength.max);
 								neighbourTerrain.setHeight(currentIndex.x, currentIndex.y, result);
 								this._neighbours[i].grid().updateHeight(this._neighbours[i], currentIndex.x, currentIndex.y, result);
 								this._neighbours[i].setEdited(true, false);
@@ -685,12 +691,6 @@ _.extend(Editor.prototype, {
 						}
 					}
 				}
-			}
-
-			if (Mouse.isReleased(MouseButton.Left))
-			{
-				this._wasFlattening	= false;
-				this._flattenHeight	= 0;
 			}
 
 			for (var i = 0; i < this._neighbours.length; ++i)
