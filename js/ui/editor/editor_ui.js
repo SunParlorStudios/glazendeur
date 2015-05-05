@@ -239,5 +239,11 @@ _.extend(EditorUI.prototype, {
 	selectedTexture: function()
 	{
 		return this._textureView.selected().path();
+	},
+
+	update: function(dt)
+	{
+		this._modelView.update(dt);
+		this._textureView.update(dt);
 	}
 });

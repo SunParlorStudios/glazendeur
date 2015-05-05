@@ -66,6 +66,7 @@ _.extend(EditorModelView.prototype, {
 
 		top.setSelected(true);
 
+		this.setMax(0, Math.max(0, this._entryOffset * this._entries.length - 240));
 		this._top = top;
 	},
 
@@ -83,6 +84,31 @@ _.extend(EditorModelView.prototype, {
 		}
 
 		this._selected = changed;
+	},
+
+	update: function(dt)
+	{
+		if (this.focussed() == false)
+		{
+			return;
+		}
+		if (Mouse.wheelDown())
+		{
+			this.scrollBy(0, 50);
+		}
+		else if (Mouse.wheelUp())
+		{
+			this.scrollBy(0, -50);
+		}
+
+		if (Keyboard.isDown(Key.Down))
+		{
+			this.scrollBy(0, dt * 500);
+		}
+		else if (Keyboard.isDown(Key.Up))
+		{
+			this.scrollBy(0, -dt * 500);
+		}
 	},
 
 	setAlpha: function(a)

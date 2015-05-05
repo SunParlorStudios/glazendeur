@@ -794,5 +794,6 @@ _.extend(Editor.prototype, {
 		this.updateCircle(dt);
 		this.updateSaving(dt);
 		this.updateTools(dt);
+		this._ui.update(dt);
 	}
 });

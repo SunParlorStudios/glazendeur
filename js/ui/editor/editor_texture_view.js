@@ -88,6 +88,31 @@ _.extend(EditorTextureView.prototype, {
 		this._selected = changed;
 	},
 
+	update: function(dt)
+	{
+		if (this.focussed() == false)
+		{
+			return;
+		}
+		if (Mouse.wheelDown())
+		{
+			this.scrollBy(0, 50);
+		}
+		else if (Mouse.wheelUp())
+		{
+			this.scrollBy(0, -50);
+		}
+
+		if (Keyboard.isDown(Key.Down))
+		{
+			this.scrollBy(0, dt * 500);
+		}
+		else if (Keyboard.isDown(Key.Up))
+		{
+			this.scrollBy(0, -dt * 500);
+		}
+	},
+
 	setAlpha: function(a)
 	{
 		this._top.setAlpha(a);
