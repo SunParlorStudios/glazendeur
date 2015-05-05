@@ -1,6 +1,7 @@
 require("js/ui/editor/editor_tool");
 require("js/ui/editor/editor_slider");
 require("js/ui/editor/editor_model_view");
+require("js/ui/editor/editor_texture_view");
 
 Enum("EditorUILayer",[
 	"Input",
@@ -84,6 +85,11 @@ var EditorUI = EditorUI || function(editor, root)
 	// this is not supported in the ui editor yet, so I'm doing this. Shit needs to be done so sorry
 	this._modelView = new EditorModelView(this, this._editor.props(), "UI");
 	this._modelView.setUI();
+	this._modelView.setZ(0);
+
+	this._textureView = new EditorTextureView(this, this._editor.textures(), "UI");
+	this._textureView.setUI();
+	this._textureView.setZ(0);
 
 	// switch the UI to whatever mode the editor is supposed to be in
 	this.switchTo(this._editor._editMode);
@@ -182,6 +188,22 @@ _.extend(EditorUI.prototype, {
 			}
 		}
 
+		if (type === EditorTools.Paint)
+		{
+			this._modelView.setVisible(false);
+			this._textureView.setVisible(true);
+		}
+		else if (type === EditorTools.Props)
+		{
+			this._modelView.setVisible(true);
+			this._textureView.setVisible(false);
+		}
+		else
+		{
+			this._modelView.setVisible(false);
+			this._textureView.setVisible(false);
+		}
+		
 		// let the actual editor know we are using a new tool
 		this._editor.setTool(type);
 	},
@@ -192,6 +214,7 @@ _.extend(EditorUI.prototype, {
 		this.view.root_world.setAlpha(1);
 		this.view.root_path.setAlpha(1);
 		this._modelView.setAlpha(1);
+		this._textureView.setAlpha(1);
 	},
 
 	_enableInput: function()
@@ -200,6 +223,7 @@ _.extend(EditorUI.prototype, {
 		this.view.root_world.setAlpha(0.5);
 		this.view.root_path.setAlpha(0.5);
 		this._modelView.setAlpha(0.5);
+		this._textureView.setAlpha(0.5);
 	},
 
 	_onSliderChange: function(v)
@@ -210,5 +234,10 @@ _.extend(EditorUI.prototype, {
 	selectedProp: function()
 	{
 		return this._modelView.selected().path();
+	},
+
+	selectedTexture: function()
+	{
+		return this._textureView.selected().path();
 	}
 });

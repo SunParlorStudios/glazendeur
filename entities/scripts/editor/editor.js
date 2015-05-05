@@ -120,7 +120,6 @@ _.extend(Editor.prototype, {
 			}	
 		}
 
-		this._currentTexture = 0;
 		this._currentBrush = 0;
 	},
 
@@ -494,11 +493,12 @@ _.extend(Editor.prototype, {
 						}
 					}
 
+					var tex = this._ui.selectedTexture();
 					terrain.brushTexture(this._brushes[this._currentBrush],
-						this._textures[this._currentTexture] + ".png",
+						tex + ".png",
 						cx, cy, size, this._brushStrength.current / this._brushStrength.max,
-						this._textures[this._currentTexture] + "_normal.png",
-						this._textures[this._currentTexture] + "_specular.png");
+						tex + "_normal.png",
+						tex + "_specular.png");
 				}
 
 				return;
@@ -752,16 +752,9 @@ _.extend(Editor.prototype, {
 		this._map.load();
 	},
 
-	changeTexture: function()
+	textures: function()
 	{
-		++this._currentTexture;
-
-		if (this._currentTexture >= this._textures.length)
-		{
-			this._currentTexture = 0;
-		}
-
-		this._ui.setCurrentTexture(this._textures[this._currentTexture] + ".png");
+		return this._textures;
 	},
 
 	changeBrush: function()

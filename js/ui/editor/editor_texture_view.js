@@ -1,11 +1,11 @@
-require("js/ui/editor/editor_model_entry");
+require("js/ui/editor/editor_texture_entry");
 
-var EditorModelView = EditorModelView || function(ui, props, layer)
+var EditorTextureView = EditorTextureView || function(ui, textures, layer)
 {
-	EditorModelView._super.constructor.call(this, layer);
+	EditorTextureView._super.constructor.call(this, layer);
 
 	this._editorUI = ui;
-	this._props = props;
+	this._textures = textures;
 
 	this._entries = [];
 
@@ -18,23 +18,25 @@ var EditorModelView = EditorModelView || function(ui, props, layer)
 		position: Vector2D.construct(600, 256)
 	};
 
-	this._entryOffset = 40;
+	this._entryOffset = 96;
 	this._selected = undefined;
+
+	this._maxPerRow = 3;
 
 	this.initialise();
 };
 
-_.inherit(EditorModelView, ScrollArea);
+_.inherit(EditorTextureView, ScrollArea);
 
-_.extend(EditorModelView.prototype, {
+_.extend(EditorTextureView.prototype, {
 	initialise: function()
 	{
-		for (var i = 0; i < this._props.length; ++i)
+		for (var i = 0; i < this._textures.length; ++i)
 		{
 			this._entries.push(
-				new EditorModelEntry(
+				new EditorTextureEntry(
 					this,
-					this._props[i], 
+					this._textures[i],
 					i == 0 ? undefined : this._entries[this._entries.length - 1]
 				)
 			);
@@ -61,12 +63,13 @@ _.extend(EditorModelView.prototype, {
 		for (var i = 0; i < this._entries.length; ++i)
 		{
 			entry = this._entries[i];
-			entry.setUI(i == 0 ? 0 : this._entryOffset);
+			entry.setUI(i, i == 0 ? 0 : this._entryOffset, this._maxPerRow);
 		}
 
 		top.setSelected(true);
 
 		this._top = top;
+		this.setMax(0, Math.floor(this._entries.length / this._maxPerRow) * this._entryOffset);
 	},
 
 	onChange: function(changed)
