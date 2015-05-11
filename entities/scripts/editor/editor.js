@@ -120,7 +120,6 @@ _.extend(Editor.prototype, {
 			}	
 		}
 
-		this._currentTexture = 0;
 		this._currentBrush = 0;
 	},
 
@@ -494,14 +493,21 @@ _.extend(Editor.prototype, {
 						}
 					}
 
+					var tex = this._ui.selectedTexture();
 					terrain.brushTexture(this._brushes[this._currentBrush],
-						this._textures[this._currentTexture] + ".png",
+						tex + ".png",
 						cx, cy, size, this._brushStrength.current / this._brushStrength.max,
-						this._textures[this._currentTexture] + "_normal.png",
-						this._textures[this._currentTexture] + "_specular.png");
+						tex + "_normal.png",
+						tex + "_specular.png");
 				}
 
 				return;
+			}
+
+			if (Mouse.isReleased(MouseButton.Left))
+			{
+				this._wasFlattening	= false;
+				this._flattenHeight	= 0;
 			}
 
 			if (!Mouse.isDown(MouseButton.Left) && !Mouse.isDown(MouseButton.Right))
@@ -668,7 +674,7 @@ _.extend(Editor.prototype, {
 									}	
 								}
 								avg /= num;
-								var result = Math.lerp(neighbourTerrain.getHeight(currentIndex.x, currentIndex.y), avg, smooth);
+								var result = Math.lerp(neighbourTerrain.getHeight(currentIndex.x, currentIndex.y), avg, smooth * this._brushStrength.current / this._brushStrength.max);
 								neighbourTerrain.setHeight(currentIndex.x, currentIndex.y, result);
 								this._neighbours[i].grid().updateHeight(this._neighbours[i], currentIndex.x, currentIndex.y, result);
 								this._neighbours[i].setEdited(true, false);
@@ -685,12 +691,6 @@ _.extend(Editor.prototype, {
 						}
 					}
 				}
-			}
-
-			if (Mouse.isReleased(MouseButton.Left))
-			{
-				this._wasFlattening	= false;
-				this._flattenHeight	= 0;
 			}
 
 			for (var i = 0; i < this._neighbours.length; ++i)
@@ -742,16 +742,9 @@ _.extend(Editor.prototype, {
 		this._map.load();
 	},
 
-	changeTexture: function()
+	textures: function()
 	{
-		++this._currentTexture;
-
-		if (this._currentTexture >= this._textures.length)
-		{
-			this._currentTexture = 0;
-		}
-
-		this._ui.setCurrentTexture(this._textures[this._currentTexture] + ".png");
+		return this._textures;
 	},
 
 	changeBrush: function()
@@ -791,5 +784,6 @@ _.extend(Editor.prototype, {
 		this.updateCircle(dt);
 		this.updateSaving(dt);
 		this.updateTools(dt);
+		this._ui.update(dt);
 	}
 });

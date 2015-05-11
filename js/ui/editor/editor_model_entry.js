@@ -73,8 +73,8 @@ _.extend(EditorModelEntry.prototype, {
 
 	_onPressed: function()
 	{
-		this._bar.setBlend(this._pressed.r1, this._pressed.r1, this._pressed.b1);
-		this._text.setBlend(this._pressed.r2, this._pressed.r2, this._pressed.b2);
+		this._bar.setBlend(this._pressed.r1, this._pressed.g1, this._pressed.b1);
+		this._text.setBlend(this._pressed.r2, this._pressed.g2, this._pressed.b2);
 	},
 
 	_onReleased: function()
@@ -85,8 +85,8 @@ _.extend(EditorModelEntry.prototype, {
 
 	_onEnter: function()
 	{
-		this._bar.setBlend(this._hover.r1, this._hover.r1, this._hover.b1);
-		this._text.setBlend(this._hover.r2, this._hover.r2, this._hover.b2);
+		this._bar.setBlend(this._hover.r1, this._hover.g1, this._hover.b1);
+		this._text.setBlend(this._hover.r2, this._hover.g2, this._hover.b2);
 	},
 
 	_onLeave: function()
