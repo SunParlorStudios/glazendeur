@@ -31,7 +31,8 @@
 			[ "texture", "textures/terrain/textures/grass_specular.png" ],
 			[ "texture", "textures/terrain/brushes/brush_1.png" ],
 			[ "model", "models/editor/gizmos/move_center.fbx" ],
-			[ "model", "models/editor/gizmos/move_axis.fbx" ]
+			[ "model", "models/editor/gizmos/move_axis.fbx" ],
+			[ "model", "models/props/test_cube/test_cube.fbx" ]
 		],
 		"info": {
 			"resourcesPerFrame": 1,

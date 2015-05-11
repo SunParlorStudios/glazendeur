@@ -1,0 +1,10 @@
+{
+	"renderables": [
+		{ "type": "Model", "path": "models/props/test_cube/test_cube.fbx" }
+	],
+
+	"script" : {
+		"path" : "entities/scripts/player/player",
+		"object" : "Player"
+	}
+}

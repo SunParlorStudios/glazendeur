@@ -10,6 +10,7 @@ var WorldGrid = WorldGrid || function (params)
 
 	this._map = params.map;
 	this._grids = [];
+	this._main = [];
 };
 
 _.inherit(WorldGrid, Entity);
@@ -45,11 +46,21 @@ _.extend(WorldGrid.prototype, {
 				{
 					for (var col = 0; col < 128; col++)
 					{
-						t.setHeight(row - x, col - y, landscapes[x + 3 * y].terrain().getHeight(row, col) + 0.02);
+						t.setHeight(row - x, col - y, landscapes[x + 3 * y].terrain().getHeight(row, col));
 					}
 				}
 
 				t.flush();
+			}
+		}
+
+		for (var row = 0; row < 128 * (landscapes.length / 3); row++)
+		{
+			this._main[row] = [];
+			
+			for (var col = 0; col < 128 * (landscapes.length / 3); col++)
+			{
+				this._main[row][col] = false;
 			}
 		}
 	},
@@ -59,7 +70,46 @@ _.extend(WorldGrid.prototype, {
 		var gridPos = landscape.gridPosition();
 		var grid = this._grids[gridPos.x + 3 * gridPos.y];
 
-		grid.setHeight(row - gridPos.x, col - gridPos.y, landscape.terrain().getHeight(row, col) + 0.02);
+		grid.setHeight(row - gridPos.x, col - gridPos.y, landscape.terrain().getHeight(row, col));
+	},
+
+	toGridPosition: function (world)
+	{
+		return {
+			row: Math.round(world.x - 128 * 0.5) + 128, 
+			col: Math.round(world.z - 128 * 0.5) + 128
+		};
+	},
+
+	makeWalkable: function (circle, walkable)
+	{
+		var pos = this.toGridPosition(circle._circle.translation());
+
+		Log.info(pos.row + ', ' + pos.col);
+
+		if (walkable === true)
+		{
+			if (this._main[pos.row][pos.col] === false)
+			{
+				var item = new Quad();
+				item.setSize(1, 1);
+				item.setRotation(Math.PI / 2, 0, 0);
+				item.setTranslation(pos.row - 128 * 0.5, 1, pos.col - 128 * 0.5);
+				item.setTechnique("Diffuse");
+				item.setEffect("effects/cull_none.effect");
+				item.spawn("UI");
+
+				this._main[pos.row][pos.col] = item;
+			}
+		}
+		else
+		{
+			if (this._main[pos.row][pos.col] !== false)
+			{
+				this._main[pos.row][pos.col].destroy();
+				this._main[pos.row][pos.col] = false;
+			}
+		}
 	},
 
 	flush: function (landscape)

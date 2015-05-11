@@ -717,25 +717,15 @@ _.extend(Editor.prototype, {
 			switch (this._currentTool)
 			{
 				case PathTools.Walkable:
-					if (Mouse.isPressed(MouseButton.Left))
+					if (Mouse.isDown(MouseButton.Left))
 					{
-
-					}
-
-					if (Mouse.isReleased(MouseButton.Right))
-					{
-
+						this._grid.makeWalkable(this._editingCircle, true);
 					}
 					break;
 				case PathTools.Unwalkable:
-					if (Mouse.isPressed(MouseButton.Left))
+					if (Mouse.isDown(MouseButton.Left))
 					{
-
-					}
-
-					if (Mouse.isReleased(MouseButton.Right))
-					{
-
+						this._grid.makeWalkable(this._editingCircle, false);
 					}
 					break;
 			}

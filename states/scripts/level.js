@@ -70,6 +70,16 @@ _.extend(Level.prototype, {
 		else
 		{
 			this.view.root_world.destroy();
+			this.view.root_path.destroy();
+			this.view.input.destroy();
+			this.view.root_world.raise.destroy();
+			this.view.root_world.paint.destroy();
+			this.view.root_world.smooth.destroy();
+			this.view.root_world.ramp.destroy();
+			this.view.root_world.flatten.destroy();
+			this.view.root_world.props.destroy();
+			this.view.root_path.walkable.destroy();
+			this.view.root_path.unwalkable.destroy();
 		}
 
 		this._map.initialise();
@@ -83,6 +93,13 @@ _.extend(Level.prototype, {
 		if (IO.exists("json/map/map.json") == true)
 		{
 			this._map.load();
+		}
+
+		if (this._editMode == false)
+		{
+			this._player = this.world.spawn("entities/player/player.json", { 
+				grid: this._grid 
+			}, "Default");
 		}
 	},
 
