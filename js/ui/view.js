@@ -29,6 +29,11 @@ _.extend(View.prototype, {
 					if (child.visible == true)
 					{
 						child.spawn('UI');
+
+						if (child.setActivated)
+						{
+							child.setActivated(true);
+						}
 					}
 
 					loopChildren(child);
@@ -49,6 +54,11 @@ _.extend(View.prototype, {
 				if (child.___ISANOBJECT___ === true)
 				{
 					child.destroy();
+
+					if (child.setActivated)
+					{
+						child.setActivated(false);
+					}
 
 					loopChildren(child);
 				}
