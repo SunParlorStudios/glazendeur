@@ -10,6 +10,7 @@ require("js/utility/vector3d");
 require("js/utility/ray");
 require("js/utility/world");
 require("js/ui/button");
+require("js/input/controls");
 
 var RenderTargets = RenderTargets || {
 	default: new RenderTarget("Default"),
