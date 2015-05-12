@@ -9,8 +9,10 @@ require("js/utility/vector2d");
 require("js/utility/vector3d");
 require("js/utility/ray");
 require("js/utility/world");
+require("js/utility/astar");
 require("js/ui/button");
 require("js/input/controls");
+require("js/input/mouse");
 
 var RenderTargets = RenderTargets || {
 	default: new RenderTarget("Default"),

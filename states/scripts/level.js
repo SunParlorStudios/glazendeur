@@ -53,7 +53,8 @@ _.extend(Level.prototype, {
 		* The grid
 		*/
 		this._grid = this.world.spawn("entities/world/utility/grid.json", {
-			map: this._map
+			map: this._map,
+			camera: this._camera
 		});
 		this._map._grid = this._grid;
 
@@ -84,6 +85,7 @@ _.extend(Level.prototype, {
 
 		this._map.initialise();
 		this._grid.calculate();
+		this._grid.display();
 
 		if (this._editMode == true)
 		{
@@ -98,7 +100,7 @@ _.extend(Level.prototype, {
 		if (this._editMode == false)
 		{
 			this._player = this.world.spawn("entities/player/player.json", { 
-				grid: this._grid 
+				grid: this._grid
 			}, "Default");
 		}
 	},

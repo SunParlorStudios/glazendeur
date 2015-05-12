@@ -11,6 +11,8 @@ var WorldGrid = WorldGrid || function (params)
 	this._map = params.map;
 	this._grids = [];
 	this._main = [];
+
+	this._camera = params.camera;
 };
 
 _.inherit(WorldGrid, Entity);
@@ -60,9 +62,11 @@ _.extend(WorldGrid.prototype, {
 			
 			for (var col = 0; col < 128 * (landscapes.length / 3); col++)
 			{
-				this._main[row][col] = false;
+				this._main[row][col] = {};
 			}
 		}
+
+		AStar.setGrid(this._main, 128 * 3);
 	},
 
 	updateHeight: function (landscape, row, col)
@@ -134,6 +138,21 @@ _.extend(WorldGrid.prototype, {
 		{
 			this._grids[i].destroy();
 		}
+	},
+
+	posToTile: function(pos)
+	{
+		return { x: Math.round((pos.z + 128 * 0.5)), y: Math.round((pos.x + 128 * 0.5)) }
+	},
+
+	findPathToMouse: function (start)
+	{
+		var end = Mouse.getTerrainPosition(this._camera, this._map.landscapes());
+		
+		if (end)
+			return AStar.findPath(this.posToTile(start), this.posToTile(end), AStar.ManhattanDistance);
+
+		return [];
 	},
 
 	onUpdate: function (dt)

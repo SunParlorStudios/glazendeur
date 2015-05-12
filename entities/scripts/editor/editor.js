@@ -293,7 +293,7 @@ _.extend(Editor.prototype, {
 
 		for (var i = 0; i < this._landscapes.length; ++i)
 		{
-			landscape = this._landscapes[i]
+			landscape = this._landscapes[i];
 			intersection = landscape.terrain().rayIntersection(ray.origin.x, ray.origin.y, ray.origin.z, ray.direction.x, ray.direction.y, ray.direction.z);
 			
 			if (intersection !== false)
