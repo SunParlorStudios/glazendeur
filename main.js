@@ -58,6 +58,9 @@ _.extend(Log, {
 
 Game.Initialise = function()
 {
+	ContentManager.load("sound", "sounds/menu.wav");
+	ContentManager.load("sound", "sounds/exploration.wav");
+
 	RenderTargets.shore.setClearAlbedo(false);
 
 	RenderTargets.default.setClearDepth(true);
@@ -86,6 +89,9 @@ Game.Initialise = function()
 	StateManager.loadState('states/loader.json');
 	StateManager.loadState('states/level.json');
 	StateManager.loadState('states/menu.json');
+
+	SoundSystem.addChannelGroup("Music");
+	SoundSystem.play("sounds/menu.wav", "Music", true);
 
 	StateManager.switch('menu');
 };

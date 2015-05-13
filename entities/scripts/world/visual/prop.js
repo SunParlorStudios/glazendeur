@@ -42,7 +42,11 @@ _.extend(Prop.prototype, {
 
 	place: function(landscape)
 	{
-		this._gizmo.setActivated(true);
+		if (this._gizmo !== undefined)
+		{
+			this._gizmo.setActivated(true);
+		}
+		
 		this._model.setBlend(1, 1, 1);
 
 		if (landscape !== undefined)

@@ -81,6 +81,13 @@ _.extend(Level.prototype, {
 			this.view.root_world.props.destroy();
 			this.view.root_path.walkable.destroy();
 			this.view.root_path.unwalkable.destroy();
+			this._editor = this.world.spawn("entities/editor/editor.json", { 
+				map: this._map, 
+				camera: this._camera,
+				view: this.view
+			});
+			this._editor.setActivated(false);
+			this._editor._loadProps();
 		}
 
 		this._map.initialise();

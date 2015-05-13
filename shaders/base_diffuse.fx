@@ -56,5 +56,7 @@ float4 PS(VOut input) : SV_TARGET
 	float4 diffuse = TexDiffuse.Sample(Sampler, coords);
 	diffuse.rgb *= input.colour.rgb * Blend;
 	diffuse.a *= Alpha;
+	diffuse.a *= input.colour.a;
+	clip(diffuse.a - 0.1f);
 	return diffuse;
 }

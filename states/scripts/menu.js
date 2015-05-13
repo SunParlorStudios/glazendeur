@@ -20,6 +20,8 @@ _.extend(Menu.prototype, {
 
 		this.view.play_button.setOnReleased(function () {
 			StateManager.switch('level');
+			SoundSystem.stop("Music");
+			SoundSystem.play("sounds/exploration.wav", "Music", true);
 		}, this);
 
 		this.view.option_button.setOnReleased(function () {
