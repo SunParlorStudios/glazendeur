@@ -155,6 +155,24 @@ _.extend(WorldGrid.prototype, {
 		return [];
 	},
 
+	getHeight: function (position)
+	{
+		var lx = Math.floor((position.x + 128 * 0.5) / 128);
+		var ly = Math.floor((position.z + 128 * 0.5) / 128);
+
+		var landscapes = this._map.landscapes();
+		var landscape;
+		for (var i = 0; i < landscapes.length; i++)
+		{
+			if (landscapes[i].gridPosition().x === lx && landscapes[i].gridPosition().y === ly)
+			{
+				landscape = landscapes[i];
+			}
+		}
+
+		return landscape.terrain().getHeight((position.x + 128 * 0.5) - 128 * lx, (position.z + 128 * 0.5) - 128 * ly);
+	},
+
 	onUpdate: function (dt)
 	{
 		//WorldGrid._super.onUpdate.call(this, dt);

@@ -28,7 +28,7 @@ _.extend(Player.prototype, {
 
 		this.updatePathing(dt);
 
-		this._model.setTranslation(this._position.x, 0, this._position.y);
+		this._model.setTranslation(this._position.x, this._grid.getHeight(this._model.translation()), this._position.y);
 	},
 
 	updateControls: function (dt)
