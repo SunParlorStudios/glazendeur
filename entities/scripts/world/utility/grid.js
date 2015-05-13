@@ -30,7 +30,7 @@ _.extend(WorldGrid.prototype, {
 		{
 			var t = new Terrain();
 			t.create(128, 128);
-			t.setTranslation(128 * landscapes[i].gridPosition().x, 1, 128 * landscapes[i].gridPosition().y);
+			t.setTranslation(128 * landscapes[i].gridPosition().x, 0.001, 128 * landscapes[i].gridPosition().y);
 			t.translateBy(-128 * 0.5, 0, -128 * 0.5);
 			t.setTextureTiling(128, 128);
 			t.brushTexture("textures/terrain/brushes/brush_1.png", "textures/tile.png", 64, 64, 99999, 1.0, "textures/tile_normal.png", "textures/tile_specular.png");
@@ -150,7 +150,7 @@ _.extend(WorldGrid.prototype, {
 		var end = Mouse.getTerrainPosition(this._camera, this._map.landscapes());
 		
 		if (end)
-			return AStar.findPath(this.posToTile(start), this.posToTile(end), AStar.ManhattanDistance);
+			return AStar.findPath(this.posToTile(start), this.posToTile(end), AStar.DiagonalDistance);
 
 		return [];
 	},

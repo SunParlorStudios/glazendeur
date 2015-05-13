@@ -28,17 +28,29 @@ _.extend(AStar, {
 	{
 		var neighbours = [];
 
-		if (node.x - 1 >= 0 && this._grid[node.y][node.x - 1] !== false) 
+		if (node.x - 1 >= 0) 
 			neighbours.push({ x: node.x - 1, y: node.y });
 
-		if (node.x + 1 < this._gridSize && this._grid[node.y][node.x + 1] !== false) 
+		if (node.x + 1 < this._gridSize) 
 			neighbours.push({ x: node.x + 1, y: node.y });
 
-		if (node.y - 1 >= 0 && this._grid[node.y - 1][node.x] !== false) 
+		if (node.y - 1 >= 0) 
 			neighbours.push({ x: node.x, y: node.y - 1 });
 
-		if (node.y + 1 < this._gridSize && this._grid[node.y + 1][node.x] !== false) 
+		if (node.y + 1 < this._gridSize) 
 			neighbours.push({ x: node.x, y: node.y + 1 });
+
+		if (node.x + 1 < this._gridSize && node.y + 1 < this._gridSize)
+			neighbours.push({ x: node.x + 1, y: node.y + 1 });
+
+		if (node.x + 1 < this._gridSize && node.y - 1 >= 0)
+			neighbours.push({ x: node.x + 1, y: node.y - 1 });
+		
+		if (node.x - 1 >= 0 && node.y - 1 >= 0)
+			neighbours.push({ x: node.x - 1, y: node.y - 1 });
+		
+		if (node.x - 1 >= 0 && node.y + 1 < this._gridSize)
+			neighbours.push({ x: node.x - 1, y: node.y + 1 });
 
 		return neighbours;
 	},
@@ -60,8 +72,6 @@ _.extend(AStar, {
 		var startNode = this.createNode(null, start);
 		var endNode = this.createNode(null, end);
 
-		Log.info(startNode.value + ', ' + endNode.value);
-
 		var openNodes = [startNode];
 		var closedNodes = [];
 
@@ -71,12 +81,8 @@ _.extend(AStar, {
 		var currentNeighbours, currentNode, currentPath;
 		var openNodesLength, maxF, idx, i;
 
-		var j = 0;
-
-		while (openNodesLength == openNodes.length)
+		while (openNodesLength = openNodes.length)
 		{
-			j++;
-
 			maxF = this._gridSize * this._gridSize;
 			idx = -1;
 
@@ -107,8 +113,8 @@ _.extend(AStar, {
 					{
 						// nope, process it
 						world[currentPath.value] = true;
-						currentPath.g = currentNode.g + this.EuclideanDistance(currentNeighbours[i], currentNode);
-						currentPath.f = currentPath.g + this.EuclideanDistance(currentNeighbours[i], endNode);
+						currentPath.g = currentNode.g + heuristic(currentNeighbours[i], currentNode);
+						currentPath.f = currentPath.g + heuristic(currentNeighbours[i], endNode);
 						openNodes.push(currentPath);
 					}
 
@@ -121,10 +127,14 @@ _.extend(AStar, {
 				currentPath = closedNodes[closedNodes.push(currentNode) - 1];
 
 				do {
-					fullPath.push([currentPath.x,currentPath.y]);
+					fullPath.push({x:currentPath.x, y: currentPath.y});
 				} while (currentPath = currentPath.parent);
 
 				fullPath.reverse();
+
+				world = [];
+				openNodes = [];
+				closedNodes = [];
 			}
 		}
 

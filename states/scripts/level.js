@@ -85,7 +85,6 @@ _.extend(Level.prototype, {
 
 		this._map.initialise();
 		this._grid.calculate();
-		this._grid.display();
 
 		if (this._editMode == true)
 		{
@@ -102,6 +101,8 @@ _.extend(Level.prototype, {
 			this._player = this.world.spawn("entities/player/player.json", { 
 				grid: this._grid
 			}, "Default");
+
+			this._camera._target = this._player;
 		}
 	},
 
