@@ -16,7 +16,9 @@ var Player = Player || function (params)
 
 	this._quads = [];
 
-	this._position = Vector2D.construct(0, 0);
+	this._model.setTranslation(280, 0, 250);
+
+	this._position = Vector2D.construct(280, 250);
 };
 
 _.inherit(Player, Entity);
@@ -44,7 +46,7 @@ _.extend(Player.prototype, {
 
 	updatePathing: function (dt)
 	{
-		if (this._path.length > 0)
+		if (this._path.length > 1)
 		{
 			var node = this._path[this._pathSettings.node];
 			var target = this._path[this._pathSettings.target];

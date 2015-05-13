@@ -220,11 +220,11 @@ _.extend(CameraControl.prototype, {
 			var t = this._target.position();
 
 			var speed = this._speed.zoom * dt;
-			if (Mouse.wheelDown() || Keyboard.isDown(Key.Minus))
+			if (Mouse.wheelUp() || Keyboard.isDown(Key.Minus))
 			{
 				this._zoom += speed;
 			}
-			else if (Mouse.wheelUp() || Keyboard.isDown(Key.Plus))
+			else if (Mouse.wheelDown() || Keyboard.isDown(Key.Plus))
 			{
 				this._zoom -= speed;
 			}
@@ -233,9 +233,9 @@ _.extend(CameraControl.prototype, {
 			this._zoom = Math.max(5, this._zoom);
 
 			var p = {
-				x: t.x + (32 / this._zoom),
-				y: t.y + 1.5 * (32 / this._zoom),
-				z: t.z + (32 / this._zoom)
+				x: t.x + 1.6 * (32 / this._zoom),
+				y: t.y + 3.6 * (32 / this._zoom),
+				z: t.z + 1.6 * (32 / this._zoom)
 			};
 
 			var rotation = Vector3D.lookAt(p, t);
@@ -244,7 +244,7 @@ _.extend(CameraControl.prototype, {
 
 			this._camera.setTranslation(
 				Math.lerp(ct.x, p.x, 0.1), 
-				Math.lerp(ct.y, p.y, 0.1), 
+				Math.max(10, Math.lerp(ct.y, p.y, 0.1)), 
 				Math.lerp(ct.z, p.z, 0.1)
 			);
 			this._camera.setRotation(rotation.x, rotation.y, 0);
