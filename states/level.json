@@ -13,6 +13,7 @@
 			[ "effect", "effects/cull_none.effect" ],
 			[ "texture", "textures/lenna.png" ],
 			[ "texture", "textures/tile.png" ],
+			[ "texture", "textures/tile_unwalkable.png" ],
 			[ "texture", "textures/tile_normal.png" ],
 			[ "texture", "textures/tile_specular.png" ],
 			[ "texture", "textures/tree.png" ],

@@ -78,11 +78,10 @@ Game.Initialise = function()
 	RenderTargets.ui.setTechnique("Diffuse");
 
 	Window.setName("Withering Shores");
-	Window.setSize(1920, 1080);
+	Window.setSize(1280, 720);
 
 	RenderSettings.setVsync(true);
 	RenderSettings.setResolution(1920, 1080);
-	RenderSettings.setFullscreen(true);
 
 	Game.camera = new Camera(CameraType.Perspective);
 	Game.camera.setTranslation(0, 0, 0);

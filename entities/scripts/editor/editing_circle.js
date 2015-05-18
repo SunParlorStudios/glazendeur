@@ -35,6 +35,11 @@ _.extend(EditingCircle.prototype, {
 		this._radius = r;
 	},
 
+	getRadius: function ()
+	{
+		return this._radius;
+	},
+
 	setBlend: function(r, g, b)
 	{
 		this._circle.setBlend(r, g, b);

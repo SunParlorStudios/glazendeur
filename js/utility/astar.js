@@ -52,6 +52,14 @@ _.extend(AStar, {
 		if (node.x - 1 >= 0 && node.y + 1 < this._gridSize)
 			neighbours.push({ x: node.x - 1, y: node.y + 1 });
 
+		for (var i = neighbours.length - 1; i >= 0; i--)
+		{
+			if (this._grid[neighbours[i].y][neighbours[i].x] === false)
+			{
+				neighbours.splice(i, 1);
+			}
+		}
+
 		return neighbours;
 	},
 

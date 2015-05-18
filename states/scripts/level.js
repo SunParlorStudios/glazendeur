@@ -91,7 +91,6 @@ _.extend(Level.prototype, {
 		}
 
 		this._map.initialise();
-		this._grid.calculate();
 
 		if (this._editMode == true)
 		{
@@ -103,6 +102,12 @@ _.extend(Level.prototype, {
 			this._map.load();
 		}
 
+		if (this._editMode)
+			this._grid.createVisuals();
+
+		this._grid.calculate();
+		this._grid.load();
+
 		if (this._editMode == false)
 		{
 			this._player = this.world.spawn("entities/player/player.json", { 
@@ -110,6 +115,11 @@ _.extend(Level.prototype, {
 			}, "Default");
 
 			this._camera._target = this._player;
+			this._camera.switchCam(CamMode.InGame);
+		}
+		else
+		{
+			this._camera.switchCam(CamMode.Editor);
 		}
 	},
 

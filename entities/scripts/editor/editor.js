@@ -494,6 +494,9 @@ _.extend(Editor.prototype, {
 					}
 
 					var tex = this._ui.selectedTexture();
+
+					Log.info(cx + ', ' + cy + ', ' + size + ', ' + this._brushStrength.current / this._brushStrength.max);
+
 					terrain.brushTexture(this._brushes[this._currentBrush],
 						tex + ".png",
 						cx, cy, size, this._brushStrength.current / this._brushStrength.max,

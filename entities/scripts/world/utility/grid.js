@@ -18,22 +18,68 @@ var WorldGrid = WorldGrid || function (params)
 _.inherit(WorldGrid, Entity);
 
 _.extend(WorldGrid.prototype, {
-	calculate: function ()
+	save: function ()
 	{
-		for (var i = 0; i < this._map.landscapes().length; i++)
+		var save = JSON.stringify(this._main);
+		IO.write('json/astar.json', save);
+	},
+
+	load: function ()
+	{
+		var save = JSON.parse(IO.read('json/astar.json'));
+		this._main = save;
+
+		for (var row = 0; row < 128 * 3; row++)
 		{
-			this._map.landscapes()[i]._grid = this;
+			for (var col = 0; col < 128 * 3; col++)
+			{
+				for (var t = 0; t < this._grids.length; t++)
+				{
+					this._grids[t].brushTexture(
+						"textures/terrain/brushes/brush_5.png", 
+						this._main[row][col] == true ? "textures/tile.png" : "textures/tile_unwalkable.png", 
+						row - (128 * 0.5) - 0.5, 
+						col - (128 * 0.5) - 0.5, 
+						0.5, 
+						1, 
+						"textures/tile_normal.png", 
+						"textures/tile_specular.png"
+					);
+				}
+			}
 		}
-		
+
+		AStar.setGrid(this._main, 128 * 3);
+	},
+
+	createVisuals: function ()
+	{
 		var landscapes = this._map.landscapes();
 		for (var i = 0; i < landscapes.length; i++)
 		{
 			var t = new Terrain();
 			t.create(128, 128);
-			t.setTranslation(128 * landscapes[i].gridPosition().x, 0.001, 128 * landscapes[i].gridPosition().y);
+			t.setTranslation(128 * landscapes[i].gridPosition().x, 0.005, 128 * landscapes[i].gridPosition().y);
 			t.translateBy(-128 * 0.5, 0, -128 * 0.5);
 			t.setTextureTiling(128, 128);
-			t.brushTexture("textures/terrain/brushes/brush_1.png", "textures/tile.png", 64, 64, 99999, 1.0, "textures/tile_normal.png", "textures/tile_specular.png");
+			t.setAlpha(0.5);
+
+			for (var x = 0; x < 128; x++)
+			{
+				for (var y = 0; y < 128; y++)
+				{
+					t.brushTexture(
+						"textures/terrain/brushes/brush_5.png", 
+						"textures/tile.png", 
+						x - (128 * 0.5) + (landscapes[i].gridPosition().x * 128), 
+						y - (128 * 0.5) + (landscapes[i].gridPosition().y * 128), 
+						0.5, 
+						1, 
+						"textures/tile_normal.png", 
+						"textures/tile_specular.png"
+					);
+				}
+			}
 
 			this._grids.push(t);
 		}
@@ -55,6 +101,15 @@ _.extend(WorldGrid.prototype, {
 				t.flush();
 			}
 		}
+	},
+
+	calculate: function ()
+	{
+		var landscapes = this._map.landscapes();
+		for (var i = 0; i < landscapes.length; i++)
+		{
+			landscapes[i]._grid = this;
+		}
 
 		for (var row = 0; row < 128 * (landscapes.length / 3); row++)
 		{
@@ -62,7 +117,7 @@ _.extend(WorldGrid.prototype, {
 			
 			for (var col = 0; col < 128 * (landscapes.length / 3); col++)
 			{
-				this._main[row][col] = {};
+				this._main[row][col] = true;
 			}
 		}
 
@@ -87,31 +142,80 @@ _.extend(WorldGrid.prototype, {
 
 	makeWalkable: function (circle, walkable)
 	{
-		var pos = this.toGridPosition(circle._circle.translation());
+		var c = circle._circle.translation();
+		var mpos = this.toGridPosition(c);
+		var landscapes = this._grids;
 
-		Log.info(pos.row + ', ' + pos.col);
+		var affected = [],
+			size = circle.getRadius(),
+			cx = c.x,
+			cy = c.z;
+
+		for (var x = cx - size; x < cx + size; ++x)
+		{
+			for (var y = cy - size; y < cy + size; ++y)
+			{
+				var dist = Math.distance(cx, cy, x, y);
+
+				if (dist <= size)
+				{
+					affected.push({x: x, z: y});
+				}
+			}
+		}
 
 		if (walkable === true)
 		{
-			if (this._main[pos.row][pos.col] === false)
+			for (var i = 0; i < affected.length; i++)
 			{
-				var item = new Quad();
-				item.setSize(1, 1);
-				item.setRotation(Math.PI / 2, 0, 0);
-				item.setTranslation(pos.row - 128 * 0.5, 1, pos.col - 128 * 0.5);
-				item.setTechnique("Diffuse");
-				item.setEffect("effects/cull_none.effect");
-				item.spawn("UI");
+				var tile = affected[i];
+				var pos = this.toGridPosition(tile);
 
-				this._main[pos.row][pos.col] = item;
+				if (this._main[pos.row][pos.col] === false)
+				{
+					for (var t = 0; t < landscapes.length; t++)
+					{
+						landscapes[t].brushTexture(
+							"textures/terrain/brushes/brush_5.png", 
+							"textures/tile.png", 
+							pos.row - 128 * 0.5 - 0.5, 
+							pos.col - 128 * 0.5 - 0.5, 
+							0.5, 
+							1, 
+							"textures/tile_normal.png", 
+							"textures/tile_specular.png"
+						);
+					}
+
+					this._main[pos.row][pos.col] = true;
+				}
 			}
 		}
 		else
 		{
-			if (this._main[pos.row][pos.col] !== false)
+			for (var i = 0; i < affected.length; i++)
 			{
-				this._main[pos.row][pos.col].destroy();
-				this._main[pos.row][pos.col] = false;
+				var tile = affected[i];
+				var pos = this.toGridPosition(tile);
+
+				if (this._main[pos.row][pos.col] !== false)
+				{
+					for (var t = 0; t < landscapes.length; t++)
+					{
+						landscapes[t].brushTexture(
+							"textures/terrain/brushes/brush_5.png", 
+							"textures/tile_unwalkable.png", 
+							pos.row - 128 * 0.5 - 0.5, 
+							pos.col - 128 * 0.5 - 0.5, 
+							0.5, 
+							1, 
+							"textures/tile_normal.png", 
+							"textures/tile_specular.png"
+						);
+					}
+
+					this._main[pos.row][pos.col] = false;
+				}
 			}
 		}
 	},
@@ -175,6 +279,16 @@ _.extend(WorldGrid.prototype, {
 
 	onUpdate: function (dt)
 	{
-		//WorldGrid._super.onUpdate.call(this, dt);
+		if (Keyboard.isDown(Key.Control))
+		{
+			if (Keyboard.isReleased(Key.S))
+			{
+				this.save();
+			}
+			else if (Keyboard.isReleased(Key.O))
+			{
+				this.load();
+			}
+		}
 	}
 });
