@@ -254,7 +254,12 @@ _.extend(WorldGrid.prototype, {
 		var end = Mouse.getTerrainPosition(this._camera, this._map.landscapes());
 		
 		if (end)
-			return AStar.findPath(this.posToTile(start), this.posToTile(end), AStar.DiagonalDistance);
+		{
+			var endTile = this.posToTile(end);
+
+			if (this._main[endTile.y][endTile.x] !== false)
+				return AStar.findPath(this.posToTile(start), endTile, AStar.DiagonalDistance);
+		}
 
 		return [];
 	},
