@@ -1,0 +1,6 @@
+{
+	"script" : {
+		"path" : "entities/scripts/world/gameplay/gameplay_controller",
+		"object" : "GameplayController"
+	}
+}

@@ -19,11 +19,17 @@ var Player = Player || function (params)
 	this._model.setTranslation(280, 0, 250);
 
 	this._position = Vector2D.construct(280, 250);
+	this._mode = GameMode.Player;
 };
 
 _.inherit(Player, Entity);
 
 _.extend(Player.prototype, {
+	setMode: function(mode)
+	{
+		this._mode = mode;
+	},
+
 	onUpdate: function (dt)
 	{
 		this.updateControls(dt);
@@ -35,6 +41,11 @@ _.extend(Player.prototype, {
 
 	updateControls: function (dt)
 	{
+		if (this._mode !== GameMode.Player)
+		{
+			return;
+		}
+
 		if (Controls.isPressed(Bindings.WalkCommand))
 		{
 			this._path = this._grid.findPathToMouse(this._model.translation());
@@ -59,7 +70,7 @@ _.extend(Player.prototype, {
 			this._position.y = Math.lerp(node.x - 128 * 0.5, target.x - 128 * 0.5, ratio);
 			this._position.x = Math.lerp(node.y - 128 * 0.5, target.y - 128 * 0.5, ratio);
 
-			if (this._position.y === target.x - 128 * 0.5 && this._position.x === target.y - 128 * 0.5)
+			if (ratio == 1)
 			{
 				this._pathSettings.node++;
 				this._pathSettings.target++;

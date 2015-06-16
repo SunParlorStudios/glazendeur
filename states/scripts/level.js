@@ -110,12 +110,18 @@ _.extend(Level.prototype, {
 
 		if (this._editMode == false)
 		{
+			this._gameplay = this.world.spawn("entities/world/gameplay/gameplay_controller.json", {});
+
 			this._player = this.world.spawn("entities/player/player.json", { 
 				grid: this._grid
 			}, "Default");
 
-			this._camera._target = this._player;
-			this._camera.switchCam(CamMode.InGame);
+			this._gameplay.initialise(this._camera, this._player);
+
+			this._camera.setTarget(this._player);
+			this._camera.switchCam(CamMode.Player);
+
+			//this._gameplay.switchMode(GameMode.Build);
 		}
 		else
 		{
