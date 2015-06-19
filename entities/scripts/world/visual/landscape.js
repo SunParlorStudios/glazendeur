@@ -3,7 +3,7 @@ var Landscape = Landscape || function(params)
 	Landscape._super.constructor.call(this, arguments);
 	this._terrain = this._renderables[0];
 	this._terrain.create(128, 128);
-	//this._terrain.setTextureTiling(32, 32);
+	this._terrain.setTextureTiling(32, 32);
 	this._gridPosition = {x: 0, y: 0};
 
 	this._waterPlane = this._renderables[1];

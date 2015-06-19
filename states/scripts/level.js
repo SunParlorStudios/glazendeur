@@ -120,8 +120,8 @@ _.extend(Level.prototype, {
 
 			this._camera.setTarget(this._player);
 			this._camera.switchCam(CamMode.Player);
-
-			//this._gameplay.switchMode(GameMode.Build);
+			
+			Gameplay = this._gameplay;
 		}
 		else
 		{

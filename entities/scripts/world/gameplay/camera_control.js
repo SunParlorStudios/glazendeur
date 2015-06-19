@@ -298,7 +298,7 @@ _.extend(CameraControl.prototype, {
 	updateBuild: function(dt)
 	{
 		var r = this._camera.rotation();
-		this._camera.setRotation(Math.lerp(r.x, Math.PI / 2, 0.1), r.y, r.z);
+		this._camera.setRotation(Math.lerp(r.x, Math.PI / 2, 0.1), Math.lerp(r.y, Math.PI / 4, 0.1), r.z);
 
 		var t = this._camera.translation();
 		this._camera.setTranslation(t.x, Math.lerp(t.y, this._buildHeight, 0.1), t.z);

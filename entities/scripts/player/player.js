@@ -16,9 +16,9 @@ var Player = Player || function (params)
 
 	this._quads = [];
 
-	this._model.setTranslation(280, 0, 250);
+	this._model.setTranslation(280, 0, 220);
 
-	this._position = Vector2D.construct(280, 250);
+	this._position = Vector2D.construct(280, 220);
 	this._mode = GameMode.Player;
 };
 
